@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta
+        name="theme-color"
+        content="#080510"
+    >
+
+    <meta
+        name="description"
+        content="Place a portal to Mars in augmented reality."
+    >
+
+    <title>Mars Portal AR</title>
+
+
+    <!-- =====================================================
+         CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="./style.css"
+    >
+
+
+    <!-- =====================================================
+         THREE.JS
+    ====================================================== -->
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+    }
+    </script>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         LANDING PAGE
+    ====================================================== -->
+
+    <main
+        id="landingPage"
+        class="landing-page"
+    >
+
+
+        <div class="background-stars"></div>
+
+        <div class="background-grid"></div>
+
+        <div class="glow glow-one"></div>
+
+        <div class="glow glow-two"></div>
+
+
+
+        <!-- =================================================
+             LEFT SIDE
+        ================================================== -->
+
+        <section class="hero">
+
+
+            <div class="status-badge">
+
+                <span class="status-dot"></span>
+
+                WEB AR PORTAL EXPERIENCE
+
+            </div>
+
+
+
+            <h1 class="hero-title">
+
+                <span class="main-title">
+                    MARS PORTAL AR
+                </span>
+
+                <span class="sub-title">
+                    OPEN ANOTHER WORLD
+                </span>
+
+            </h1>
+
+
+
+            <p class="description">
+
+                Place a life-size portal in your real-world
+                environment and look through the doorway
+                onto the surface of Mars.
+
+            </p>
+
+
+
+            <!-- =================================================
+                 STEPS
+            ================================================== -->
+
+            <div class="steps">
+
+
+                <div class="step">
+
+                    <span>
+                        01
+                    </span>
+
+                    <strong>
+                        Start AR
+                    </strong>
+
+                    <p>
+                        Allow camera access on your phone.
+                    </p>
+
+                </div>
+
+
+
+                <div class="step">
+
+                    <span>
+                        02
+                    </span>
+
+                    <strong>
+                        Find the Floor
+                    </strong>
+
+                    <p>
+                        Move your phone slowly to detect a surface.
+                    </p>
+
+                </div>
+
+
+
+                <div class="step">
+
+                    <span>
+                        03
+                    </span>
+
+                    <strong>
+                        Place the Portal
+                    </strong>
+
+                    <p>
+                        Tap and look through the doorway into Mars.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 START AR
+            ================================================== -->
+
+            <button
+                id="startARButton"
+                class="start-button"
+                type="button"
+                disabled
+            >
+
+                <span class="button-icon">
+                    ◉
+                </span>
+
+                START MARS PORTAL AR
+
+            </button>
+
+
+
+            <!-- =================================================
+                 DEVICE OPTIONS
+            ================================================== -->
+
+            <div class="device-options">
+
+
+                <div
+                    id="androidCard"
+                    class="device-card"
+                >
+
+                    <div class="device-icon">
+                        ◉
+                    </div>
+
+
+                    <div class="device-info">
+
+                        <span class="device-label">
+                            ANDROID
+                        </span>
+
+                        <strong>
+                            Interactive WebXR Portal
+                        </strong>
+
+                        <p>
+                            Use Chrome to place and explore
+                            the real-time Mars portal.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div
+                    id="iphoneCard"
+                    class="device-card"
+                >
+
+                    <div class="device-icon apple-icon">
+                        
+                    </div>
+
+
+                    <div class="device-info">
+
+                        <span class="device-label iphone-label">
+                            iPHONE / iPAD
+                        </span>
+
+                        <strong>
+                            Apple AR Fallback
+                        </strong>
+
+                        <p>
+                            The stencil portal requires WebXR.
+                            A USDZ Quick Look fallback can be
+                            added separately for Apple devices.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 STATUS
+            ================================================== -->
+
+            <p
+                id="supportMessage"
+                class="support-message"
+            >
+
+                Loading portal...
+
+            </p>
+
+
+
+            <div class="technology">
+
+                <span>
+                    THREE.JS
+                </span>
+
+                <span>
+                    WEBXR
+                </span>
+
+                <span>
+                    STENCIL MASK
+                </span>
+
+                <span>
+                    GLB
+                </span>
+
+                <span>
+                    HIT TEST
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             RIGHT CARD
+        ================================================== -->
+
+        <section class="model-preview">
+
+
+            <div class="orbit orbit-one"></div>
+
+            <div class="orbit orbit-two"></div>
+
+
+
+            <div class="preview-card">
+
+
+                <div class="preview-header">
+
+                    <span>
+                        MARS PORTAL
+                    </span>
+
+                    <span class="live-label">
+                        READY
+                    </span>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     QR PLACEHOLDER
+                ================================================== -->
+
+                <div class="qr-area">
+
+
+                    <div class="qr-glow"></div>
+
+
+                    <div class="qr-frame">
+
+
+                        <div class="qr-placeholder">
+
+                            <div class="portal-symbol">
+
+                                <div class="portal-inner">
+                                    MARS
+                                </div>
+
+                            </div>
+
+
+                            <strong>
+                                QR CODE
+                            </strong>
+
+                            <small>
+                                ADD AFTER PUBLISHING
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="scan-line"></div>
+
+
+                </div>
+
+
+
+                <div class="qr-copy">
+
+                    <span class="scan-label">
+                        SCAN WITH YOUR PHONE
+                    </span>
+
+                    <h3>
+                        Open the Mars Portal
+                    </h3>
+
+                    <p>
+                        Scan the QR code to place a portal
+                        into another world.
+                    </p>
+
+                </div>
+
+
+
+                <div class="file-label">
+
+                    <span>
+                        EXPERIENCE
+                    </span>
+
+                    <strong>
+                        Portal to Mars
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         AR OVERLAY
+    ====================================================== -->
+
+    <div
+        id="arOverlay"
+        class="ar-overlay"
+    >
+
+
+        <div class="ar-top-bar">
+
+
+            <div class="ar-logo">
+                AR
+            </div>
+
+
+            <div class="ar-top-text">
+
+                <strong>
+                    MARS PORTAL
+                </strong>
+
+                <span id="arStatus">
+                    Move your phone to find the floor
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             PLACEMENT MESSAGE
+        ================================================== -->
+
+        <div
+            id="placementMessage"
+            class="placement-message"
+        >
+
+            <div class="scan-icon">
+                ◎
+            </div>
+
+            <strong>
+                FIND THE FLOOR
+            </strong>
+
+            <span>
+                Slowly move your phone around
+            </span>
+
+        </div>
+
+
+
+        <!-- =================================================
+             CONTROLS
+        ================================================== -->
+
+        <div
+            id="arControls"
+            class="ar-controls"
+        >
+
+
+            <button
+                id="rotateButton"
+                class="control-button"
+                type="button"
+            >
+
+                ↻
+
+                <span>
+                    ROTATE
+                </span>
+
+            </button>
+
+
+
+            <button
+                id="smallerButton"
+                class="control-button"
+                type="button"
+            >
+
+                −
+
+                <span>
+                    SMALLER
+                </span>
+
+            </button>
+
+
+
+            <button
+                id="largerButton"
+                class="control-button"
+                type="button"
+            >
+
+                +
+
+                <span>
+                    LARGER
+                </span>
+
+            </button>
+
+
+
+            <button
+                id="replaceButton"
+                class="control-button"
+                type="button"
+            >
+
+                ◎
+
+                <span>
+                    PLACE AGAIN
+                </span>
+
+            </button>
+
+
+        </div>
+
+
+
+        <button
+            id="exitARButton"
+            class="exit-button"
+            type="button"
+        >
+
+            EXIT
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         WEBXR CANVAS
+    ====================================================== -->
+
+    <canvas id="arCanvas"></canvas>
+
+
+
+    <!-- =====================================================
+         IMPORTANT:
+         PLAIN SCRIPT.JS
+         DO NOT VITE BUILD
+    ====================================================== -->
+
+    <script
+        type="module"
+        src="./script.js"
+    ></script>
+
+
+</body>
+
+</html>

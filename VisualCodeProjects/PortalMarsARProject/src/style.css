@@ -1,0 +1,1739 @@
+/* =========================================================
+   MARS PORTAL AR
+========================================================= */
+
+:root {
+
+    --background: #05040b;
+
+    --cyan: #00e5ff;
+
+    --orange: #ff6a2a;
+
+    --mars: #d64f28;
+
+    --gold: #ffba55;
+
+    --purple: #7b45ff;
+
+    --pink: #ff3c8f;
+
+    --lime: #b7ff3c;
+
+    --white: #f8f7ff;
+
+    --gray: #aaa9bd;
+
+}
+
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+
+    box-sizing: border-box;
+
+}
+
+
+html {
+
+    width: 100%;
+
+    min-height: 100%;
+
+}
+
+
+body {
+
+    margin: 0;
+
+    min-height: 100%;
+
+    overflow-x: hidden;
+
+    color: var(--white);
+
+    background: var(--background);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+}
+
+
+button {
+
+    font-family: inherit;
+
+}
+
+
+
+/* =========================================================
+   LANDING
+========================================================= */
+
+.landing-page {
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.2fr)
+        minmax(360px, .8fr);
+
+    align-items: center;
+
+    gap: 55px;
+
+    padding:
+        65px
+        clamp(30px, 5vw, 80px);
+
+    overflow: hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 16% 25%,
+            rgba(123,69,255,.28),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at 80% 55%,
+            rgba(255,106,42,.20),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            120deg,
+            #150923,
+            #080713 55%,
+            #030309
+        );
+
+}
+
+
+
+/* =========================================================
+   STARS
+========================================================= */
+
+.background-stars {
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: .45;
+
+    background-image:
+
+        radial-gradient(
+            circle,
+            white 1px,
+            transparent 1.5px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255,145,90,.8) 1px,
+            transparent 1.5px
+        );
+
+    background-size:
+        90px 90px,
+        145px 145px;
+
+    background-position:
+        0 0,
+        40px 50px;
+
+}
+
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.background-grid {
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .1;
+
+    pointer-events: none;
+
+    background-image:
+
+        linear-gradient(
+            rgba(255,255,255,.08) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.08) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        55px 55px;
+
+}
+
+
+
+/* =========================================================
+   GLOWS
+========================================================= */
+
+.glow {
+
+    position: absolute;
+
+    width: 520px;
+
+    height: 520px;
+
+    border-radius: 50%;
+
+    filter: blur(150px);
+
+    pointer-events: none;
+
+}
+
+
+.glow-one {
+
+    top: -260px;
+
+    left: -200px;
+
+    background: var(--purple);
+
+    opacity: .18;
+
+}
+
+
+.glow-two {
+
+    right: -230px;
+
+    bottom: -250px;
+
+    background: var(--orange);
+
+    opacity: .18;
+
+}
+
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+
+    position: relative;
+
+    z-index: 5;
+
+    min-width: 0;
+
+}
+
+
+
+/* =========================================================
+   STATUS BADGE
+========================================================= */
+
+.status-badge {
+
+    width: fit-content;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 25px;
+
+    padding: 8px 14px;
+
+    color: var(--lime);
+
+    border:
+        1px solid
+        rgba(183,255,60,.3);
+
+    border-radius: 999px;
+
+    background:
+        rgba(183,255,60,.06);
+
+    font-size: .66rem;
+
+    font-weight: 900;
+
+    letter-spacing: .13em;
+
+}
+
+
+.status-dot {
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: var(--lime);
+
+    box-shadow:
+        0 0 18px
+        var(--lime);
+
+}
+
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.hero-title {
+
+    margin: 0;
+
+}
+
+
+.main-title {
+
+    display: block;
+
+    font-size:
+        clamp(
+            3rem,
+            5vw,
+            6rem
+        );
+
+    line-height: .92;
+
+    font-weight: 900;
+
+    letter-spacing: -.055em;
+
+    white-space: nowrap;
+
+}
+
+
+.sub-title {
+
+    display: block;
+
+    margin-top: 14px;
+
+    color: transparent;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            var(--orange),
+            var(--gold),
+            var(--pink)
+        );
+
+    -webkit-background-clip: text;
+
+    background-clip: text;
+
+    font-size:
+        clamp(
+            1.9rem,
+            3vw,
+            3.5rem
+        );
+
+    line-height: 1;
+
+    font-weight: 900;
+
+    white-space: nowrap;
+
+}
+
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.description {
+
+    max-width: 680px;
+
+    margin:
+        30px 0;
+
+    color: var(--gray);
+
+    font-size: 1rem;
+
+    line-height: 1.65;
+
+}
+
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 12px;
+
+    max-width: 810px;
+
+    margin-bottom: 28px;
+
+}
+
+
+.step {
+
+    min-height: 145px;
+
+    padding: 20px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.11);
+
+    border-radius: 18px;
+
+    background:
+        rgba(255,255,255,.03);
+
+    backdrop-filter:
+        blur(12px);
+
+}
+
+
+.step > span {
+
+    color: var(--orange);
+
+    font-size: .67rem;
+
+    font-weight: 900;
+
+}
+
+
+.step strong {
+
+    display: block;
+
+    margin:
+        18px 0
+        7px;
+
+    font-size: .92rem;
+
+}
+
+
+.step p {
+
+    margin: 0;
+
+    color: #8f8ea3;
+
+    font-size: .74rem;
+
+    line-height: 1.45;
+
+}
+
+
+
+/* =========================================================
+   START BUTTON
+========================================================= */
+
+.start-button {
+
+    width:
+        min(
+            100%,
+            420px
+        );
+
+    min-height: 68px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    cursor: pointer;
+
+    color: #180703;
+
+    background:
+
+        linear-gradient(
+            110deg,
+            var(--orange),
+            #ff9e50,
+            var(--gold)
+        );
+
+    box-shadow:
+        0 18px 55px
+        rgba(255,106,42,.25);
+
+    font-size: .9rem;
+
+    font-weight: 900;
+
+    letter-spacing: .10em;
+
+}
+
+
+.start-button:hover:not(:disabled) {
+
+    transform:
+        translateY(-3px);
+
+}
+
+
+.start-button:disabled {
+
+    opacity: .38;
+
+    cursor: not-allowed;
+
+}
+
+
+.button-icon {
+
+    margin-right: 10px;
+
+}
+
+
+
+/* =========================================================
+   DEVICE CARDS
+========================================================= */
+
+.device-options {
+
+    width: 100%;
+
+    max-width: 760px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0,1fr));
+
+    gap: 12px;
+
+    margin-top: 18px;
+
+}
+
+
+.device-card {
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 13px;
+
+    padding: 16px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+
+    border-radius: 16px;
+
+    background:
+        rgba(255,255,255,.025);
+
+}
+
+
+.device-card.recommended {
+
+    border-color:
+        rgba(255,106,42,.5);
+
+}
+
+
+.device-icon {
+
+    width: 43px;
+
+    height: 43px;
+
+    flex:
+        0 0
+        43px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 11px;
+
+    color: var(--orange);
+
+    background:
+        rgba(255,106,42,.1);
+
+    font-weight: 900;
+
+}
+
+
+.apple-icon {
+
+    color: white;
+
+    background:
+        rgba(123,69,255,.12);
+
+}
+
+
+.device-info {
+
+    min-width: 0;
+
+}
+
+
+.device-label {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--orange);
+
+    font-size: .54rem;
+
+    font-weight: 900;
+
+    letter-spacing: .12em;
+
+}
+
+
+.iphone-label {
+
+    color: #bea9ff;
+
+}
+
+
+.device-info strong {
+
+    display: block;
+
+    font-size: .82rem;
+
+}
+
+
+.device-info p {
+
+    margin:
+        5px 0 0;
+
+    color: #8e8da3;
+
+    font-size: .65rem;
+
+    line-height: 1.45;
+
+}
+
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.support-message {
+
+    min-height: 22px;
+
+    margin-top: 14px;
+
+    color: #9593aa;
+
+    font-size: .73rem;
+
+}
+
+
+.support-message.good {
+
+    color: var(--lime);
+
+}
+
+
+.support-message.bad {
+
+    color: #ff738f;
+
+}
+
+
+.support-message.warning {
+
+    color: var(--gold);
+
+}
+
+
+
+/* =========================================================
+   TECHNOLOGY
+========================================================= */
+
+.technology {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+    margin-top: 22px;
+
+}
+
+
+.technology span {
+
+    color: #706d84;
+
+    font-size: .59rem;
+
+    font-weight: 900;
+
+    letter-spacing: .12em;
+
+}
+
+
+
+/* =========================================================
+   PREVIEW
+========================================================= */
+
+.model-preview {
+
+    position: relative;
+
+    z-index: 3;
+
+    min-height: 590px;
+
+    display: grid;
+
+    place-items: center;
+
+}
+
+
+.orbit {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(255,106,42,.22);
+
+}
+
+
+.orbit::after {
+
+    content: "";
+
+    position: absolute;
+
+    top: 50%;
+
+    left: -6px;
+
+    width: 12px;
+
+    height: 12px;
+
+    border-radius: 50%;
+
+    background: var(--orange);
+
+    box-shadow:
+        0 0 24px
+        var(--orange);
+
+}
+
+
+.orbit-one {
+
+    width: 520px;
+
+    height: 520px;
+
+    animation:
+        rotateOrbit
+        16s
+        linear
+        infinite;
+
+}
+
+
+.orbit-two {
+
+    width: 390px;
+
+    height: 390px;
+
+    border-color:
+        rgba(123,69,255,.25);
+
+    animation:
+        rotateOrbitReverse
+        11s
+        linear
+        infinite;
+
+}
+
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.preview-card {
+
+    position: relative;
+
+    z-index: 5;
+
+    width:
+        min(
+            420px,
+            95%
+        );
+
+    padding: 20px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.13);
+
+    border-radius: 28px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(39,18,28,.9),
+            rgba(8,7,18,.96)
+        );
+
+    backdrop-filter:
+        blur(20px);
+
+    box-shadow:
+        0 45px 100px
+        rgba(0,0,0,.45);
+
+}
+
+
+.preview-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    color: #938fa7;
+
+    font-size: .62rem;
+
+    font-weight: 900;
+
+    letter-spacing: .12em;
+
+}
+
+
+.live-label {
+
+    color: var(--lime);
+
+}
+
+
+
+/* =========================================================
+   QR
+========================================================= */
+
+.qr-area {
+
+    position: relative;
+
+    min-height: 355px;
+
+    display: grid;
+
+    place-items: center;
+
+    overflow: hidden;
+
+}
+
+
+.qr-glow {
+
+    position: absolute;
+
+    width: 280px;
+
+    height: 280px;
+
+    border-radius: 50%;
+
+    background:
+        var(--orange);
+
+    filter:
+        blur(90px);
+
+    opacity: .18;
+
+}
+
+
+.qr-frame {
+
+    position: relative;
+
+    z-index: 3;
+
+    width: 245px;
+
+    height: 245px;
+
+    padding: 15px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 22px;
+
+    background:
+        #fff;
+
+}
+
+
+.qr-placeholder {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: grid;
+
+    place-items: center;
+
+    align-content: center;
+
+    color: #140802;
+
+    text-align: center;
+
+}
+
+
+.portal-symbol {
+
+    width: 120px;
+
+    height: 145px;
+
+    padding: 9px;
+
+    border-radius:
+        60px 60px
+        14px 14px;
+
+    background:
+
+        linear-gradient(
+            140deg,
+            var(--orange),
+            var(--purple)
+        );
+
+}
+
+
+.portal-inner {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius:
+        50px 50px
+        9px 9px;
+
+    color: white;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 80%,
+            #a94428,
+            #48182a 65%,
+            #140914
+        );
+
+    font-weight: 900;
+
+    font-size: .75rem;
+
+    letter-spacing: .15em;
+
+}
+
+
+.qr-placeholder strong {
+
+    display: block;
+
+    margin-top: 12px;
+
+    font-size: .8rem;
+
+}
+
+
+.qr-placeholder small {
+
+    margin-top: 4px;
+
+    color: #76707c;
+
+    font-size: .51rem;
+
+    font-weight: 900;
+
+}
+
+
+.scan-line {
+
+    position: absolute;
+
+    z-index: 5;
+
+    width: 220px;
+
+    height: 2px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--orange),
+            transparent
+        );
+
+    box-shadow:
+        0 0 15px
+        var(--orange);
+
+    animation:
+        qrScan
+        2.7s
+        ease-in-out
+        infinite;
+
+}
+
+
+.qr-copy {
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.scan-label {
+
+    color: var(--orange);
+
+    font-size: .59rem;
+
+    font-weight: 900;
+
+    letter-spacing: .14em;
+
+}
+
+
+.qr-copy h3 {
+
+    margin:
+        8px 0
+        7px;
+
+}
+
+
+.qr-copy p {
+
+    max-width: 310px;
+
+    margin:
+        0 auto;
+
+    color: #9793a8;
+
+    font-size: .7rem;
+
+    line-height: 1.5;
+
+}
+
+
+.file-label {
+
+    padding: 14px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    border-radius: 13px;
+
+    background:
+        rgba(255,255,255,.025);
+
+}
+
+
+.file-label span {
+
+    display: block;
+
+    color: var(--orange);
+
+    font-size: .55rem;
+
+    font-weight: 900;
+
+    letter-spacing: .12em;
+
+}
+
+
+.file-label strong {
+
+    display: block;
+
+    margin-top: 5px;
+
+}
+
+
+
+/* =========================================================
+   AR
+========================================================= */
+
+#arCanvas {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: none;
+
+    width: 100%;
+
+    height: 100%;
+
+}
+
+
+.ar-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 200;
+
+    display: none;
+
+    pointer-events: none;
+
+}
+
+
+body.ar-active
+.ar-overlay {
+
+    display: block;
+
+}
+
+
+body.ar-active
+#arCanvas {
+
+    display: block;
+
+}
+
+
+body.ar-active
+.landing-page {
+
+    display: none;
+
+}
+
+
+
+/* =========================================================
+   AR TOP
+========================================================= */
+
+.ar-top-bar {
+
+    position: absolute;
+
+    top:
+        max(
+            18px,
+            env(safe-area-inset-top)
+        );
+
+    left: 15px;
+
+    right: 82px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 11px 14px;
+
+    border-radius: 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.14);
+
+    background:
+        rgba(10,6,13,.76);
+
+    backdrop-filter:
+        blur(15px);
+
+}
+
+
+.ar-logo {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 11px;
+
+    color: #1b0702;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--orange),
+            var(--gold)
+        );
+
+    font-weight: 900;
+
+}
+
+
+.ar-top-text strong {
+
+    display: block;
+
+    font-size: .77rem;
+
+}
+
+
+.ar-top-text span {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color: #cac3d0;
+
+    font-size: .62rem;
+
+}
+
+
+
+/* =========================================================
+   PLACEMENT
+========================================================= */
+
+.placement-message {
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    width:
+        min(
+            300px,
+            calc(100% - 40px)
+        );
+
+    transform:
+        translate(-50%,-50%);
+
+    padding: 18px;
+
+    text-align: center;
+
+    border:
+        1px solid
+        rgba(255,106,42,.4);
+
+    border-radius: 18px;
+
+    background:
+        rgba(10,6,13,.75);
+
+    backdrop-filter:
+        blur(15px);
+
+}
+
+
+.placement-message.hidden {
+
+    display: none;
+
+}
+
+
+.scan-icon {
+
+    color: var(--orange);
+
+    font-size: 2.1rem;
+
+}
+
+
+.placement-message strong {
+
+    display: block;
+
+    margin-top: 6px;
+
+    font-size: .75rem;
+
+    letter-spacing: .12em;
+
+}
+
+
+.placement-message span {
+
+    display: block;
+
+    margin-top: 7px;
+
+    color: #aaa4b3;
+
+    font-size: .68rem;
+
+}
+
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+.ar-controls {
+
+    position: absolute;
+
+    left: 10px;
+
+    right: 10px;
+
+    bottom:
+        max(
+            18px,
+            env(safe-area-inset-bottom)
+        );
+
+    display: none;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 7px;
+
+    pointer-events: auto;
+
+}
+
+
+.ar-controls.visible {
+
+    display: grid;
+
+}
+
+
+.control-button {
+
+    min-height: 66px;
+
+    color: white;
+
+    border:
+        1px solid
+        rgba(255,255,255,.15);
+
+    border-radius: 13px;
+
+    background:
+        rgba(10,6,13,.78);
+
+    font-size: 1.2rem;
+
+    font-weight: 900;
+
+}
+
+
+.control-button span {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color: #bfb8c7;
+
+    font-size: .47rem;
+
+}
+
+
+.exit-button {
+
+    position: absolute;
+
+    top:
+        max(
+            19px,
+            env(safe-area-inset-top)
+        );
+
+    right: 14px;
+
+    min-height: 44px;
+
+    padding:
+        0 13px;
+
+    color: white;
+
+    border:
+        1px solid
+        rgba(255,255,255,.15);
+
+    border-radius: 11px;
+
+    background:
+        rgba(10,6,13,.8);
+
+    pointer-events: auto;
+
+}
+
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes rotateOrbit {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+@keyframes rotateOrbitReverse {
+
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
+
+}
+
+
+@keyframes qrScan {
+
+    0% {
+
+        transform:
+            translateY(-90px);
+
+        opacity: 0;
+
+    }
+
+    50% {
+
+        transform:
+            translateY(90px);
+
+        opacity: 1;
+
+    }
+
+    100% {
+
+        transform:
+            translateY(-90px);
+
+        opacity: 0;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+    max-width: 1150px
+) {
+
+    .landing-page {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+
+@media (
+    max-width: 650px
+) {
+
+    .landing-page {
+
+        display: block;
+
+        padding:
+            42px 18px
+            60px;
+
+        overflow: visible;
+
+    }
+
+
+    .main-title {
+
+        white-space: normal;
+
+        font-size:
+            clamp(
+                3rem,
+                14vw,
+                4.5rem
+            );
+
+    }
+
+
+    .sub-title {
+
+        white-space: normal;
+
+    }
+
+
+    .steps {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .step {
+
+        min-height: auto;
+
+    }
+
+
+    .device-options {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .start-button {
+
+        width: 100%;
+
+    }
+
+
+    .model-preview {
+
+        min-height: 520px;
+
+        margin-top: 50px;
+
+    }
+
+
+    .orbit-one {
+
+        width: 350px;
+
+        height: 350px;
+
+    }
+
+
+    .orbit-two {
+
+        width: 270px;
+
+        height: 270px;
+
+    }
+
+}
