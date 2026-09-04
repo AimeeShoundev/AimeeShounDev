@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta
+        name="theme-color"
+        content="#050817"
+    >
+
+    <title>Robot Spider AR</title>
+
+
+
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+    }
+    </script>
+  <script type="module" crossorigin src="/assets/index-aFwb3GQZ.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CCguYRvL.css">
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         LANDING PAGE
+    ====================================================== -->
+
+    <main
+        id="landingPage"
+        class="landing-page"
+    >
+
+
+        <div class="background-grid"></div>
+
+        <div class="glow glow-one"></div>
+
+        <div class="glow glow-two"></div>
+
+
+
+        <!-- =================================================
+             LEFT SIDE
+        ================================================== -->
+
+        <section class="hero">
+
+
+            <div class="status-badge">
+
+                <span class="status-dot"></span>
+
+                WEB AR EXPERIENCE
+
+            </div>
+
+
+
+            <h1 class="hero-title">
+
+                <span class="robot-title">
+                    ROBOT SPIDER AR
+                </span>
+
+                <span class="ar-title">
+                    AUGMENTED REALITY
+                </span>
+
+            </h1>
+
+
+
+            <p class="description">
+
+                Place a giant Robot Spider directly into
+                your real-world environment using your phone.
+
+            </p>
+
+
+
+            <!-- STEPS -->
+
+            <div class="steps">
+
+
+                <div class="step">
+
+                    <span>
+                        01
+                    </span>
+
+                    <strong>
+                        Start AR
+                    </strong>
+
+                    <p>
+                        Allow camera access.
+                    </p>
+
+                </div>
+
+
+
+                <div class="step">
+
+                    <span>
+                        02
+                    </span>
+
+                    <strong>
+                        Find a Surface
+                    </strong>
+
+                    <p>
+                        Slowly move your phone.
+                    </p>
+
+                </div>
+
+
+
+                <div class="step">
+
+                    <span>
+                        03
+                    </span>
+
+                    <strong>
+                        Tap to Place
+                    </strong>
+
+                    <p>
+                        Spawn the giant Robot Spider.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- START AR -->
+
+            <button
+                id="startARButton"
+                class="start-button"
+                type="button"
+            >
+
+                <span class="button-icon">
+                    ◉
+                </span>
+
+                START AR
+
+            </button>
+
+
+
+            <p
+                id="supportMessage"
+                class="support-message"
+            >
+
+                Loading Robot Spider...
+
+            </p>
+
+
+
+            <div class="technology">
+
+                <span>
+                    THREE.JS
+                </span>
+
+                <span>
+                    WEBXR
+                </span>
+
+                <span>
+                    WEBGL
+                </span>
+
+                <span>
+                    GLB
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             QR CODE CARD
+        ================================================== -->
+
+        <section class="model-preview qr-preview">
+
+
+            <div class="orbit orbit-one"></div>
+
+            <div class="orbit orbit-two"></div>
+
+
+
+            <div class="preview-card qr-preview-card">
+
+
+                <!-- TOP -->
+
+                <div class="preview-header">
+
+                    <span>
+                        MOBILE AR
+                    </span>
+
+                    <span class="live-label">
+                        READY
+                    </span>
+
+                </div>
+
+
+
+                <!-- QR AREA -->
+
+                <div class="qr-area">
+
+
+                    <div class="qr-glow"></div>
+
+
+
+                    <div class="qr-frame">
+
+
+                        <!--
+                        =================================================
+                        PLACEHOLDER FOR NOW
+
+                        Later replace this div with:
+
+                        <img
+                            src="images/robot-spider-qr.png"
+                            alt="Scan to launch Robot Spider AR"
+                            class="qr-image"
+                        >
+                        =================================================
+                        -->
+
+
+                        <div
+                            class="qr-placeholder"
+                            id="qrPlaceholder"
+                        >
+
+
+                            <div class="fake-qr-grid">
+
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+
+                            </div>
+
+
+                            <strong>
+                                QR CODE
+                            </strong>
+
+
+                            <small>
+                                COMING HERE
+                            </small>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="scan-line"></div>
+
+
+                </div>
+
+
+
+                <!-- QR TEXT -->
+
+                <div class="qr-copy">
+
+
+                    <span class="scan-label">
+                        SCAN WITH YOUR PHONE
+                    </span>
+
+
+                    <h3>
+                        Launch Robot Spider AR
+                    </h3>
+
+
+                    <p>
+
+                        Scan this code with your phone
+                        to open the augmented reality
+                        experience.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- BOTTOM LABEL -->
+
+                <div class="file-label">
+
+
+                    <span>
+                        EXPERIENCE
+                    </span>
+
+
+                    <strong>
+                        Robot Spider AR
+                    </strong>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         AR OVERLAY
+    ====================================================== -->
+
+    <div
+        id="arOverlay"
+        class="ar-overlay"
+    >
+
+
+        <div class="ar-top-bar">
+
+
+            <div class="ar-logo">
+                AR
+            </div>
+
+
+            <div class="ar-top-text">
+
+
+                <strong>
+                    ROBOT SPIDER AR
+                </strong>
+
+
+                <span id="arStatus">
+                    Move your phone to find a surface
+                </span>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- PLACEMENT MESSAGE -->
+
+        <div
+            id="placementMessage"
+            class="placement-message"
+        >
+
+
+            <div class="scan-icon">
+                ◎
+            </div>
+
+
+            <strong>
+                FIND A SURFACE
+            </strong>
+
+
+            <span>
+                Slowly move your phone around
+            </span>
+
+
+        </div>
+
+
+
+        <!-- AR CONTROLS -->
+
+        <div
+            id="arControls"
+            class="ar-controls"
+        >
+
+
+            <button
+                id="rotateButton"
+                class="control-button"
+                type="button"
+            >
+
+                ↻
+
+                <span>
+                    ROTATE
+                </span>
+
+            </button>
+
+
+
+            <button
+                id="smallerButton"
+                class="control-button"
+                type="button"
+            >
+
+                −
+
+                <span>
+                    SMALLER
+                </span>
+
+            </button>
+
+
+
+            <button
+                id="largerButton"
+                class="control-button"
+                type="button"
+            >
+
+                +
+
+                <span>
+                    LARGER
+                </span>
+
+            </button>
+
+
+
+            <button
+                id="replaceButton"
+                class="control-button"
+                type="button"
+            >
+
+                ◎
+
+                <span>
+                    PLACE AGAIN
+                </span>
+
+            </button>
+
+
+        </div>
+
+
+
+        <!-- EXIT -->
+
+        <button
+            id="exitARButton"
+            class="exit-button"
+            type="button"
+        >
+
+            EXIT
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- WEBXR CANVAS -->
+
+    <canvas id="arCanvas"></canvas>
+
+
+
+    <!-- OUR SCRIPT -->
+
+
+
+</body>
+
+</html>
