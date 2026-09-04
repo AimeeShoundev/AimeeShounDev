@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta
+        name="theme-color"
+        content="#050817"
+    >
+
+    <meta
+        name="description"
+        content="Explore the Solar System in augmented reality."
+    >
+
+    <title>Solar System AR</title>
+
+
+    <!-- =====================================================
+         CSS
+    ====================================================== -->
+
+
+
+    <!-- =====================================================
+         THREE.JS IMPORT MAP
+    ====================================================== -->
+
+
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+    }
+    </script>
+  <script type="module" crossorigin src="/assets/index-B9_P33Ex.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-D9ifMLWj.css">
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         LANDING PAGE
+    ====================================================== -->
+
+    <main
+        id="landingPage"
+        class="landing-page"
+    >
+
+
+        <!-- BACKGROUND EFFECTS -->
+
+        <div class="background-stars"></div>
+
+        <div class="background-grid"></div>
+
+        <div class="glow glow-one"></div>
+
+        <div class="glow glow-two"></div>
+
+
+
+        <!-- =================================================
+             LEFT SIDE
+        ================================================== -->
+
+        <section class="hero">
+
+
+            <!-- BADGE -->
+
+            <div class="status-badge">
+
+                <span class="status-dot"></span>
+
+                WEB AR EXPERIENCE
+
+            </div>
+
+
+
+            <!-- TITLE -->
+
+            <h1 class="hero-title">
+
+                <span class="solar-title">
+                    SOLAR SYSTEM AR
+                </span>
+
+                <span class="ar-title">
+                    EXPLORE THE UNIVERSE
+                </span>
+
+            </h1>
+
+
+
+            <!-- DESCRIPTION -->
+
+            <p class="description">
+
+                Bring the Solar System into your real-world
+                environment. Place the Sun and planets in your
+                space and walk around them in augmented reality.
+
+            </p>
+
+
+
+            <!-- =================================================
+                 STEPS
+            ================================================== -->
+
+            <div class="steps">
+
+
+                <div class="step">
+
+                    <span>
+                        01
+                    </span>
+
+                    <strong>
+                        Start AR
+                    </strong>
+
+                    <p>
+                        Choose your phone's AR experience.
+                    </p>
+
+                </div>
+
+
+
+                <div class="step">
+
+                    <span>
+                        02
+                    </span>
+
+                    <strong>
+                        Find a Surface
+                    </strong>
+
+                    <p>
+                        Slowly move your phone around your room.
+                    </p>
+
+                </div>
+
+
+
+                <div class="step">
+
+                    <span>
+                        03
+                    </span>
+
+                    <strong>
+                        Place the Solar System
+                    </strong>
+
+                    <p>
+                        Tap to bring the planets into your space.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ANDROID WEBXR BUTTON
+            ================================================== -->
+
+            <button
+                id="startARButton"
+                class="start-button"
+                type="button"
+                disabled
+            >
+
+                <span class="button-icon">
+                    ◉
+                </span>
+
+                START AR
+
+            </button>
+
+
+
+            <!-- =================================================
+                 DEVICE OPTIONS
+            ================================================== -->
+
+            <div class="device-options">
+
+
+                <!-- =============================================
+                     ANDROID
+                ============================================== -->
+
+                <div
+                    id="androidCard"
+                    class="device-card android-card"
+                >
+
+                    <div class="device-icon android-icon">
+                        ◉
+                    </div>
+
+
+                    <div class="device-info">
+
+                        <span class="device-label">
+                            ANDROID
+                        </span>
+
+                        <strong>
+                            WebXR Augmented Reality
+                        </strong>
+
+                        <p>
+                            Open this page in Chrome and use
+                            START AR to detect a surface and
+                            place the Solar System.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =============================================
+                     IPHONE / IPAD
+                ============================================== -->
+
+                <div
+                    id="iphoneCard"
+                    class="device-card iphone-card"
+                >
+
+                    <div class="device-icon apple-icon">
+                        
+                    </div>
+
+
+                    <div class="device-info">
+
+                        <span class="device-label iphone-label">
+                            iPHONE / iPAD
+                        </span>
+
+                        <strong>
+                            Apple AR Quick Look
+                        </strong>
+
+                        <p>
+                            Open this page in Safari and launch
+                            the Solar System directly into your space.
+                        </p>
+
+                    </div>
+
+
+
+                    <!--
+                        IMPORTANT:
+
+                        This opens:
+                        models/SolarSystem.usdz
+
+                        The USDZ must exist for iPhone AR.
+                    -->
+
+                    <a
+                        id="iphoneARButton"
+                        class="iphone-ar-button"
+                        rel="ar"
+                        href="./models/SolarSystem.usdz"
+                    >
+
+                        <!--
+                            Quick Look works most reliably when
+                            the rel="ar" link contains an image.
+                            This is an invisible 1-pixel marker.
+                        -->
+
+                        <img
+                            class="quick-look-marker"
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                            alt=""
+                        >
+
+                        <span class="apple-button-symbol">
+                            
+                        </span>
+
+                        OPEN iPHONE AR
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 STATUS
+            ================================================== -->
+
+            <p
+                id="supportMessage"
+                class="support-message"
+            >
+
+                Checking your device...
+
+            </p>
+
+
+
+            <!-- =================================================
+                 TECHNOLOGY
+            ================================================== -->
+
+            <div class="technology">
+
+                <span>
+                    THREE.JS
+                </span>
+
+                <span>
+                    WEBXR
+                </span>
+
+                <span>
+                    WEBGL
+                </span>
+
+                <span>
+                    GLB
+                </span>
+
+                <span>
+                    USDZ
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             RIGHT SIDE
+             QR CARD
+        ================================================== -->
+
+        <section class="model-preview qr-preview">
+
+
+            <!-- DECORATIVE ORBITS -->
+
+            <div class="orbit orbit-one"></div>
+
+            <div class="orbit orbit-two"></div>
+
+            <div class="orbit orbit-three"></div>
+
+
+
+            <div class="preview-card qr-preview-card">
+
+
+                <!-- HEADER -->
+
+                <div class="preview-header">
+
+                    <span>
+                        MOBILE AR
+                    </span>
+
+                    <span class="live-label">
+                        READY
+                    </span>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     QR CODE
+                ================================================== -->
+
+                <div class="qr-area">
+
+
+                    <div class="qr-glow"></div>
+
+
+
+                    <div class="qr-frame">
+
+
+                        <!-- =================================================
+                             QR PLACEHOLDER
+
+                             Once your page is live, replace this whole
+                             qr-placeholder div with:
+
+                             <img
+                                 src="./images/solar-system-qr.png"
+                                 alt="Scan to launch Solar System AR"
+                                 class="qr-image"
+                             >
+                        ================================================== -->
+
+
+                        <div
+                            id="qrPlaceholder"
+                            class="qr-placeholder"
+                        >
+
+
+                            <div class="fake-qr-grid">
+
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+
+                            </div>
+
+
+                            <strong>
+                                QR CODE
+                            </strong>
+
+
+                            <small>
+                                ADD AFTER PUBLISHING
+                            </small>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="scan-line"></div>
+
+
+                </div>
+
+
+
+                <!-- QR COPY -->
+
+                <div class="qr-copy">
+
+
+                    <span class="scan-label">
+                        SCAN WITH YOUR PHONE
+                    </span>
+
+
+                    <h3>
+                        Launch Solar System AR
+                    </h3>
+
+
+                    <p>
+
+                        One QR code opens this page on both
+                        Android and iPhone. Then choose the
+                        AR option for your device.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- BOTTOM -->
+
+                <div class="file-label">
+
+                    <span>
+                        EXPERIENCE
+                    </span>
+
+                    <strong>
+                        Solar System AR
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         ANDROID WEBXR AR OVERLAY
+    ====================================================== -->
+
+    <div
+        id="arOverlay"
+        class="ar-overlay"
+    >
+
+
+        <!-- TOP BAR -->
+
+        <div class="ar-top-bar">
+
+
+            <div class="ar-logo">
+                AR
+            </div>
+
+
+            <div class="ar-top-text">
+
+                <strong>
+                    SOLAR SYSTEM AR
+                </strong>
+
+
+                <span id="arStatus">
+
+                    Move your phone to find a surface
+
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             PLACEMENT MESSAGE
+        ================================================== -->
+
+        <div
+            id="placementMessage"
+            class="placement-message"
+        >
+
+            <div class="scan-icon">
+                ◎
+            </div>
+
+            <strong>
+                FIND A SURFACE
+            </strong>
+
+            <span>
+                Slowly move your phone around
+            </span>
+
+        </div>
+
+
+
+        <!-- =================================================
+             AR CONTROLS
+        ================================================== -->
+
+        <div
+            id="arControls"
+            class="ar-controls"
+        >
+
+
+            <button
+                id="rotateButton"
+                class="control-button"
+                type="button"
+            >
+
+                ↻
+
+                <span>
+                    ROTATE
+                </span>
+
+            </button>
+
+
+
+            <button
+                id="smallerButton"
+                class="control-button"
+                type="button"
+            >
+
+                −
+
+                <span>
+                    SMALLER
+                </span>
+
+            </button>
+
+
+
+            <button
+                id="largerButton"
+                class="control-button"
+                type="button"
+            >
+
+                +
+
+                <span>
+                    LARGER
+                </span>
+
+            </button>
+
+
+
+            <button
+                id="replaceButton"
+                class="control-button"
+                type="button"
+            >
+
+                ◎
+
+                <span>
+                    PLACE AGAIN
+                </span>
+
+            </button>
+
+
+        </div>
+
+
+
+        <!-- EXIT -->
+
+        <button
+            id="exitARButton"
+            class="exit-button"
+            type="button"
+        >
+
+            EXIT
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         WEBXR CANVAS
+    ====================================================== -->
+
+    <canvas id="arCanvas"></canvas>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+
+         KEEP THIS EXACTLY LIKE THIS.
+         DO NOT REPLACE WITH /assets/index-xxxx.js
+    ====================================================== -->
+
+
+
+</body>
+
+</html>
