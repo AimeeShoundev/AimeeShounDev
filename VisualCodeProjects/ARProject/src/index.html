@@ -17,26 +17,20 @@
 
     <meta
         name="description"
-        content="Robot Spider augmented reality WebXR experience."
+        content="Robot Spider augmented reality experience."
     >
 
     <title>Robot Spider AR</title>
 
 
-    <!-- =====================================================
-         CSS
-    ====================================================== -->
-
+    <!-- OUR CSS -->
     <link
         rel="stylesheet"
         href="./style.css"
     >
 
 
-    <!-- =====================================================
-         THREE.JS IMPORT MAP
-    ====================================================== -->
-
+    <!-- THREE.JS IMPORT MAP -->
     <script type="importmap">
     {
         "imports": {
@@ -62,7 +56,7 @@
     >
 
 
-        <!-- BACKGROUND EFFECTS -->
+        <!-- BACKGROUND -->
 
         <div class="background-grid"></div>
 
@@ -79,8 +73,6 @@
         <section class="hero">
 
 
-            <!-- STATUS BADGE -->
-
             <div class="status-badge">
 
                 <span class="status-dot"></span>
@@ -90,8 +82,6 @@
             </div>
 
 
-
-            <!-- TITLE -->
 
             <h1 class="hero-title">
 
@@ -107,8 +97,6 @@
 
 
 
-            <!-- DESCRIPTION -->
-
             <p class="description">
 
                 Place a giant Robot Spider directly into
@@ -118,14 +106,10 @@
 
 
 
-            <!-- =================================================
-                 STEPS
-            ================================================== -->
+            <!-- STEPS -->
 
             <div class="steps">
 
-
-                <!-- STEP 1 -->
 
                 <div class="step">
 
@@ -145,8 +129,6 @@
 
 
 
-                <!-- STEP 2 -->
-
                 <div class="step">
 
                     <span>
@@ -164,8 +146,6 @@
                 </div>
 
 
-
-                <!-- STEP 3 -->
 
                 <div class="step">
 
@@ -188,14 +168,13 @@
 
 
 
-            <!-- =================================================
-                 START AR BUTTON
-            ================================================== -->
+            <!-- START AR BUTTON -->
 
             <button
                 id="startARButton"
                 class="start-button"
                 type="button"
+                disabled
             >
 
                 <span class="button-icon">
@@ -208,9 +187,7 @@
 
 
 
-            <!-- =================================================
-                 MODEL / DEVICE STATUS
-            ================================================== -->
+            <!-- STATUS -->
 
             <p
                 id="supportMessage"
@@ -223,9 +200,7 @@
 
 
 
-            <!-- =================================================
-                 TECHNOLOGY
-            ================================================== -->
+            <!-- TECHNOLOGIES -->
 
             <div class="technology">
 
@@ -253,14 +228,11 @@
 
 
         <!-- =================================================
-             RIGHT SIDE
-             QR CODE CARD
+             QR CARD
         ================================================== -->
 
         <section class="model-preview qr-preview">
 
-
-            <!-- DECORATIVE ORBITS -->
 
             <div class="orbit orbit-one"></div>
 
@@ -268,12 +240,10 @@
 
 
 
-            <!-- QR CARD -->
-
             <div class="preview-card qr-preview-card">
 
 
-                <!-- CARD HEADER -->
+                <!-- HEADER -->
 
                 <div class="preview-header">
 
@@ -289,25 +259,15 @@
 
 
 
-                <!-- =================================================
-                     QR CODE
-                ================================================== -->
+                <!-- QR CODE -->
 
                 <div class="qr-area">
 
 
-                    <!-- GLOW BEHIND QR -->
-
                     <div class="qr-glow"></div>
 
 
-
-                    <!-- WHITE QR FRAME -->
-
                     <div class="qr-frame">
-
-
-                        <!-- REAL QR CODE -->
 
                         <img
                             src="./images/robot-spider-qr.png"
@@ -315,12 +275,8 @@
                             class="qr-image"
                         >
 
-
                     </div>
 
-
-
-                    <!-- ANIMATED SCAN LINE -->
 
                     <div class="scan-line"></div>
 
@@ -329,9 +285,7 @@
 
 
 
-                <!-- =================================================
-                     QR TEXT
-                ================================================== -->
+                <!-- QR COPY -->
 
                 <div class="qr-copy">
 
@@ -349,8 +303,7 @@
                     <p>
 
                         Scan this code with your phone
-                        to open the augmented reality
-                        experience.
+                        to open the augmented reality experience.
 
                     </p>
 
@@ -359,22 +312,17 @@
 
 
 
-                <!-- =================================================
-                     CARD BOTTOM
-                ================================================== -->
+                <!-- BOTTOM -->
 
                 <div class="file-label">
-
 
                     <span>
                         EXPERIENCE
                     </span>
 
-
                     <strong>
                         Robot Spider AR
                     </strong>
-
 
                 </div>
 
@@ -390,7 +338,7 @@
 
 
     <!-- =====================================================
-         AR OVERLAY
+         WEBXR AR OVERLAY
     ====================================================== -->
 
     <div
@@ -399,9 +347,7 @@
     >
 
 
-        <!-- =================================================
-             AR TOP BAR
-        ================================================== -->
+        <!-- TOP -->
 
         <div class="ar-top-bar">
 
@@ -433,9 +379,7 @@
 
 
 
-        <!-- =================================================
-             PLACEMENT INSTRUCTIONS
-        ================================================== -->
+        <!-- FIND SURFACE MESSAGE -->
 
         <div
             id="placementMessage"
@@ -454,9 +398,7 @@
 
 
             <span>
-
                 Slowly move your phone around
-
             </span>
 
 
@@ -464,17 +406,13 @@
 
 
 
-        <!-- =================================================
-             AR CONTROLS
-        ================================================== -->
+        <!-- CONTROLS -->
 
         <div
             id="arControls"
             class="ar-controls"
         >
 
-
-            <!-- ROTATE -->
 
             <button
                 id="rotateButton"
@@ -492,8 +430,6 @@
 
 
 
-            <!-- SMALLER -->
-
             <button
                 id="smallerButton"
                 class="control-button"
@@ -510,8 +446,6 @@
 
 
 
-            <!-- LARGER -->
-
             <button
                 id="largerButton"
                 class="control-button"
@@ -527,8 +461,6 @@
             </button>
 
 
-
-            <!-- PLACE AGAIN -->
 
             <button
                 id="replaceButton"
@@ -549,9 +481,7 @@
 
 
 
-        <!-- =================================================
-             EXIT AR
-        ================================================== -->
+        <!-- EXIT -->
 
         <button
             id="exitARButton"
@@ -577,7 +507,32 @@
 
 
     <!-- =====================================================
-         JAVASCRIPT
+         iPHONE / iPAD QUICK LOOK
+
+         This is hidden.
+
+         iOS opens RobotSpider.usdz when START AR is pressed.
+    ====================================================== -->
+
+    <a
+        id="iosQuickLookLink"
+        rel="ar"
+        href="./models/RobotSpider.usdz"
+        class="quick-look-link"
+    >
+
+        <img
+            src="./images/robot-spider-qr.png"
+            alt=""
+        >
+
+    </a>
+
+
+
+    <!-- =====================================================
+         OUR JAVASCRIPT
+         THIS IS THE IMPORTANT CONNECTION
     ====================================================== -->
 
     <script

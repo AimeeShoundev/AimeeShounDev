@@ -1,5 +1,6 @@
 /* =========================================================
    ROBOT SPIDER AR
+   SCRIPT.JS
 ========================================================= */
 
 
@@ -15,40 +16,57 @@ from "three/addons/loaders/GLTFLoader.js";
 
 
 /* =========================================================
-   MODEL
+   FILE PATHS
 ========================================================= */
 
+
+/*
+    Android / WebXR model
+*/
 
 const MODEL_PATH =
     "./models/Spiderwalk.glb";
 
 
-
 /*
-    Giant spider size in meters.
+    iPhone / iPad Quick Look model
 
-    4.5 = huge
-    6 = very huge
-    8 = monster size
+    You will need to create this USDZ file.
 */
 
+const IOS_USDZ_PATH =
+    "./models/RobotSpider.usdz";
+
+
+
+/* =========================================================
+   GIANT SPIDER SIZE
+========================================================= */
+
+
+/*
+    Longest dimension will be about 4.5 meters.
+
+    4.5 = huge
+    6.0 = enormous
+    8.0 = monster-sized
+*/
 
 const TARGET_MODEL_SIZE =
     4.5;
-
-
-
-const MAX_USER_SCALE =
-    4;
 
 
 const MIN_USER_SCALE =
     0.15;
 
 
+const MAX_USER_SCALE =
+    4;
+
+
 
 /* =========================================================
-   ELEMENTS
+   HTML
 ========================================================= */
 
 
@@ -118,6 +136,37 @@ const canvas =
     );
 
 
+const iosQuickLookLink =
+    document.getElementById(
+        "iosQuickLookLink"
+    );
+
+
+
+/* =========================================================
+   DEVICE DETECTION
+========================================================= */
+
+
+const isIOS =
+
+    /iPad|iPhone|iPod/.test(
+        navigator.userAgent
+    )
+
+    ||
+
+    (
+        navigator.platform ===
+        "MacIntel"
+
+        &&
+
+        navigator.maxTouchPoints >
+        1
+    );
+
+
 
 /* =========================================================
    THREE.JS VARIABLES
@@ -130,14 +179,21 @@ let camera;
 
 let renderer;
 
-let xrSession;
+
+let xrSession =
+    null;
 
 
-let viewerReferenceSpace;
+let viewerReferenceSpace =
+    null;
 
-let localReferenceSpace;
 
-let hitTestSource;
+let localReferenceSpace =
+    null;
+
+
+let hitTestSource =
+    null;
 
 
 let reticle;
@@ -145,9 +201,16 @@ let reticle;
 let controller;
 
 
-let robotSpider;
+let robotSpider =
+    null;
 
-let robotSpiderVisual;
+
+let robotSpiderVisual =
+    null;
+
+
+let animationMixer =
+    null;
 
 
 let modelLoaded =
@@ -164,10 +227,6 @@ let modelRotation =
 
 let userScale =
     1;
-
-
-let animationMixer =
-    null;
 
 
 const animationClock =
@@ -265,20 +324,20 @@ function createThreeJS() {
     ===================================================== */
 
 
-    const hemi =
+    const hemisphere =
         new THREE.HemisphereLight(
 
             0xffffff,
 
-            0x333344,
+            0x303040,
 
-            2.6
+            2.8
 
         );
 
 
     scene.add(
-        hemi
+        hemisphere
     );
 
 
@@ -310,17 +369,17 @@ function createThreeJS() {
 
 
 
-    const fill =
+    const fillLight =
         new THREE.DirectionalLight(
 
             0x88ccff,
 
-            1.2
+            1.4
 
         );
 
 
-    fill.position.set(
+    fillLight.position.set(
 
         -3,
 
@@ -332,7 +391,7 @@ function createThreeJS() {
 
 
     scene.add(
-        fill
+        fillLight
     );
 
 
@@ -347,6 +406,7 @@ function createThreeJS() {
         );
 
 
+
     controller.addEventListener(
 
         "select",
@@ -354,6 +414,7 @@ function createThreeJS() {
         onSelect
 
     );
+
 
 
     scene.add(
@@ -380,7 +441,7 @@ function createThreeJS() {
 
 
 /* =========================================================
-   RETICLE
+   CREATE PLACEMENT RETICLE
 ========================================================= */
 
 
@@ -392,11 +453,12 @@ function createReticle() {
 
             0.12,
 
-            0.15,
+            0.16,
 
             64
 
         );
+
 
 
     geometry.rotateX(
@@ -437,12 +499,15 @@ function createReticle() {
         );
 
 
+
     reticle.matrixAutoUpdate =
         false;
 
 
+
     reticle.visible =
         false;
+
 
 
     scene.add(
@@ -455,7 +520,7 @@ function createReticle() {
 
 
 /* =========================================================
-   LOAD MODEL
+   LOAD GLB
 ========================================================= */
 
 
@@ -483,6 +548,11 @@ function loadRobotSpider() {
 
             robotSpider =
                 new THREE.Group();
+
+
+
+            robotSpider.name =
+                "RobotSpiderRoot";
 
 
 
@@ -514,13 +584,18 @@ function loadRobotSpider() {
 
 
 
+            /*
+                Get original model bounds.
+            */
+
+
             robotSpiderVisual.updateMatrixWorld(
                 true
             );
 
 
 
-            const originalBox =
+            const originalBounds =
                 new THREE.Box3()
                     .setFromObject(
                         robotSpiderVisual
@@ -529,14 +604,7 @@ function loadRobotSpider() {
 
 
             const originalSize =
-                originalBox.getSize(
-                    new THREE.Vector3()
-                );
-
-
-
-            const originalCenter =
-                originalBox.getCenter(
+                originalBounds.getSize(
                     new THREE.Vector3()
                 );
 
@@ -561,12 +629,17 @@ function loadRobotSpider() {
 
 
                 throw new Error(
-                    "Invalid model size."
+                    "Robot Spider has invalid model dimensions."
                 );
 
 
             }
 
+
+
+            /*
+                Scale it to giant AR size.
+            */
 
 
             const modelScale =
@@ -582,24 +655,53 @@ function loadRobotSpider() {
 
 
 
-            robotSpiderVisual.position.x =
-
-                -originalCenter.x *
-                modelScale;
-
+            /*
+                Recalculate bounds AFTER scaling.
+            */
 
 
-            robotSpiderVisual.position.z =
-
-                -originalCenter.z *
-                modelScale;
+            robotSpiderVisual.updateMatrixWorld(
+                true
+            );
 
 
 
-            robotSpiderVisual.position.y =
+            const scaledBounds =
+                new THREE.Box3()
+                    .setFromObject(
+                        robotSpiderVisual
+                    );
 
-                -originalBox.min.y *
-                modelScale;
+
+
+            const scaledCenter =
+                scaledBounds.getCenter(
+                    new THREE.Vector3()
+                );
+
+
+
+            /*
+                Center the spider over the placement point.
+            */
+
+
+            robotSpiderVisual.position.x -=
+                scaledCenter.x;
+
+
+            robotSpiderVisual.position.z -=
+                scaledCenter.z;
+
+
+
+            /*
+                Put its feet / bottom on the floor.
+            */
+
+
+            robotSpiderVisual.position.y -=
+                scaledBounds.min.y;
 
 
 
@@ -621,7 +723,7 @@ function loadRobotSpider() {
 
 
             /* =================================================
-               PLAY ANIMATIONS IF THE GLB HAS THEM
+               MODEL ANIMATIONS
             ================================================= */
 
 
@@ -665,12 +767,13 @@ function loadRobotSpider() {
 
 
 
-            checkARSupport();
-
-
             console.log(
-                "Robot Spider loaded."
+                "Robot Spider loaded successfully."
             );
+
+
+
+            setupARButton();
 
 
         },
@@ -719,20 +822,23 @@ function loadRobotSpider() {
 
 
             console.error(
+
+                "Robot Spider GLB failed to load:",
+
                 error
+
             );
 
 
 
             supportMessage.textContent =
 
-                "Could not load models/Spiderwalk.glb. Check that the GLB is inside the models folder and the filename matches exactly.";
+                "Could not load ./models/Spiderwalk.glb. Check the models folder and filename.";
 
 
 
-            supportMessage.classList.add(
-                "bad"
-            );
+            supportMessage.className =
+                "support-message bad";
 
 
 
@@ -751,11 +857,11 @@ function loadRobotSpider() {
 
 
 /* =========================================================
-   CHECK AR
+   SET UP START AR BUTTON
 ========================================================= */
 
 
-async function checkARSupport() {
+async function setupARButton() {
 
 
     if (
@@ -768,6 +874,48 @@ async function checkARSupport() {
 
 
 
+    /*
+        =============================================
+        iPHONE / iPAD
+        =============================================
+    */
+
+
+    if (
+        isIOS
+    ) {
+
+
+        startARButton.disabled =
+            false;
+
+
+
+        supportMessage.textContent =
+
+            "iPhone/iPad detected. Tap START AR to open Apple AR Quick Look.";
+
+
+
+        supportMessage.className =
+            "support-message good";
+
+
+
+        return;
+
+
+    }
+
+
+
+    /*
+        =============================================
+        ANDROID / WEBXR
+        =============================================
+    */
+
+
     if (
         !window.isSecureContext
     ) {
@@ -775,17 +923,18 @@ async function checkARSupport() {
 
         supportMessage.textContent =
 
-            "Robot Spider loaded. AR requires HTTPS. Test the live GitHub Pages version on your phone.";
+            "AR requires HTTPS. Open the live GitHub Pages URL on your phone.";
 
 
 
-        supportMessage.classList.add(
-            "bad"
-        );
+        supportMessage.className =
+            "support-message bad";
+
 
 
         startARButton.disabled =
             true;
+
 
 
         return;
@@ -802,17 +951,18 @@ async function checkARSupport() {
 
         supportMessage.textContent =
 
-            "Robot Spider loaded, but this browser does not support WebXR AR.";
+            "This browser does not provide WebXR AR. Try Chrome on a supported Android phone.";
 
 
 
-        supportMessage.classList.add(
-            "bad"
-        );
+        supportMessage.className =
+            "support-message bad";
+
 
 
         startARButton.disabled =
-            true;
+            false;
+
 
 
         return;
@@ -838,24 +988,19 @@ async function checkARSupport() {
         ) {
 
 
-            supportMessage.textContent =
-
-                "Robot Spider loaded. Your device is ready for AR.";
-
-
-
-            supportMessage.classList.remove(
-                "bad"
-            );
-
-
-            supportMessage.classList.add(
-                "good"
-            );
-
-
             startARButton.disabled =
                 false;
+
+
+
+            supportMessage.textContent =
+
+                "Robot Spider is loaded. Your phone is ready for AR.";
+
+
+
+            supportMessage.className =
+                "support-message good";
 
 
         }
@@ -863,19 +1008,19 @@ async function checkARSupport() {
         else {
 
 
+            startARButton.disabled =
+                false;
+
+
+
             supportMessage.textContent =
 
-                "Immersive AR is not supported on this device/browser.";
+                "This device does not report immersive WebXR AR support.";
 
 
 
-            supportMessage.classList.add(
-                "bad"
-            );
-
-
-            startARButton.disabled =
-                true;
+            supportMessage.className =
+                "support-message warning";
 
 
         }
@@ -891,8 +1036,20 @@ async function checkARSupport() {
         );
 
 
+
+        startARButton.disabled =
+            false;
+
+
+
         supportMessage.textContent =
-            "Unable to check AR support.";
+
+            "Unable to automatically confirm AR support. Tap START AR to try.";
+
+
+
+        supportMessage.className =
+            "support-message warning";
 
 
     }
@@ -903,11 +1060,176 @@ async function checkARSupport() {
 
 
 /* =========================================================
-   START AR
+   START BUTTON
 ========================================================= */
 
 
 async function startAR() {
+
+
+    /*
+        =====================================================
+        iPHONE / iPAD
+        =====================================================
+    */
+
+
+    if (
+        isIOS
+    ) {
+
+
+        launchIOSQuickLook();
+
+
+        return;
+
+
+    }
+
+
+
+    /*
+        =====================================================
+        ANDROID WEBXR
+        =====================================================
+    */
+
+
+    await startWebXR();
+
+
+}
+
+
+
+/* =========================================================
+   iPHONE QUICK LOOK
+========================================================= */
+
+
+async function launchIOSQuickLook() {
+
+
+    try {
+
+
+        /*
+            Check whether the USDZ actually exists.
+        */
+
+
+        const response =
+
+            await fetch(
+
+                IOS_USDZ_PATH,
+
+                {
+
+                    method:
+                        "HEAD",
+
+                    cache:
+                        "no-store"
+
+                }
+
+            );
+
+
+
+        if (
+            !response.ok
+        ) {
+
+
+            alert(
+
+                "The iPhone AR model is not uploaded yet. Add models/RobotSpider.usdz to this project."
+
+            );
+
+
+            return;
+
+
+        }
+
+
+
+        iosQuickLookLink.click();
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(
+            error
+        );
+
+
+
+        alert(
+
+            "iPhone AR needs models/RobotSpider.usdz. The GLB file is used for Android WebXR."
+
+        );
+
+
+    }
+
+
+}
+
+
+
+/* =========================================================
+   START ANDROID WEBXR
+========================================================= */
+
+
+async function startWebXR() {
+
+
+    if (
+        !window.isSecureContext
+    ) {
+
+
+        alert(
+
+            "AR requires HTTPS. Open the live GitHub Pages link instead of a local file."
+
+        );
+
+
+        return;
+
+
+    }
+
+
+
+    if (
+        !navigator.xr
+    ) {
+
+
+        alert(
+
+            "This browser does not support WebXR AR. On Android, try the latest Chrome browser."
+
+        );
+
+
+        return;
+
+
+    }
+
 
 
     if (
@@ -916,7 +1238,7 @@ async function startAR() {
 
 
         alert(
-            "Robot Spider is still loading."
+            "The Robot Spider is still loading."
         );
 
 
@@ -946,7 +1268,9 @@ async function startAR() {
 
                     optionalFeatures: [
 
-                        "dom-overlay"
+                        "dom-overlay",
+
+                        "local-floor"
 
                     ],
 
@@ -969,19 +1293,38 @@ async function startAR() {
 
 
 
-        placementMessage.classList.remove(
-            "hidden"
-        );
-
-
-
         arControls.classList.remove(
             "visible"
         );
 
 
 
+        placementMessage.classList.remove(
+            "hidden"
+        );
+
+
+
+        placementMessage.innerHTML = `
+
+            <div class="scan-icon">
+                ◎
+            </div>
+
+            <strong>
+                FIND A SURFACE
+            </strong>
+
+            <span>
+                Slowly move your phone around
+            </span>
+
+        `;
+
+
+
         arStatus.textContent =
+
             "Move your phone to find a surface";
 
 
@@ -1033,12 +1376,15 @@ async function startAR() {
             false;
 
 
+
         modelRotation =
             0;
 
 
+
         userScale =
             1;
+
 
 
         robotSpider.visible =
@@ -1061,12 +1407,16 @@ async function startAR() {
 
 
         console.error(
+            "AR session failed:",
             error
         );
 
 
+
         alert(
-            "AR could not start. Make sure camera permission is allowed and use a supported Android browser."
+
+            "AR could not start. Make sure camera permissions are allowed and that Chrome/WebXR AR is supported on this Android phone."
+
         );
 
 
@@ -1078,7 +1428,7 @@ async function startAR() {
 
 
 /* =========================================================
-   XR RENDER
+   WEBXR FRAME
 ========================================================= */
 
 
@@ -1114,7 +1464,7 @@ function render(
     ) {
 
 
-        const hits =
+        const hitResults =
 
             frame.getHitTestResults(
                 hitTestSource
@@ -1123,16 +1473,17 @@ function render(
 
 
         if (
-            hits.length >
+            hitResults.length >
             0
         ) {
 
 
             const pose =
 
-                hits[0].getPose(
-                    localReferenceSpace
-                );
+                hitResults[0]
+                    .getPose(
+                        localReferenceSpace
+                    );
 
 
 
@@ -1170,7 +1521,7 @@ function render(
                     </strong>
 
                     <span>
-                        Spawn the giant Robot Spider here
+                        Place the Robot Spider here
                     </span>
 
                 `;
@@ -1204,7 +1555,6 @@ function render(
 
 
     if (
-        reticle &&
         reticle.visible
     ) {
 
@@ -1260,16 +1610,7 @@ function onSelect() {
 
     if (
         !reticle ||
-        !reticle.visible
-    ) {
-
-        return;
-
-    }
-
-
-
-    if (
+        !reticle.visible ||
         !robotSpider
     ) {
 
@@ -1283,8 +1624,10 @@ function onSelect() {
         new THREE.Vector3();
 
 
+
     const quaternion =
         new THREE.Quaternion();
+
 
 
     const scale =
@@ -1357,7 +1700,7 @@ function onSelect() {
 
     arStatus.textContent =
 
-        "Giant Robot Spider placed — walk around it to explore";
+        "Robot Spider placed — walk around it to explore";
 
 
 }
@@ -1373,8 +1716,8 @@ function rotateModel() {
 
 
     if (
-        !robotSpider ||
-        !modelPlaced
+        !modelPlaced ||
+        !robotSpider
     ) {
 
         return;
@@ -1408,8 +1751,8 @@ function makeSmaller() {
 
 
     if (
-        !robotSpider ||
-        !modelPlaced
+        !modelPlaced ||
+        !robotSpider
     ) {
 
         return;
@@ -1449,8 +1792,8 @@ function makeLarger() {
 
 
     if (
-        !robotSpider ||
-        !modelPlaced
+        !modelPlaced ||
+        !robotSpider
     ) {
 
         return;
@@ -1532,7 +1875,7 @@ function placeAgain() {
         </strong>
 
         <span>
-            Aim at the floor and tap the placement ring
+            Aim at a surface and tap the placement ring
         </span>
 
     `;
@@ -1549,7 +1892,7 @@ function placeAgain() {
 
 
 /* =========================================================
-   EXIT
+   EXIT AR
 ========================================================= */
 
 
@@ -1561,7 +1904,23 @@ async function exitAR() {
     ) {
 
 
-        await xrSession.end();
+        try {
+
+
+            await xrSession.end();
+
+
+        }
+
+        catch (error) {
+
+
+            console.error(
+                error
+            );
+
+
+        }
 
 
     }
@@ -1617,12 +1976,15 @@ function onSessionEnded() {
         null;
 
 
+
     viewerReferenceSpace =
         null;
 
 
+
     localReferenceSpace =
         null;
+
 
 
     xrSession =
@@ -1630,16 +1992,8 @@ function onSessionEnded() {
 
 
 
-    if (
-        reticle
-    ) {
-
-
-        reticle.visible =
-            false;
-
-
-    }
+    reticle.visible =
+        false;
 
 
 
@@ -1658,14 +2012,6 @@ function onSessionEnded() {
 
     modelPlaced =
         false;
-
-
-    modelRotation =
-        0;
-
-
-    userScale =
-        1;
 
 
 
@@ -1793,12 +2139,13 @@ replaceButton.addEventListener(
 
 
 /* =========================================================
-   START
+   INITIALIZE
 ========================================================= */
 
 
 startARButton.disabled =
     true;
+
 
 
 createThreeJS();

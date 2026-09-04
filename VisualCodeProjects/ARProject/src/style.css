@@ -7,8 +7,6 @@
 
     --background: #050817;
 
-    --background-two: #100b2e;
-
     --cyan: #00e5ff;
 
     --blue: #4197ff;
@@ -79,7 +77,7 @@ button {
 
 
 /* =========================================================
-   LANDING
+   LANDING PAGE
 ========================================================= */
 
 
@@ -113,13 +111,13 @@ button {
 
         radial-gradient(
             circle at 15% 25%,
-            rgba(138, 79, 255, 0.26),
+            rgba(138,79,255,0.26),
             transparent 34%
         ),
 
         radial-gradient(
             circle at 82% 60%,
-            rgba(0, 229, 255, 0.14),
+            rgba(0,229,255,0.14),
             transparent 35%
         ),
 
@@ -135,7 +133,7 @@ button {
 
 
 /* =========================================================
-   BACKGROUND GRID
+   BACKGROUND
 ========================================================= */
 
 
@@ -166,12 +164,6 @@ button {
         55px 55px;
 
 }
-
-
-
-/* =========================================================
-   GLOW
-========================================================= */
 
 
 .glow {
@@ -298,7 +290,7 @@ button {
 
 
 /* =========================================================
-   TITLES
+   TITLE
 ========================================================= */
 
 
@@ -348,6 +340,7 @@ button {
     color: transparent;
 
     background:
+
         linear-gradient(
             90deg,
             var(--cyan),
@@ -504,10 +497,11 @@ button {
     color: #03131b;
 
     background:
+
         linear-gradient(
             110deg,
             var(--cyan),
-            #77efff,
+            #77f3ff,
             var(--lime)
         );
 
@@ -523,12 +517,24 @@ button {
 
     cursor: pointer;
 
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+
+}
+
+
+.start-button:hover:not(:disabled) {
+
+    transform:
+        translateY(-3px);
+
 }
 
 
 .start-button:disabled {
 
-    opacity: 0.45;
+    opacity: 0.42;
 
     cursor: not-allowed;
 
@@ -544,7 +550,7 @@ button {
 
 
 /* =========================================================
-   SUPPORT MESSAGE
+   STATUS
 ========================================================= */
 
 
@@ -552,7 +558,7 @@ button {
 
     min-height: 22px;
 
-    max-width: 620px;
+    max-width: 650px;
 
     margin-top: 14px;
 
@@ -575,6 +581,13 @@ button {
 .support-message.bad {
 
     color: #ff7897;
+
+}
+
+
+.support-message.warning {
+
+    color: #ffd166;
 
 }
 
@@ -713,16 +726,12 @@ button {
 
     background: var(--pink);
 
-    box-shadow:
-        0 0 24px
-        var(--pink);
-
 }
 
 
 
 /* =========================================================
-   CARD
+   PREVIEW CARD
 ========================================================= */
 
 
@@ -747,13 +756,15 @@ button {
     border-radius: 28px;
 
     background:
+
         linear-gradient(
             145deg,
             rgba(20,29,64,0.85),
             rgba(6,9,25,0.95)
         );
 
-    backdrop-filter: blur(20px);
+    backdrop-filter:
+        blur(20px);
 
     box-shadow:
         0 45px 100px
@@ -766,9 +777,9 @@ button {
 
     display: flex;
 
-    justify-content: space-between;
-
     align-items: center;
+
+    justify-content: space-between;
 
     color: #8c96b0;
 
@@ -783,7 +794,8 @@ button {
 
 .live-label {
 
-    padding: 6px 10px;
+    padding:
+        6px 10px;
 
     color: var(--lime);
 
@@ -798,7 +810,7 @@ button {
 
 
 /* =========================================================
-   QR AREA
+   QR
 ========================================================= */
 
 
@@ -830,6 +842,7 @@ button {
     border-radius: 50%;
 
     background:
+
         linear-gradient(
             135deg,
             var(--cyan),
@@ -844,12 +857,6 @@ button {
 }
 
 
-
-/* =========================================================
-   QR FRAME
-========================================================= */
-
-
 .qr-frame {
 
     position: relative;
@@ -860,20 +867,17 @@ button {
 
     height: 245px;
 
+    padding: 15px;
+
     display: grid;
 
     place-items: center;
-
-    padding: 15px;
 
     border-radius: 22px;
 
     background: white;
 
     box-shadow:
-
-        0 0 0 1px
-        rgba(255,255,255,0.25),
 
         0 0 45px
         rgba(0,229,255,0.25),
@@ -884,115 +888,17 @@ button {
 }
 
 
+.qr-image {
 
-/* =========================================================
-   QR PLACEHOLDER
-========================================================= */
-
-
-.qr-placeholder {
+    display: block;
 
     width: 100%;
 
     height: 100%;
 
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    color: #081022;
-
-    text-align: center;
+    object-fit: contain;
 
 }
-
-
-.qr-placeholder strong {
-
-    margin-top: 12px;
-
-    font-size: 1rem;
-
-    font-weight: 900;
-
-    letter-spacing: 0.08em;
-
-}
-
-
-.qr-placeholder small {
-
-    margin-top: 4px;
-
-    color: #657087;
-
-    font-size: 0.58rem;
-
-    font-weight: 900;
-
-    letter-spacing: 0.11em;
-
-}
-
-
-
-/* =========================================================
-   FAKE QR
-========================================================= */
-
-
-.fake-qr-grid {
-
-    width: 125px;
-
-    height: 125px;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    grid-template-rows:
-        repeat(4, 1fr);
-
-    gap: 5px;
-
-    padding: 7px;
-
-    border: 4px solid #081022;
-
-    background: white;
-
-}
-
-
-.fake-qr-grid span {
-
-    background: #081022;
-
-}
-
-
-.fake-qr-grid span:nth-child(2),
-.fake-qr-grid span:nth-child(5),
-.fake-qr-grid span:nth-child(7),
-.fake-qr-grid span:nth-child(10),
-.fake-qr-grid span:nth-child(12),
-.fake-qr-grid span:nth-child(15) {
-
-    background: white;
-
-}
-
-
-
-/* =========================================================
-   SCANNING LINE
-========================================================= */
 
 
 .scan-line {
@@ -1013,6 +919,7 @@ button {
         translateX(-50%);
 
     background:
+
         linear-gradient(
             90deg,
             transparent,
@@ -1031,12 +938,6 @@ button {
         infinite;
 
 }
-
-
-
-/* =========================================================
-   QR TEXT
-========================================================= */
 
 
 .qr-copy {
@@ -1066,8 +967,7 @@ button {
 .qr-copy h3 {
 
     margin:
-        8px 0
-        7px;
+        8px 0 7px;
 
     color: white;
 
@@ -1081,8 +981,7 @@ button {
     max-width: 310px;
 
     margin:
-        0 auto
-        20px;
+        0 auto 20px;
 
     color: #929cb8;
 
@@ -1095,26 +994,7 @@ button {
 
 
 /* =========================================================
-   REAL QR IMAGE
-========================================================= */
-
-
-.qr-image {
-
-    display: block;
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: contain;
-
-}
-
-
-
-/* =========================================================
-   BOTTOM CARD LABEL
+   CARD BOTTOM
 ========================================================= */
 
 
@@ -1266,7 +1146,8 @@ body.ar-active
     background:
         rgba(5,8,23,0.72);
 
-    backdrop-filter: blur(15px);
+    backdrop-filter:
+        blur(15px);
 
 }
 
@@ -1288,6 +1169,7 @@ body.ar-active
     border-radius: 11px;
 
     background:
+
         linear-gradient(
             135deg,
             var(--cyan),
@@ -1374,7 +1256,8 @@ body.ar-active
     background:
         rgba(5,8,23,0.73);
 
-    backdrop-filter: blur(15px);
+    backdrop-filter:
+        blur(15px);
 
 }
 
@@ -1479,7 +1362,8 @@ body.ar-active
     background:
         rgba(5,8,23,0.76);
 
-    backdrop-filter: blur(15px);
+    backdrop-filter:
+        blur(15px);
 
     font-size: 1.25rem;
 
@@ -1540,6 +1424,29 @@ body.ar-active
     font-size: 0.61rem;
 
     font-weight: 900;
+
+}
+
+
+
+/* =========================================================
+   iOS QUICK LOOK
+========================================================= */
+
+
+.quick-look-link {
+
+    position: fixed;
+
+    left: -9999px;
+
+    top: -9999px;
+
+    width: 1px;
+
+    height: 1px;
+
+    overflow: hidden;
 
 }
 
@@ -1647,7 +1554,7 @@ body.ar-active
 
 
 /* =========================================================
-   MEDIUM
+   TABLET
 ========================================================= */
 
 
@@ -1658,8 +1565,7 @@ body.ar-active
 
     .landing-page {
 
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
 
     }
 
@@ -1704,9 +1610,7 @@ body.ar-active
         display: block;
 
         padding:
-            45px
-            18px
-            60px;
+            45px 18px 60px;
 
     }
 
@@ -1812,34 +1716,5 @@ body.ar-active
         min-height: 320px;
 
     }
-
-
-}
-
-
-
-/* =========================================================
-   VERY SMALL MOBILE
-========================================================= */
-
-
-@media (
-    max-width: 390px
-) {
-
-
-    .robot-title {
-
-        font-size: 2.75rem;
-
-    }
-
-
-    .ar-title {
-
-        font-size: 1.95rem;
-
-    }
-
 
 }
