@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>AI Agent Lab</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- =========================
+       NAVIGATION
+  ========================== -->
+  <header class="site-header">
+    <a href="#home" class="logo">
+      AI<span>AGENT</span>LAB
+    </a>
+
+    <nav class="nav">
+      <a href="#about">What Are Agents?</a>
+      <a href="#how">How They Work</a>
+      <a href="#tools">Tools</a>
+      <a href="#use-cases">Use Cases</a>
+      <a href="#builder">Build One</a>
+    </nav>
+
+    <button class="menu-btn" id="menuBtn">
+      ☰
+    </button>
+  </header>
+
+
+  <!-- =========================
+       HERO
+  ========================== -->
+  <main>
+
+    <section class="hero" id="home">
+
+      <div class="hero-glow hero-glow-1"></div>
+      <div class="hero-glow hero-glow-2"></div>
+
+      <div class="hero-content">
+
+        <div class="eyebrow">
+          AI AGENT LAB
+        </div>
+
+        <h1>
+          AI That Doesn't Just
+          <span>Answer.</span>
+          It Acts.
+        </h1>
+
+        <p class="hero-copy">
+          Learn what AI agents are, how they make decisions,
+          what tools they can use, and how you can start
+          building your own.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#about" class="btn btn-primary">
+            Explore AI Agents
+          </a>
+
+          <a href="#builder" class="btn btn-secondary">
+            Build Your First Agent
+          </a>
+        </div>
+
+        <div class="hero-status">
+          <span class="status-dot"></span>
+          Agent system online
+        </div>
+
+      </div>
+
+
+      <div class="hero-visual">
+
+        <div class="orbit-system">
+
+          <div class="orbit orbit-1"></div>
+          <div class="orbit orbit-2"></div>
+          <div class="orbit orbit-3"></div>
+
+          <img
+            src="images/ai-brain.png"
+            alt="AI brain"
+            class="hero-brain"
+          />
+
+          <div class="orbit-label label-plan">
+            PLAN
+          </div>
+
+          <div class="orbit-label label-act">
+            ACT
+          </div>
+
+          <div class="orbit-label label-observe">
+            OBSERVE
+          </div>
+
+          <div class="orbit-label label-repeat">
+            REPEAT
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         WHAT IS AN AGENT
+    ========================== -->
+    <section class="section" id="about">
+
+      <div class="section-heading">
+        <span class="section-number">01</span>
+
+        <div>
+          <p class="section-kicker">
+            THE BASICS
+          </p>
+
+          <h2>
+            What is an AI agent?
+          </h2>
+        </div>
+      </div>
+
+
+      <div class="comparison-grid">
+
+        <article class="glass-card comparison-card">
+
+          <div class="card-label">
+            TRADITIONAL AI
+          </div>
+
+          <h3>
+            You ask.
+            <br />
+            It answers.
+          </h3>
+
+          <div class="chat-demo">
+
+            <div class="message user-message">
+              What meetings do I have tomorrow?
+            </div>
+
+            <div class="message ai-message">
+              You have meetings at 9 AM, 11 AM and 2 PM.
+            </div>
+
+          </div>
+
+        </article>
+
+
+        <article class="glass-card comparison-card agent-card">
+
+          <div class="card-label">
+            AI AGENT
+          </div>
+
+          <h3>
+            You give it a goal.
+            <br />
+            It works through the task.
+          </h3>
+
+          <div class="chat-demo">
+
+            <div class="message user-message">
+              Help me prepare for tomorrow.
+            </div>
+
+            <div class="agent-checklist">
+              <div>✓ Check calendar</div>
+              <div>✓ Review meetings</div>
+              <div>✓ Gather information</div>
+              <div>✓ Build summary</div>
+              <div>✓ Create task list</div>
+            </div>
+
+          </div>
+
+        </article>
+
+      </div>
+
+
+      <div class="definition-panel glass-card">
+
+        <div>
+          <p class="definition-big">
+            An AI agent combines
+            <span>reasoning, instructions, tools and memory</span>
+            to work toward a goal.
+          </p>
+        </div>
+
+        <img
+          src="images/robot.png"
+          alt="AI robot"
+          class="definition-robot"
+        />
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         HOW IT WORKS
+    ========================== -->
+    <section class="section" id="how">
+
+      <div class="section-heading">
+        <span class="section-number">02</span>
+
+        <div>
+          <p class="section-kicker">
+            AGENT ARCHITECTURE
+          </p>
+
+          <h2>
+            Inside an AI agent
+          </h2>
+        </div>
+      </div>
+
+
+      <div class="agent-core-wrap">
+
+        <div class="core-lines"></div>
+
+        <div class="core-card core-model">
+          <span>01</span>
+          <h3>Model</h3>
+          <p>
+            Understands information and decides what to do next.
+          </p>
+        </div>
+
+        <div class="core-card core-goal">
+          <span>02</span>
+          <h3>Goal</h3>
+          <p>
+            Defines what the agent is trying to accomplish.
+          </p>
+        </div>
+
+        <div class="core-card core-tools">
+          <span>03</span>
+          <h3>Tools</h3>
+          <p>
+            Gives the agent access to useful functions and services.
+          </p>
+        </div>
+
+        <div class="core-card core-memory">
+          <span>04</span>
+          <h3>Memory</h3>
+          <p>
+            Keeps track of useful context and previous results.
+          </p>
+        </div>
+
+        <div class="core-card core-loop">
+          <span>05</span>
+          <h3>Agent Loop</h3>
+          <p>
+            Observe results, adjust the plan and keep working.
+          </p>
+        </div>
+
+
+        <div class="agent-core">
+          <img
+            src="images/ai-orb.png"
+            alt="Agent core"
+          />
+
+          <div class="core-title">
+            AGENT
+            <span>CORE</span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- Workflow -->
+      <div class="workflow">
+
+        <div class="workflow-card active">
+          <div class="workflow-number">01</div>
+          <h3>Understand</h3>
+          <p>
+            What does the user actually want?
+          </p>
+        </div>
+
+        <div class="workflow-arrow">→</div>
+
+        <div class="workflow-card">
+          <div class="workflow-number">02</div>
+          <h3>Plan</h3>
+          <p>
+            Break the goal into steps.
+          </p>
+        </div>
+
+        <div class="workflow-arrow">→</div>
+
+        <div class="workflow-card">
+          <div class="workflow-number">03</div>
+          <h3>Use Tool</h3>
+          <p>
+            Search, calculate, read or take action.
+          </p>
+        </div>
+
+        <div class="workflow-arrow">→</div>
+
+        <div class="workflow-card">
+          <div class="workflow-number">04</div>
+          <h3>Observe</h3>
+          <p>
+            Review the tool result.
+          </p>
+        </div>
+
+        <div class="workflow-arrow">→</div>
+
+        <div class="workflow-card">
+          <div class="workflow-number">05</div>
+          <h3>Decide</h3>
+          <p>
+            Determine what should happen next.
+          </p>
+        </div>
+
+        <div class="workflow-arrow">→</div>
+
+        <div class="workflow-card">
+          <div class="workflow-number">06</div>
+          <h3>Act</h3>
+          <p>
+            Respond or continue the loop.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         TOOLS
+    ========================== -->
+    <section class="section" id="tools">
+
+      <div class="section-heading">
+        <span class="section-number">03</span>
+
+        <div>
+          <p class="section-kicker">
+            AGENT TOOLBOX
+          </p>
+
+          <h2>
+            Give AI the ability to do more
+          </h2>
+        </div>
+      </div>
+
+
+      <div class="tools-layout">
+
+        <div class="tools-copy">
+
+          <p>
+            A model becomes much more capable when you give it
+            access to approved tools.
+          </p>
+
+          <p>
+            The agent can decide when a tool is needed,
+            run it, review the result and continue working.
+          </p>
+
+        </div>
+
+
+        <div class="tool-grid">
+
+          <button class="tool-card" data-tool="Web Search">
+            <div class="tool-icon">◎</div>
+            <h3>Web Search</h3>
+            <p>Find current information.</p>
+          </button>
+
+          <button class="tool-card" data-tool="Email">
+            <div class="tool-icon">✉</div>
+            <h3>Email</h3>
+            <p>Read, organize and draft messages.</p>
+          </button>
+
+          <button class="tool-card" data-tool="Calendar">
+            <div class="tool-icon">▦</div>
+            <h3>Calendar</h3>
+            <p>Check schedules and events.</p>
+          </button>
+
+          <button class="tool-card" data-tool="Files">
+            <div class="tool-icon">▤</div>
+            <h3>Files</h3>
+            <p>Read and analyze documents.</p>
+          </button>
+
+          <button class="tool-card" data-tool="Database">
+            <div class="tool-icon">◫</div>
+            <h3>Database</h3>
+            <p>Retrieve structured information.</p>
+          </button>
+
+          <button class="tool-card" data-tool="Code">
+            <div class="tool-icon">&lt;/&gt;</div>
+            <h3>Code</h3>
+            <p>Calculate and process information.</p>
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="tool-console glass-card">
+
+        <div class="console-header">
+          TOOL ACTIVITY
+        </div>
+
+        <div id="toolOutput" class="console-body">
+          Select a tool to see what an AI agent could do with it.
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         USE CASES
+    ========================== -->
+    <section class="section" id="use-cases">
+
+      <div class="section-heading">
+        <span class="section-number">04</span>
+
+        <div>
+          <p class="section-kicker">
+            REAL USE CASES
+          </p>
+
+          <h2>
+            What can agents do?
+          </h2>
+        </div>
+      </div>
+
+
+      <div class="mission-grid">
+
+        <article class="mission-card">
+          <div class="mission-top">
+            <span>01</span>
+            <div class="mission-icon">✉</div>
+          </div>
+
+          <h3>Inbox Agent</h3>
+
+          <p>
+            Sort messages, identify priorities and prepare drafts.
+          </p>
+
+          <div class="mission-flow">
+            Read → Categorize → Prioritize → Draft
+          </div>
+        </article>
+
+
+        <article class="mission-card">
+          <div class="mission-top">
+            <span>02</span>
+            <div class="mission-icon">⌕</div>
+          </div>
+
+          <h3>Research Agent</h3>
+
+          <p>
+            Investigate a subject and organize information.
+          </p>
+
+          <div class="mission-flow">
+            Search → Read → Compare → Summarize
+          </div>
+        </article>
+
+
+        <article class="mission-card">
+          <div class="mission-top">
+            <span>03</span>
+            <div class="mission-icon">⌘</div>
+          </div>
+
+          <h3>Development Agent</h3>
+
+          <p>
+            Review bugs, logs, code and technical documentation.
+          </p>
+
+          <div class="mission-flow">
+            Inspect → Diagnose → Suggest → Verify
+          </div>
+        </article>
+
+
+        <article class="mission-card">
+          <div class="mission-top">
+            <span>04</span>
+            <div class="mission-icon">▥</div>
+          </div>
+
+          <h3>Business Agent</h3>
+
+          <p>
+            Analyze information and prepare recurring reports.
+          </p>
+
+          <div class="mission-flow">
+            Collect → Analyze → Visualize → Report
+          </div>
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         BUILDER
+    ========================== -->
+    <section class="section builder-section" id="builder">
+
+      <div class="section-heading">
+        <span class="section-number">05</span>
+
+        <div>
+          <p class="section-kicker">
+            INTERACTIVE DEMO
+          </p>
+
+          <h2>
+            Build a simulated agent
+          </h2>
+        </div>
+      </div>
+
+
+      <div class="builder-grid">
+
+        <div class="builder-panel glass-card">
+
+          <div class="builder-step">
+            <span>STEP 01</span>
+
+            <h3>
+              Choose a goal
+            </h3>
+
+            <select id="goalSelect">
+              <option value="Research a subject">
+                Research a subject
+              </option>
+
+              <option value="Organize email">
+                Organize email
+              </option>
+
+              <option value="Analyze documents">
+                Analyze documents
+              </option>
+
+              <option value="Help write code">
+                Help write code
+              </option>
+
+              <option value="Plan a trip">
+                Plan a trip
+              </option>
+            </select>
+          </div>
+
+
+          <div class="builder-step">
+
+            <span>STEP 02</span>
+
+            <h3>
+              Choose tools
+            </h3>
+
+            <div class="tool-options">
+
+              <label>
+                <input
+                  type="checkbox"
+                  value="Web Search"
+                  checked
+                />
+                Web Search
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  value="Files"
+                />
+                Files
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  value="Code"
+                />
+                Code
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  value="Calendar"
+                />
+                Calendar
+              </label>
+
+            </div>
+
+          </div>
+
+
+          <div class="builder-step">
+
+            <span>STEP 03</span>
+
+            <h3>
+              Give instructions
+            </h3>
+
+            <textarea
+              id="instructionInput"
+              placeholder="Example: Research the latest developments in VR and create a short summary."
+            ></textarea>
+
+          </div>
+
+
+          <button
+            class="btn btn-primary create-agent-btn"
+            id="createAgentBtn"
+          >
+            Create Agent
+          </button>
+
+        </div>
+
+
+        <div class="agent-terminal glass-card">
+
+          <div class="terminal-top">
+
+            <div class="terminal-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <p>
+              AGENT TERMINAL
+            </p>
+
+          </div>
+
+
+          <div
+            class="terminal-content"
+            id="terminalContent"
+          >
+
+            <div class="terminal-line muted">
+              System waiting for agent configuration...
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         GET STARTED
+    ========================== -->
+    <section class="section learning-section">
+
+      <div class="section-heading">
+
+        <span class="section-number">06</span>
+
+        <div>
+          <p class="section-kicker">
+            LEARNING PATH
+          </p>
+
+          <h2>
+            How to get started
+          </h2>
+        </div>
+
+      </div>
+
+
+      <div class="level-list">
+
+        <div class="level-item">
+          <span class="level-number">
+            LEVEL 01
+          </span>
+
+          <div>
+            <h3>
+              Learn JavaScript or Python
+            </h3>
+
+            <p>
+              Understand variables, functions, arrays, objects,
+              JSON and APIs.
+            </p>
+          </div>
+        </div>
+
+
+        <div class="level-item">
+          <span class="level-number">
+            LEVEL 02
+          </span>
+
+          <div>
+            <h3>
+              Call an AI model
+            </h3>
+
+            <p>
+              Send instructions to a model and display its response.
+            </p>
+          </div>
+        </div>
+
+
+        <div class="level-item">
+          <span class="level-number">
+            LEVEL 03
+          </span>
+
+          <div>
+            <h3>
+              Add a tool
+            </h3>
+
+            <p>
+              Give your AI access to a controlled function or API.
+            </p>
+          </div>
+        </div>
+
+
+        <div class="level-item">
+          <span class="level-number">
+            LEVEL 04
+          </span>
+
+          <div>
+            <h3>
+              Build the agent loop
+            </h3>
+
+            <p>
+              Let the model choose a tool, inspect the result and
+              decide what to do next.
+            </p>
+          </div>
+        </div>
+
+
+        <div class="level-item">
+          <span class="level-number">
+            LEVEL 05
+          </span>
+
+          <div>
+            <h3>
+              Build a real project
+            </h3>
+
+            <p>
+              Start with a research agent, document analyzer or
+              coding assistant.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+  <footer class="footer">
+
+    <div>
+      <div class="logo">
+        AI<span>AGENT</span>LAB
+      </div>
+
+      <p>
+        Learn how intelligent systems move from
+        answering questions to completing tasks.
+      </p>
+    </div>
+
+    <a href="#home">
+      Back to top ↑
+    </a>
+
+  </footer>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>

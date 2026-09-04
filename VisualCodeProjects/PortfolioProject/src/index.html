@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Aimee Shoun — Interactive Developer, WebGL Developer, 3D Artist and XR Designer."
+    >
+
+    <title>
+        Aimee Shoun | Interactive Developer
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- IMPORTANT: LOCAL CSS -->
+    <link
+        rel="stylesheet"
+        href="./style.css"
+    >
+</head>
+
+
+<body>
+
+<canvas id="webglCanvas"></canvas>
+
+<div
+    class="cursorGlow"
+    id="cursorGlow"
+></div>
+
+
+<!-- ======================================================
+     NAVIGATION
+====================================================== -->
+
+<header class="topNav">
+
+    <a
+        href="#home"
+        class="brand"
+    >
+        <span class="brandMark">
+            AS
+        </span>
+
+        <span class="brandText">
+            AIMEE SHOUN
+        </span>
+    </a>
+
+
+    <nav
+        class="desktopNav"
+        aria-label="Main navigation"
+    >
+        <a href="#home">
+            Home
+        </a>
+
+        <a href="#work">
+            Work
+        </a>
+
+        <a href="#experience">
+            Experience
+        </a>
+
+        <a href="#skills">
+            Skills
+        </a>
+
+        <a href="#about">
+            About
+        </a>
+
+        <a href="#contact">
+            Contact
+        </a>
+    </nav>
+
+
+    <div class="navActions">
+
+        <button
+            class="devModeButton"
+            id="devModeButton"
+            type="button"
+        >
+            <span class="devDot"></span>
+            DEV MODE
+        </button>
+
+
+        <button
+            class="menuButton"
+            id="menuButton"
+            type="button"
+            aria-label="Open navigation"
+        >
+            ☰
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ======================================================
+     MOBILE NAV
+====================================================== -->
+
+<div
+    class="mobileNav"
+    id="mobileNav"
+>
+    <a href="#home">Home</a>
+    <a href="#work">Work</a>
+    <a href="#experience">Experience</a>
+    <a href="#skills">Skills</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+</div>
+
+
+<main>
+
+
+<!-- ======================================================
+     HERO
+====================================================== -->
+
+<section
+    class="hero"
+    id="home"
+>
+
+    <div class="heroGrid">
+
+        <div class="heroContent">
+
+            <div class="eyebrow">
+                INTERACTIVE DEVELOPER
+                <span>•</span>
+                3D ARTIST
+                <span>•</span>
+                XR DESIGNER
+            </div>
+
+
+            <h1>
+                I build
+                <span class="gradientText">
+                    interactive worlds.
+                </span>
+            </h1>
+
+
+            <p class="heroIntro">
+                I create browser-based games,
+                simulations, interactive learning
+                experiences, 3D environments and
+                immersive XR experiences using Unity,
+                WebGL, JavaScript and Three.js.
+            </p>
+
+
+            <div class="heroButtons">
+
+                <a
+                    href="#work"
+                    class="primaryButton"
+                >
+                    Explore My Work
+                    <span>→</span>
+                </a>
+
+
+                <a
+                    href="https://www.artstation.com/aimeeshoun"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="secondaryButton"
+                >
+                    ArtStation
+                </a>
+
+
+                <a
+                    href="https://www.linkedin.com/in/aimee-shoun-68224b243/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="secondaryButton"
+                >
+                    LinkedIn
+                </a>
+
+            </div>
+
+
+            <div class="heroTech">
+
+                <span>UNITY</span>
+                <span>WEBGL</span>
+                <span>THREE.JS</span>
+                <span>C#</span>
+                <span>JAVASCRIPT</span>
+                <span>BLENDER</span>
+                <span>MAYA</span>
+
+            </div>
+
+        </div>
+
+
+        <!-- HERO INTERACTIVE AREA -->
+
+        <div class="heroWorld">
+
+            <div class="worldCore">
+
+                <div class="worldRing ringOne"></div>
+                <div class="worldRing ringTwo"></div>
+                <div class="worldRing ringThree"></div>
+
+                <div class="coreOrb">
+
+                    <div class="orbInner">
+                        AS
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="floatingPortal portalScience"
+                data-filter-target="science"
+                type="button"
+            >
+                <span class="portalIcon">
+                    ⚗
+                </span>
+
+                <strong>
+                    SCIENCE
+                </strong>
+
+                <small>
+                    WebGL Experiences
+                </small>
+            </button>
+
+
+            <button
+                class="floatingPortal portalMath"
+                data-filter-target="math"
+                type="button"
+            >
+                <span class="portalIcon">
+                    ◇
+                </span>
+
+                <strong>
+                    MATH
+                </strong>
+
+                <small>
+                    Interactive Games
+                </small>
+            </button>
+
+
+            <button
+                class="floatingPortal portalHistory"
+                data-filter-target="history"
+                type="button"
+            >
+                <span class="portalIcon">
+                    ◈
+                </span>
+
+                <strong>
+                    HISTORY
+                </strong>
+
+                <small>
+                    Interactive Worlds
+                </small>
+            </button>
+
+
+            <button
+                class="floatingPortal portalXR"
+                data-filter-target="xr"
+                type="button"
+            >
+                <span class="portalIcon">
+                    ◉
+                </span>
+
+                <strong>
+                    XR / 3D
+                </strong>
+
+                <small>
+                    Immersive Work
+                </small>
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="heroStats">
+
+        <div class="statCard">
+
+            <strong id="webglCount">
+                60+
+            </strong>
+
+            <span>
+                WebGL & Browser Experiences
+            </span>
+
+        </div>
+
+
+        <div class="statCard">
+
+            <strong>
+                3D
+            </strong>
+
+            <span>
+                Modeling, Animation & Environments
+            </span>
+
+        </div>
+
+
+        <div class="statCard">
+
+            <strong>
+                XR
+            </strong>
+
+            <span>
+                VR, AR & Immersive Simulation
+            </span>
+
+        </div>
+
+
+        <div class="statCard">
+
+            <strong>
+                K–12
+            </strong>
+
+            <span>
+                Science, Math, History & Language Arts
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     FEATURED COLLECTIONS
+====================================================== -->
+
+<section class="section">
+
+    <div class="sectionHeading">
+
+        <div>
+
+            <p class="sectionEyebrow">
+                FEATURED COLLECTIONS
+            </p>
+
+            <h2>
+                Large-scale interactive learning work
+            </h2>
+
+        </div>
+
+
+        <p>
+            Collections of browser-based games,
+            simulations and interactive educational
+            experiences.
+        </p>
+
+    </div>
+
+
+    <div class="collectionGrid">
+
+        <article
+            class="collectionCard scienceCollection"
+            data-filter-target="science"
+        >
+
+            <div class="collectionNumber">
+                12
+            </div>
+
+            <div class="collectionIcon">
+                ⚗
+            </div>
+
+            <p class="collectionType">
+                SCIENCE
+            </p>
+
+            <h3>
+                Strider Voyager
+            </h3>
+
+            <p>
+                Interactive science experiences covering
+                energy, geology, forces, biology,
+                scientific practices and more.
+            </p>
+
+            <button type="button">
+                Explore Science →
+            </button>
+
+        </article>
+
+
+        <article
+            class="collectionCard mathCollection"
+            data-filter-target="math"
+        >
+
+            <div class="collectionNumber">
+                13
+            </div>
+
+            <div class="collectionIcon">
+                ⬡
+            </div>
+
+            <p class="collectionType">
+                MATH
+            </p>
+
+            <h3>
+                Fun Factory + Mystic Manor
+            </h3>
+
+            <p>
+                Interactive math and geometry experiences
+                using themed environments and gameplay.
+            </p>
+
+            <button type="button">
+                Explore Math →
+            </button>
+
+        </article>
+
+
+        <article
+            class="collectionCard historyCollection"
+            data-filter-target="history"
+        >
+
+            <div class="collectionNumber">
+                10+
+            </div>
+
+            <div class="collectionIcon">
+                ◈
+            </div>
+
+            <p class="collectionType">
+                HISTORY
+            </p>
+
+            <h3>
+                Immersive History
+            </h3>
+
+            <p>
+                Historical simulations, escape rooms,
+                social studies experiences and
+                interactive learning.
+            </p>
+
+            <button type="button">
+                Explore History →
+            </button>
+
+        </article>
+
+
+        <article
+            class="collectionCard xrCollection"
+            data-filter-target="xr"
+        >
+
+            <div class="collectionNumber">
+                XR
+            </div>
+
+            <div class="collectionIcon">
+                ◉
+            </div>
+
+            <p class="collectionType">
+                VR / AR / 3D
+            </p>
+
+            <h3>
+                Immersive Development
+            </h3>
+
+            <p>
+                VR simulations, WebAR, Three.js,
+                interactive training and 3D production.
+            </p>
+
+            <button type="button">
+                Explore XR →
+            </button>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     PROJECTS
+====================================================== -->
+
+<section
+    class="section"
+    id="work"
+>
+
+    <div class="sectionHeading">
+
+        <div>
+
+            <p class="sectionEyebrow">
+                SELECTED WORK
+            </p>
+
+            <h2>
+                Projects & experiences
+            </h2>
+
+        </div>
+
+
+        <div class="projectCount">
+
+            <span id="visibleProjectCount">
+                0
+            </span>
+
+            projects
+
+        </div>
+
+    </div>
+
+
+    <div class="professionalWorkNotice">
+
+        <span>
+            PROFESSIONAL WORK
+        </span>
+
+        <p>
+            Selected professional projects are presented
+            as portfolio case studies. Live employer
+            production links are intentionally omitted.
+        </p>
+
+    </div>
+
+
+    <div class="projectControls">
+
+        <div class="searchWrap">
+
+            <span>
+                ⌕
+            </span>
+
+            <input
+                type="search"
+                id="projectSearch"
+                placeholder="Search projects..."
+            >
+
+        </div>
+
+
+        <div class="filterButtons">
+
+            <button
+                class="filterButton active"
+                data-filter="all"
+                type="button"
+            >
+                All
+            </button>
+
+
+            <button
+                class="filterButton"
+                data-filter="science"
+                type="button"
+            >
+                Science
+            </button>
+
+
+            <button
+                class="filterButton"
+                data-filter="math"
+                type="button"
+            >
+                Math
+            </button>
+
+
+            <button
+                class="filterButton"
+                data-filter="history"
+                type="button"
+            >
+                History
+            </button>
+
+
+            <button
+                class="filterButton"
+                data-filter="highlights"
+                type="button"
+            >
+                Course Highlights
+            </button>
+
+
+            <button
+                class="filterButton"
+                data-filter="k12"
+                type="button"
+            >
+                K12
+            </button>
+
+
+            <button
+                class="filterButton"
+                data-filter="xr"
+                type="button"
+            >
+                XR / 3D
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="projectGrid"
+        id="projectGrid"
+    ></div>
+
+</section>
+
+
+
+<!-- ======================================================
+     WHAT I MAKE
+====================================================== -->
+
+<section class="section">
+
+    <div class="sectionHeading">
+
+        <div>
+
+            <p class="sectionEyebrow">
+                WHAT I MAKE
+            </p>
+
+            <h2>
+                Art + code + interaction
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="makeGrid">
+
+        <article class="makeCard">
+
+            <div class="makeIcon">
+                ⌘
+            </div>
+
+            <h3>
+                Interactive Development
+            </h3>
+
+            <p>
+                Browser-based educational games,
+                simulations, UI systems, gameplay
+                mechanics and responsive experiences.
+            </p>
+
+        </article>
+
+
+        <article class="makeCard">
+
+            <div class="makeIcon">
+                ◇
+            </div>
+
+            <h3>
+                3D Art & Environments
+            </h3>
+
+            <p>
+                Modeling, UV mapping, PBR materials,
+                texturing, environment design,
+                rigging and animation.
+            </p>
+
+        </article>
+
+
+        <article class="makeCard">
+
+            <div class="makeIcon">
+                ◉
+            </div>
+
+            <h3>
+                XR / VR / AR
+            </h3>
+
+            <p>
+                Immersive simulations, virtual reality,
+                mobile AR, WebXR and browser-based
+                3D experiences.
+            </p>
+
+        </article>
+
+
+        <article class="makeCard">
+
+            <div class="makeIcon">
+                ⚡
+            </div>
+
+            <h3>
+                WebGL Optimization
+            </h3>
+
+            <p>
+                Asset cleanup, loading improvements,
+                responsive rendering and production
+                WebGL performance work.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     EXPERIENCE
+====================================================== -->
+
+<section
+    class="section"
+    id="experience"
+>
+
+    <div class="sectionHeading">
+
+        <div>
+
+            <p class="sectionEyebrow">
+                EXPERIENCE
+            </p>
+
+            <h2>
+                Building interactive learning experiences
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="experienceLayout">
+
+        <div class="timeline">
+
+            <article class="timelineItem">
+
+                <div class="timelineDot"></div>
+
+                <div class="timelineDate">
+                    2023 — PRESENT
+                </div>
+
+
+                <div class="timelineContent">
+
+                    <p class="company">
+                        STRIDE K–12
+                    </p>
+
+                    <h3>
+                        Augmented Reality Specialist /
+                        Interactive Developer
+                    </h3>
+
+                    <p>
+                        Developed, maintained and optimized
+                        interactive educational experiences
+                        across Unity, WebGL, Three.js,
+                        JavaScript and immersive
+                        technologies.
+                    </p>
+
+
+                    <div class="timelineTags">
+
+                        <span>Unity</span>
+                        <span>C#</span>
+                        <span>WebGL</span>
+                        <span>Three.js</span>
+                        <span>JavaScript</span>
+                        <span>3D</span>
+                        <span>XR</span>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <article class="timelineItem">
+
+                <div class="timelineDot"></div>
+
+                <div class="timelineDate">
+                    2023
+                </div>
+
+
+                <div class="timelineContent">
+
+                    <p class="company">
+                        UTAH VALLEY UNIVERSITY
+                    </p>
+
+                    <h3>
+                        B.S. Animation & Game Development
+                    </h3>
+
+                    <p>
+                        Graduated Cum Laude with training
+                        in game development, animation,
+                        modeling, rigging, texturing
+                        and interactive design.
+                    </p>
+
+                </div>
+
+            </article>
+
+        </div>
+
+
+        <aside class="experienceStats">
+
+            <div class="experienceStat">
+
+                <span>
+                    PRODUCTION
+                </span>
+
+                <strong>
+                    WebGL
+                </strong>
+
+                <p>
+                    Large libraries of deployed
+                    browser-based interactive content.
+                </p>
+
+            </div>
+
+
+            <div class="experienceStat">
+
+                <span>
+                    FULL PIPELINE
+                </span>
+
+                <strong>
+                    3D → Web
+                </strong>
+
+                <p>
+                    From modeling and materials to
+                    interaction and final deployment.
+                </p>
+
+            </div>
+
+
+            <div class="experienceStat">
+
+                <span>
+                    IMMERSIVE
+                </span>
+
+                <strong>
+                    XR / VR
+                </strong>
+
+                <p>
+                    Interactive simulations and
+                    immersive training experiences.
+                </p>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     SKILLS
+====================================================== -->
+
+<section
+    class="section"
+    id="skills"
+>
+
+    <div class="sectionHeading">
+
+        <div>
+
+            <p class="sectionEyebrow">
+                TOOLKIT
+            </p>
+
+            <h2>
+                Skills & technologies
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="skillsGrid">
+
+
+        <div class="skillGroup">
+
+            <h3>
+                Development
+            </h3>
+
+            <div class="skillCloud">
+
+                <span>Unity</span>
+                <span>C#</span>
+                <span>JavaScript</span>
+                <span>Three.js</span>
+                <span>WebGL</span>
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>WebXR</span>
+                <span>GSAP</span>
+                <span>JSON</span>
+
+            </div>
+
+        </div>
+
+
+        <div class="skillGroup">
+
+            <h3>
+                3D & Art
+            </h3>
+
+            <div class="skillCloud">
+
+                <span>Blender</span>
+                <span>Autodesk Maya</span>
+                <span>Substance Painter</span>
+                <span>Photoshop</span>
+                <span>3D Modeling</span>
+                <span>UV Mapping</span>
+                <span>PBR Texturing</span>
+                <span>Rigging</span>
+                <span>Animation</span>
+                <span>Environment Art</span>
+
+            </div>
+
+        </div>
+
+
+        <div class="skillGroup">
+
+            <h3>
+                WebGL / Technical
+            </h3>
+
+            <div class="skillCloud">
+
+                <span>GLTF / GLB</span>
+                <span>DRACO</span>
+                <span>OrbitControls</span>
+                <span>Shaders</span>
+                <span>Particles</span>
+                <span>Asset Optimization</span>
+                <span>Texture Optimization</span>
+                <span>Responsive WebGL</span>
+                <span>Performance Profiling</span>
+                <span>Unity WebGL Builds</span>
+
+            </div>
+
+        </div>
+
+
+        <div class="skillGroup">
+
+            <h3>
+                XR / Interaction
+            </h3>
+
+            <div class="skillCloud">
+
+                <span>AR</span>
+                <span>VR</span>
+                <span>WebXR</span>
+                <span>Apple Quick Look</span>
+                <span>USDZ</span>
+                <span>Interactive Hotspots</span>
+                <span>Camera Systems</span>
+                <span>Drag & Drop</span>
+                <span>Audio / Narration</span>
+                <span>UI / UX</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     DEV MODE
+====================================================== -->
+
+<section
+    class="section devSection"
+    id="devSection"
+>
+
+    <div class="devPanel">
+
+        <div>
+
+            <p class="sectionEyebrow">
+                DEVELOPER MODE
+            </p>
+
+            <h2>
+                Under the hood
+            </h2>
+
+            <p>
+                My work includes both the visual
+                experience and the technical systems
+                required to make interactive browser
+                content perform reliably.
+            </p>
+
+        </div>
+
+
+        <div class="devMetrics">
+
+            <div>
+                <span>RENDERING</span>
+                <strong>THREE.JS</strong>
+            </div>
+
+            <div>
+                <span>ENGINE</span>
+                <strong>UNITY</strong>
+            </div>
+
+            <div>
+                <span>PLATFORM</span>
+                <strong>WEBGL</strong>
+            </div>
+
+            <div>
+                <span>LANGUAGE</span>
+                <strong>C# / JS</strong>
+            </div>
+
+        </div>
+
+
+        <div class="devFeatureGrid">
+
+            <div>WebGL loading optimization</div>
+            <div>Texture & memory optimization</div>
+            <div>JavaScript integrations</div>
+            <div>Unity/browser communication</div>
+            <div>Responsive UI systems</div>
+            <div>Mobile XR workflows</div>
+            <div>Animated GLB environments</div>
+            <div>Interactive hotspots</div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     ABOUT
+====================================================== -->
+
+<section
+    class="section"
+    id="about"
+>
+
+    <div class="aboutCard">
+
+        <div class="aboutBadge">
+            AS
+        </div>
+
+
+        <div class="aboutText">
+
+            <p class="sectionEyebrow">
+                ABOUT ME
+            </p>
+
+            <h2>
+                Developer + artist
+            </h2>
+
+            <p>
+                I'm Aimee Shoun, an interactive
+                developer and 3D artist focused on
+                turning ideas into engaging digital
+                experiences.
+            </p>
+
+            <p>
+                My work sits between development and
+                art. I can model and texture an
+                environment, build the interaction
+                systems around it, optimize it for
+                the browser and deliver the finished
+                interactive experience.
+            </p>
+
+
+            <div class="aboutActions">
+
+                <a
+                    href="./assets/Aimee-Shoun-Resume.pdf"
+                    class="primaryButton"
+                    target="_blank"
+                >
+                    View Resume
+                </a>
+
+
+                <a
+                    href="https://www.artstation.com/aimeeshoun"
+                    class="secondaryButton"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    ArtStation
+                </a>
+
+
+                <a
+                    href="https://www.linkedin.com/in/aimee-shoun-68224b243/"
+                    class="secondaryButton"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    LinkedIn
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     CONTACT
+====================================================== -->
+
+<section
+    class="contactSection"
+    id="contact"
+>
+
+    <p class="sectionEyebrow">
+        LET'S BUILD SOMETHING
+    </p>
+
+    <h2>
+        Have an interactive project in mind?
+    </h2>
+
+    <p>
+        I'm interested in interactive development,
+        WebGL, Unity, XR, 3D and immersive
+        educational experiences.
+    </p>
+
+
+    <a
+        href="mailto:shounaimee@gmail.com"
+        class="contactEmail"
+    >
+        shounaimee@gmail.com
+        <span>↗</span>
+    </a>
+
+
+    <div class="contactLinks">
+
+        <a
+            href="https://www.artstation.com/aimeeshoun"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            ARTSTATION
+        </a>
+
+
+        <a
+            href="https://www.linkedin.com/in/aimee-shoun-68224b243/"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            LINKEDIN
+        </a>
+
+
+        <a href="#home">
+            BACK TO TOP ↑
+        </a>
+
+    </div>
+
+</section>
+
+
+</main>
+
+
+
+<!-- ======================================================
+     PROJECT MODAL
+====================================================== -->
+
+<div
+    class="projectModal"
+    id="projectModal"
+    aria-hidden="true"
+>
+
+    <div
+        class="modalBackdrop"
+        id="modalBackdrop"
+    ></div>
+
+
+    <div class="modalPanel">
+
+        <button
+            class="modalClose"
+            id="modalClose"
+            type="button"
+        >
+            ×
+        </button>
+
+
+        <div
+            class="modalVisual"
+            id="modalVisual"
+        >
+
+            <div class="modalVisualText">
+
+                <span id="modalCollection">
+                    PROJECT
+                </span>
+
+                <strong id="modalVisualTitle">
+                    Project
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="modalBody">
+
+            <p
+                class="modalType"
+                id="modalType"
+            ></p>
+
+
+            <h2 id="modalTitle"></h2>
+
+
+            <div
+                class="modalVideoContainer"
+                id="modalVideoContainer"
+            >
+
+                <iframe
+                    id="modalVideo"
+                    src=""
+                    title="Project video"
+                    allow="
+                        accelerometer;
+                        autoplay;
+                        clipboard-write;
+                        encrypted-media;
+                        gyroscope;
+                        picture-in-picture;
+                        web-share
+                    "
+                    allowfullscreen
+                ></iframe>
+
+            </div>
+
+
+            <p
+                class="modalDescription"
+                id="modalDescription"
+            ></p>
+
+
+            <div
+                class="modalTags"
+                id="modalTags"
+            ></div>
+
+
+            <div class="modalContribution">
+
+                <span>
+                    WORK INCLUDED
+                </span>
+
+                <p id="modalContribution"></p>
+
+            </div>
+
+
+            <div class="modalActions">
+
+                <button
+                    class="secondaryButton"
+                    id="modalDoneButton"
+                    type="button"
+                >
+                    Close Project
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- THREE.JS -->
+<script
+    src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"
+></script>
+
+<!-- IMPORTANT: LOCAL JAVASCRIPT -->
+<script src="./script.js"></script>
+
+</body>
+</html>
