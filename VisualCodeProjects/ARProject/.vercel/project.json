@@ -1,0 +1,16 @@
+{
+  "projectId": "prj_cv0YoyVfIktaaEGM6S5UEgz0ZkQg",
+  "orgId": "team_n7pk1ZvfQ1pt8P5BvTOIgqgV",
+  "projectName": "test-3d-overlays",
+  "settings": {
+    "createdAt": 1757363904323,
+    "framework": "vite",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "22.x"
+  }
+}

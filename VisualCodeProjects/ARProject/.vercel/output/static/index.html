@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 3d Overlay Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    
+ 
+</head>
+<body>
+    
+    <canvas class="webgl"></canvas>
+
+    <div class="loading-bar"></div>
+
+    <div class="point point-0">
+        <div class="label">1</div>
+    </div>
+    <div class="point point-1">
+        <div class="label">2</div>
+    </div>
+    <div class="point point-2">
+         <div class="label">3</div>
+    </div>
+    <div class="point point-3">
+         <div class="label">4</div>
+    </div>
+    <div class="point point-4">
+         <div class="label">5</div>
+    </div>
+
+    <div class="overlay" aria-hidden="true" role="dialog" aria-modal="true">
+        <button class="modalCloseBtn" aria-label="Close" data-close>&times;</button>
+        <div>
+            <img class="overlayImg" alt="" />
+        </div>
+        <div class="overlayText">
+            <h2></h2>
+            <p></p>
+        </div>
+    </div>
+
+    <div class="introOverlay" aria-hidden="true" role="dialog" aria-modal="true">
+        <button class="modalCloseBtn" aria-label="Close" data-close>&times;</button>
+        <div class="introOverlayImg">
+            <img class="introImg" src="./img/intro_img.png" alt="intro image" />
+        </div>
+        <div class="introText">
+            <h2>Welcome to Science 2!</h2>
+            <p>In this unit you will be exploring various physics laws such as gravity, inertia, and centrifical force.</p>
+        </div>
+        <button class="modalStartBtn" aria-label="Start" data-start>Lets Go!</button>
+    </div>
+    
+</body>
+</html>
