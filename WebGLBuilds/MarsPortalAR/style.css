@@ -1,27 +1,36 @@
 /* =========================================================
-   SOLAR SYSTEM AR
+   MARS PORTAL AR
+   COMPLETE STYLE.CSS
 ========================================================= */
 
 
+/* =========================================================
+   COLORS
+========================================================= */
+
 :root {
 
-    --background: #030612;
+    --background: #05040b;
 
     --cyan: #00e5ff;
 
     --blue: #4197ff;
 
-    --purple: #8a4fff;
+    --orange: #ff6a2a;
 
-    --pink: #ff3cac;
+    --mars: #d64f28;
+
+    --gold: #ffba55;
+
+    --purple: #7b45ff;
+
+    --pink: #ff3c8f;
 
     --lime: #b7ff3c;
 
-    --gold: #ffc84a;
+    --white: #f8f7ff;
 
-    --white: #f5f8ff;
-
-    --gray: #a7b0ca;
+    --gray: #aaa9bd;
 
 }
 
@@ -30,7 +39,6 @@
 /* =========================================================
    RESET
 ========================================================= */
-
 
 * {
 
@@ -83,7 +91,6 @@ a {
    LANDING PAGE
 ========================================================= */
 
-
 .landing-page {
 
     position: relative;
@@ -94,8 +101,6 @@ a {
 
     min-height: 100svh;
 
-    overflow: hidden;
-
     display: grid;
 
     grid-template-columns:
@@ -104,37 +109,39 @@ a {
 
     align-items: center;
 
-    gap: 60px;
+    gap: 55px;
 
     padding:
-        70px
-        clamp(35px, 5vw, 80px);
+        65px
+        clamp(30px, 5vw, 80px);
+
+    overflow: hidden;
 
     background:
 
         radial-gradient(
-            circle at 15% 25%,
-            rgba(138,79,255,0.30),
-            transparent 34%
+            circle at 16% 25%,
+            rgba(123,69,255,0.28),
+            transparent 35%
         ),
 
         radial-gradient(
-            circle at 82% 60%,
-            rgba(0,229,255,0.14),
+            circle at 80% 55%,
+            rgba(255,106,42,0.20),
             transparent 35%
         ),
 
         radial-gradient(
             circle at 72% 10%,
-            rgba(255,200,74,0.08),
-            transparent 25%
+            rgba(255,186,85,0.08),
+            transparent 26%
         ),
 
         linear-gradient(
             120deg,
-            #100b2e 0%,
-            #07091d 55%,
-            #030714 100%
+            #150923,
+            #080713 55%,
+            #030309
         );
 
 }
@@ -145,7 +152,6 @@ a {
    STAR BACKGROUND
 ========================================================= */
 
-
 .background-stars {
 
     position: absolute;
@@ -154,7 +160,7 @@ a {
 
     pointer-events: none;
 
-    opacity: 0.55;
+    opacity: 0.45;
 
     background-image:
 
@@ -166,34 +172,33 @@ a {
 
         radial-gradient(
             circle,
-            rgba(0,229,255,0.55) 1px,
+            rgba(255,145,90,0.8) 1px,
             transparent 1.5px
         ),
 
         radial-gradient(
             circle,
-            rgba(255,200,74,0.4) 1px,
+            rgba(123,69,255,0.7) 1px,
             transparent 1.5px
         );
 
     background-size:
-        85px 85px,
-        140px 140px,
-        190px 190px;
+        90px 90px,
+        145px 145px,
+        210px 210px;
 
     background-position:
         0 0,
-        38px 50px,
-        80px 20px;
+        40px 50px,
+        85px 20px;
 
 }
 
 
 
 /* =========================================================
-   GRID
+   BACKGROUND GRID
 ========================================================= */
-
 
 .background-grid {
 
@@ -201,20 +206,20 @@ a {
 
     inset: 0;
 
-    pointer-events: none;
-
     opacity: 0.10;
+
+    pointer-events: none;
 
     background-image:
 
         linear-gradient(
-            rgba(255,255,255,0.055) 1px,
+            rgba(255,255,255,0.08) 1px,
             transparent 1px
         ),
 
         linear-gradient(
             90deg,
-            rgba(255,255,255,0.055) 1px,
+            rgba(255,255,255,0.08) 1px,
             transparent 1px
         );
 
@@ -229,7 +234,6 @@ a {
    GLOWS
 ========================================================= */
 
-
 .glow {
 
     position: absolute;
@@ -240,35 +244,35 @@ a {
 
     border-radius: 50%;
 
-    pointer-events: none;
-
     filter: blur(150px);
+
+    pointer-events: none;
 
 }
 
 
 .glow-one {
 
-    top: -300px;
+    top: -260px;
 
     left: -200px;
 
     background: var(--purple);
 
-    opacity: 0.20;
+    opacity: 0.18;
 
 }
 
 
 .glow-two {
 
-    right: -260px;
+    right: -230px;
 
-    bottom: -280px;
+    bottom: -250px;
 
-    background: var(--cyan);
+    background: var(--orange);
 
-    opacity: 0.16;
+    opacity: 0.18;
 
 }
 
@@ -278,12 +282,11 @@ a {
    HERO
 ========================================================= */
 
-
 .hero {
 
     position: relative;
 
-    z-index: 4;
+    z-index: 5;
 
     width: 100%;
 
@@ -294,9 +297,8 @@ a {
 
 
 /* =========================================================
-   BADGE
+   STATUS BADGE
 ========================================================= */
-
 
 .status-badge {
 
@@ -308,7 +310,7 @@ a {
 
     gap: 9px;
 
-    margin-bottom: 26px;
+    margin-bottom: 25px;
 
     padding:
         8px 14px;
@@ -317,14 +319,14 @@ a {
 
     border:
         1px solid
-        rgba(183,255,60,0.3);
+        rgba(183,255,60,0.30);
 
     border-radius: 999px;
 
     background:
         rgba(183,255,60,0.06);
 
-    font-size: 0.68rem;
+    font-size: 0.66rem;
 
     font-weight: 900;
 
@@ -355,7 +357,6 @@ a {
    TITLE
 ========================================================= */
 
-
 .hero-title {
 
     margin: 0;
@@ -365,7 +366,7 @@ a {
 }
 
 
-.solar-title {
+.main-title {
 
     display: block;
 
@@ -373,14 +374,14 @@ a {
 
     font-size:
         clamp(
-            3.1rem,
-            5.2vw,
-            6.2rem
+            3rem,
+            5vw,
+            6rem
         );
 
-    font-weight: 900;
+    line-height: 0.92;
 
-    line-height: 0.9;
+    font-weight: 900;
 
     letter-spacing: -0.055em;
 
@@ -389,13 +390,13 @@ a {
 }
 
 
-.ar-title {
+.sub-title {
 
     display: block;
 
     margin-top: 14px;
 
-    padding-right: 20px;
+    padding-right: 15px;
 
     color: transparent;
 
@@ -403,28 +404,29 @@ a {
 
         linear-gradient(
             90deg,
-            var(--cyan),
-            var(--blue),
-            var(--purple),
+            var(--orange),
+            var(--gold),
             var(--pink)
         );
 
-    -webkit-background-clip: text;
+    -webkit-background-clip:
+        text;
 
-    background-clip: text;
+    background-clip:
+        text;
 
     font-size:
         clamp(
-            1.8rem,
+            1.9rem,
             3vw,
             3.5rem
         );
 
-    font-weight: 900;
-
     line-height: 1;
 
-    letter-spacing: -0.04em;
+    font-weight: 900;
+
+    letter-spacing: -0.035em;
 
     white-space: nowrap;
 
@@ -436,13 +438,12 @@ a {
    DESCRIPTION
 ========================================================= */
 
-
 .description {
 
-    max-width: 700px;
+    max-width: 680px;
 
     margin:
-        32px 0;
+        30px 0;
 
     color: var(--gray);
 
@@ -458,7 +459,6 @@ a {
    STEPS
 ========================================================= */
 
-
 .steps {
 
     display: grid;
@@ -472,7 +472,7 @@ a {
 
     max-width: 810px;
 
-    margin-bottom: 30px;
+    margin-bottom: 28px;
 
 }
 
@@ -490,7 +490,7 @@ a {
     border-radius: 18px;
 
     background:
-        rgba(255,255,255,0.025);
+        rgba(255,255,255,0.03);
 
     backdrop-filter:
         blur(12px);
@@ -500,7 +500,7 @@ a {
 
 .step > span {
 
-    color: var(--cyan);
+    color: var(--orange);
 
     font-size: 0.67rem;
 
@@ -517,6 +517,8 @@ a {
         18px 0
         7px;
 
+    color: white;
+
     font-size: 0.92rem;
 
 }
@@ -526,9 +528,9 @@ a {
 
     margin: 0;
 
-    color: #8790aa;
+    color: #8f8ea3;
 
-    font-size: 0.75rem;
+    font-size: 0.74rem;
 
     line-height: 1.45;
 
@@ -537,50 +539,53 @@ a {
 
 
 /* =========================================================
-   MAIN START AR BUTTON
+   START AR BUTTON
 ========================================================= */
-
 
 .start-button {
 
     width:
         min(
             100%,
-            390px
+            420px
         );
 
     min-height: 68px;
+
+    padding:
+        0 20px;
 
     border: none;
 
     border-radius: 17px;
 
-    color: #03131b;
+    cursor: pointer;
+
+    color: #180703;
 
     background:
 
         linear-gradient(
             110deg,
-            var(--cyan),
-            #77f3ff,
-            var(--lime)
+            var(--orange),
+            #ff9e50,
+            var(--gold)
         );
 
     box-shadow:
         0 18px 55px
-        rgba(0,229,255,0.22);
+        rgba(255,106,42,0.25);
 
-    font-size: 0.95rem;
+    font-size: 0.90rem;
 
     font-weight: 900;
 
-    letter-spacing: 0.12em;
-
-    cursor: pointer;
+    letter-spacing: 0.10em;
 
     transition:
-        transform 0.2s ease,
-        opacity 0.2s ease;
+        transform 0.20s ease,
+        opacity 0.20s ease,
+        box-shadow 0.20s ease;
 
 }
 
@@ -589,6 +594,10 @@ a {
 
     transform:
         translateY(-3px);
+
+    box-shadow:
+        0 22px 65px
+        rgba(255,106,42,0.35);
 
 }
 
@@ -614,7 +623,6 @@ a {
    DEVICE OPTIONS
 ========================================================= */
 
-
 .device-options {
 
     width: 100%;
@@ -624,13 +632,14 @@ a {
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
 
     gap: 12px;
 
     margin-top: 18px;
-
-    margin-bottom: 8px;
 
 }
 
@@ -638,8 +647,6 @@ a {
 .device-card {
 
     min-width: 0;
-
-    padding: 17px;
 
     display: flex;
 
@@ -649,14 +656,16 @@ a {
 
     gap: 13px;
 
+    padding: 16px;
+
     border:
         1px solid
-        rgba(255,255,255,0.11);
+        rgba(255,255,255,0.10);
 
-    border-radius: 17px;
+    border-radius: 16px;
 
     background:
-        rgba(255,255,255,0.035);
+        rgba(255,255,255,0.025);
 
     backdrop-filter:
         blur(12px);
@@ -671,31 +680,45 @@ a {
 .device-card.recommended {
 
     border-color:
-        rgba(183,255,60,0.40);
+        rgba(255,106,42,0.50);
 
     background:
-        rgba(183,255,60,0.045);
+        rgba(255,106,42,0.045);
 
 }
 
 
+
+/* =========================================================
+   DEVICE ICONS
+========================================================= */
+
 .device-icon {
 
-    width: 44px;
+    width: 43px;
 
-    height: 44px;
+    height: 43px;
 
     flex:
         0 0
-        44px;
+        43px;
 
     display: grid;
 
     place-items: center;
 
-    border-radius: 12px;
+    border-radius: 11px;
 
-    font-size: 1.1rem;
+    color: var(--orange);
+
+    border:
+        1px solid
+        rgba(255,106,42,0.20);
+
+    background:
+        rgba(255,106,42,0.10);
+
+    font-size: 1.05rem;
 
     font-weight: 900;
 
@@ -704,14 +727,7 @@ a {
 
 .android-icon {
 
-    color: var(--cyan);
-
-    border:
-        1px solid
-        rgba(0,229,255,0.20);
-
-    background:
-        rgba(0,229,255,0.09);
+    color: var(--orange);
 
 }
 
@@ -720,15 +736,19 @@ a {
 
     color: white;
 
-    border:
-        1px solid
-        rgba(138,79,255,0.28);
+    border-color:
+        rgba(123,69,255,0.30);
 
     background:
-        rgba(138,79,255,0.12);
+        rgba(123,69,255,0.13);
 
 }
 
+
+
+/* =========================================================
+   DEVICE TEXT
+========================================================= */
 
 .device-info {
 
@@ -745,9 +765,9 @@ a {
 
     margin-bottom: 4px;
 
-    color: var(--cyan);
+    color: var(--orange);
 
-    font-size: 0.55rem;
+    font-size: 0.54rem;
 
     font-weight: 900;
 
@@ -758,7 +778,7 @@ a {
 
 .iphone-label {
 
-    color: #c0a7ff;
+    color: #bea9ff;
 
 }
 
@@ -769,7 +789,7 @@ a {
 
     color: white;
 
-    font-size: 0.84rem;
+    font-size: 0.82rem;
 
 }
 
@@ -777,11 +797,11 @@ a {
 .device-info p {
 
     margin:
-        6px 0 0;
+        5px 0 0;
 
-    color: #929bb6;
+    color: #8e8da3;
 
-    font-size: 0.67rem;
+    font-size: 0.65rem;
 
     line-height: 1.45;
 
@@ -790,11 +810,24 @@ a {
 
 
 /* =========================================================
-   iPHONE BUTTON
+   iPHONE CARD
 ========================================================= */
 
+.iphone-card {
+
+    flex-wrap: wrap;
+
+}
+
+
+
+/* =========================================================
+   iPHONE / iPAD AR BUTTONS
+========================================================= */
 
 .iphone-ar-button {
+
+    position: relative;
 
     width: 100%;
 
@@ -807,8 +840,6 @@ a {
     justify-content: center;
 
     gap: 8px;
-
-    margin-top: 3px;
 
     padding:
         0 14px;
@@ -827,20 +858,23 @@ a {
 
         linear-gradient(
             110deg,
-            rgba(65,151,255,0.25),
+            rgba(65,151,255,0.24),
             rgba(138,79,255,0.38),
-            rgba(255,60,172,0.25)
+            rgba(255,60,172,0.24)
         );
 
-    font-size: 0.66rem;
+    font-size: 0.64rem;
 
     font-weight: 900;
 
-    letter-spacing: 0.09em;
+    letter-spacing: 0.08em;
+
+    cursor: pointer;
 
     transition:
-        transform 0.2s ease,
-        border-color 0.2s ease;
+        transform 0.20s ease,
+        border-color 0.20s ease,
+        background 0.20s ease;
 
 }
 
@@ -856,12 +890,40 @@ a {
 }
 
 
-.apple-button-symbol {
 
-    font-size: 1rem;
+/* =========================================================
+   MARS WORLD iPHONE BUTTON
+========================================================= */
+
+.mars-button {
+
+    border-color:
+        rgba(255,106,42,0.50);
+
+    background:
+
+        linear-gradient(
+            110deg,
+            rgba(255,106,42,0.24),
+            rgba(190,70,35,0.36),
+            rgba(255,180,70,0.20)
+        );
 
 }
 
+
+.mars-button:hover {
+
+    border-color:
+        rgba(255,186,85,0.75);
+
+}
+
+
+
+/* =========================================================
+   QUICK LOOK MARKER
+========================================================= */
 
 .quick-look-marker {
 
@@ -880,9 +942,8 @@ a {
 
 
 /* =========================================================
-   STATUS
+   SUPPORT STATUS
 ========================================================= */
-
 
 .support-message {
 
@@ -892,9 +953,9 @@ a {
 
     margin-top: 14px;
 
-    color: #8791ae;
+    color: #9593aa;
 
-    font-size: 0.74rem;
+    font-size: 0.73rem;
 
     line-height: 1.5;
 
@@ -910,7 +971,7 @@ a {
 
 .support-message.bad {
 
-    color: #ff7897;
+    color: #ff738f;
 
 }
 
@@ -924,9 +985,8 @@ a {
 
 
 /* =========================================================
-   TECHNOLOGY
+   TECHNOLOGY LABELS
 ========================================================= */
-
 
 .technology {
 
@@ -934,18 +994,18 @@ a {
 
     flex-wrap: wrap;
 
-    gap: 16px;
+    gap: 15px;
 
-    margin-top: 24px;
+    margin-top: 22px;
 
 }
 
 
 .technology span {
 
-    color: #6c7795;
+    color: #706d84;
 
-    font-size: 0.62rem;
+    font-size: 0.59rem;
 
     font-weight: 900;
 
@@ -956,9 +1016,8 @@ a {
 
 
 /* =========================================================
-   RIGHT SIDE
+   RIGHT PREVIEW SECTION
 ========================================================= */
-
 
 .model-preview {
 
@@ -980,7 +1039,6 @@ a {
    DECORATIVE ORBITS
 ========================================================= */
 
-
 .orbit {
 
     position: absolute;
@@ -989,7 +1047,9 @@ a {
 
     border:
         1px solid
-        rgba(0,229,255,0.20);
+        rgba(255,106,42,0.22);
+
+    pointer-events: none;
 
 }
 
@@ -1010,11 +1070,12 @@ a {
 
     border-radius: 50%;
 
-    background: var(--cyan);
+    background:
+        var(--orange);
 
     box-shadow:
         0 0 24px
-        var(--cyan);
+        var(--orange);
 
 }
 
@@ -1036,16 +1097,16 @@ a {
 
 .orbit-two {
 
-    width: 400px;
+    width: 390px;
 
-    height: 400px;
+    height: 390px;
 
     border-color:
-        rgba(255,60,172,0.22);
+        rgba(123,69,255,0.25);
 
     animation:
         rotateOrbitReverse
-        12s
+        11s
         linear
         infinite;
 
@@ -1054,40 +1115,12 @@ a {
 
 .orbit-two::after {
 
-    background: var(--pink);
+    background:
+        var(--purple);
 
     box-shadow:
         0 0 24px
-        var(--pink);
-
-}
-
-
-.orbit-three {
-
-    width: 285px;
-
-    height: 285px;
-
-    border-color:
-        rgba(255,200,74,0.24);
-
-    animation:
-        rotateOrbit
-        8s
-        linear
-        infinite;
-
-}
-
-
-.orbit-three::after {
-
-    background: var(--gold);
-
-    box-shadow:
-        0 0 24px
-        var(--gold);
+        var(--purple);
 
 }
 
@@ -1096,7 +1129,6 @@ a {
 /* =========================================================
    PREVIEW CARD
 ========================================================= */
-
 
 .preview-card {
 
@@ -1114,7 +1146,7 @@ a {
 
     border:
         1px solid
-        rgba(255,255,255,0.14);
+        rgba(255,255,255,0.13);
 
     border-radius: 28px;
 
@@ -1122,8 +1154,8 @@ a {
 
         linear-gradient(
             145deg,
-            rgba(20,29,64,0.85),
-            rgba(6,9,25,0.95)
+            rgba(39,18,28,0.90),
+            rgba(8,7,18,0.96)
         );
 
     backdrop-filter:
@@ -1131,10 +1163,15 @@ a {
 
     box-shadow:
         0 45px 100px
-        rgba(0,0,0,0.40);
+        rgba(0,0,0,0.45);
 
 }
 
+
+
+/* =========================================================
+   PREVIEW HEADER
+========================================================= */
 
 .preview-header {
 
@@ -1144,9 +1181,9 @@ a {
 
     justify-content: space-between;
 
-    color: #8c96b0;
+    color: #938fa7;
 
-    font-size: 0.64rem;
+    font-size: 0.62rem;
 
     font-weight: 900;
 
@@ -1164,7 +1201,7 @@ a {
 
     border:
         1px solid
-        rgba(183,255,60,0.25);
+        rgba(183,255,60,0.24);
 
     border-radius: 999px;
 
@@ -1173,9 +1210,8 @@ a {
 
 
 /* =========================================================
-   QR
+   QR AREA
 ========================================================= */
-
 
 .qr-area {
 
@@ -1183,16 +1219,19 @@ a {
 
     min-height: 355px;
 
-    display: flex;
+    display: grid;
 
-    align-items: center;
-
-    justify-content: center;
+    place-items: center;
 
     overflow: hidden;
 
 }
 
+
+
+/* =========================================================
+   QR GLOW
+========================================================= */
 
 .qr-glow {
 
@@ -1208,17 +1247,23 @@ a {
 
         linear-gradient(
             135deg,
-            var(--cyan),
-            var(--purple),
-            var(--pink)
+            var(--orange),
+            var(--pink),
+            var(--purple)
         );
 
-    filter: blur(90px);
+    filter:
+        blur(90px);
 
-    opacity: 0.20;
+    opacity: 0.18;
 
 }
 
+
+
+/* =========================================================
+   QR FRAME
+========================================================= */
 
 .qr-frame {
 
@@ -1243,13 +1288,18 @@ a {
     box-shadow:
 
         0 0 45px
-        rgba(0,229,255,0.25),
+        rgba(255,106,42,0.25),
 
         0 25px 55px
         rgba(0,0,0,0.35);
 
 }
 
+
+
+/* =========================================================
+   REAL QR IMAGE
+========================================================= */
 
 .qr-image {
 
@@ -1266,9 +1316,10 @@ a {
 
 
 /* =========================================================
-   QR PLACEHOLDER
-========================================================= */
+   OPTIONAL OLD QR PLACEHOLDER STYLING
 
+   Harmless if placeholder HTML is gone.
+========================================================= */
 
 .qr-placeholder {
 
@@ -1276,28 +1327,83 @@ a {
 
     height: 100%;
 
-    display: flex;
+    display: grid;
 
-    flex-direction: column;
+    place-items: center;
 
-    align-items: center;
+    align-content: center;
 
-    justify-content: center;
-
-    color: #081022;
+    color: #140802;
 
     text-align: center;
 
 }
 
 
+.portal-symbol {
+
+    width: 120px;
+
+    height: 145px;
+
+    padding: 9px;
+
+    border-radius:
+        60px 60px
+        14px 14px;
+
+    background:
+
+        linear-gradient(
+            140deg,
+            var(--orange),
+            var(--purple)
+        );
+
+}
+
+
+.portal-inner {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius:
+        50px 50px
+        9px 9px;
+
+    color: white;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 80%,
+            #a94428,
+            #48182a 65%,
+            #140914
+        );
+
+    font-weight: 900;
+
+    font-size: 0.75rem;
+
+    letter-spacing: 0.15em;
+
+}
+
+
 .qr-placeholder strong {
+
+    display: block;
 
     margin-top: 12px;
 
-    font-size: 1rem;
-
-    font-weight: 900;
+    font-size: 0.80rem;
 
 }
 
@@ -1306,71 +1412,19 @@ a {
 
     margin-top: 4px;
 
-    color: #657087;
+    color: #76707c;
 
-    font-size: 0.54rem;
+    font-size: 0.51rem;
 
     font-weight: 900;
-
-    letter-spacing: 0.08em;
-
-}
-
-
-.fake-qr-grid {
-
-    width: 125px;
-
-    height: 125px;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    grid-template-rows:
-        repeat(4, 1fr);
-
-    gap: 5px;
-
-    padding: 7px;
-
-    border:
-        4px solid
-        #081022;
-
-    background:
-        white;
-
-}
-
-
-.fake-qr-grid span {
-
-    background:
-        #081022;
-
-}
-
-
-.fake-qr-grid span:nth-child(2),
-.fake-qr-grid span:nth-child(5),
-.fake-qr-grid span:nth-child(7),
-.fake-qr-grid span:nth-child(10),
-.fake-qr-grid span:nth-child(12),
-.fake-qr-grid span:nth-child(15) {
-
-    background:
-        white;
 
 }
 
 
 
 /* =========================================================
-   SCAN LINE
+   QR SCAN LINE
 ========================================================= */
-
 
 .scan-line {
 
@@ -1380,27 +1434,30 @@ a {
 
     left: 50%;
 
-    top: 85px;
+    top: 50%;
 
     width: 220px;
 
     height: 2px;
 
     transform:
-        translateX(-50%);
+        translate(
+            -50%,
+            -90px
+        );
 
     background:
 
         linear-gradient(
             90deg,
             transparent,
-            var(--cyan),
+            var(--orange),
             transparent
         );
 
     box-shadow:
         0 0 15px
-        var(--cyan);
+        var(--orange);
 
     animation:
         qrScan
@@ -1416,12 +1473,9 @@ a {
    QR COPY
 ========================================================= */
 
-
 .qr-copy {
 
-    margin:
-        -5px 5px
-        20px;
+    margin-bottom: 20px;
 
     text-align: center;
 
@@ -1430,9 +1484,9 @@ a {
 
 .scan-label {
 
-    color: var(--cyan);
+    color: var(--orange);
 
-    font-size: 0.61rem;
+    font-size: 0.59rem;
 
     font-weight: 900;
 
@@ -1459,12 +1513,11 @@ a {
     max-width: 310px;
 
     margin:
-        0 auto
-        20px;
+        0 auto;
 
-    color: #929cb8;
+    color: #9793a8;
 
-    font-size: 0.72rem;
+    font-size: 0.70rem;
 
     line-height: 1.5;
 
@@ -1473,13 +1526,12 @@ a {
 
 
 /* =========================================================
-   FILE LABEL
+   CARD BOTTOM
 ========================================================= */
-
 
 .file-label {
 
-    padding: 15px;
+    padding: 14px;
 
     border:
         1px solid
@@ -1497,11 +1549,9 @@ a {
 
     display: block;
 
-    margin-bottom: 5px;
+    color: var(--orange);
 
-    color: var(--cyan);
-
-    font-size: 0.58rem;
+    font-size: 0.55rem;
 
     font-weight: 900;
 
@@ -1514,7 +1564,11 @@ a {
 
     display: block;
 
-    font-size: 0.9rem;
+    margin-top: 5px;
+
+    color: white;
+
+    font-size: 0.90rem;
 
 }
 
@@ -1523,7 +1577,6 @@ a {
 /* =========================================================
    AR CANVAS
 ========================================================= */
-
 
 #arCanvas {
 
@@ -1546,7 +1599,6 @@ a {
 /* =========================================================
    AR OVERLAY
 ========================================================= */
-
 
 .ar-overlay {
 
@@ -1592,7 +1644,6 @@ body.ar-active
    AR TOP BAR
 ========================================================= */
 
-
 .ar-top-bar {
 
     position: absolute;
@@ -1618,18 +1669,23 @@ body.ar-active
 
     border:
         1px solid
-        rgba(255,255,255,0.15);
+        rgba(255,255,255,0.14);
 
     border-radius: 15px;
 
     background:
-        rgba(5,8,23,0.72);
+        rgba(10,6,13,0.76);
 
     backdrop-filter:
         blur(15px);
 
 }
 
+
+
+/* =========================================================
+   AR LOGO
+========================================================= */
 
 .ar-logo {
 
@@ -1645,22 +1701,27 @@ body.ar-active
 
     place-items: center;
 
-    color: #041119;
-
     border-radius: 11px;
+
+    color: #1b0702;
 
     background:
 
         linear-gradient(
             135deg,
-            var(--cyan),
-            var(--lime)
+            var(--orange),
+            var(--gold)
         );
 
     font-weight: 900;
 
 }
 
+
+
+/* =========================================================
+   AR TOP TEXT
+========================================================= */
 
 .ar-top-text {
 
@@ -1673,7 +1734,9 @@ body.ar-active
 
     display: block;
 
-    font-size: 0.78rem;
+    color: white;
+
+    font-size: 0.77rem;
 
 }
 
@@ -1686,9 +1749,9 @@ body.ar-active
 
     overflow: hidden;
 
-    color: #c5ccdf;
+    color: #cac3d0;
 
-    font-size: 0.63rem;
+    font-size: 0.62rem;
 
     white-space: nowrap;
 
@@ -1701,7 +1764,6 @@ body.ar-active
 /* =========================================================
    PLACEMENT MESSAGE
 ========================================================= */
-
 
 .placement-message {
 
@@ -1718,21 +1780,23 @@ body.ar-active
         );
 
     transform:
-        translate(-50%, -50%);
+        translate(
+            -50%,
+            -50%
+        );
 
-    padding:
-        18px 22px;
+    padding: 18px;
 
     text-align: center;
 
     border:
         1px solid
-        rgba(0,229,255,0.30);
+        rgba(255,106,42,0.40);
 
     border-radius: 18px;
 
     background:
-        rgba(5,8,23,0.73);
+        rgba(10,6,13,0.75);
 
     backdrop-filter:
         blur(15px);
@@ -1749,9 +1813,7 @@ body.ar-active
 
 .scan-icon {
 
-    margin-bottom: 9px;
-
-    color: var(--cyan);
+    color: var(--orange);
 
     font-size: 2.1rem;
 
@@ -1762,7 +1824,11 @@ body.ar-active
 
     display: block;
 
-    font-size: 0.77rem;
+    margin-top: 6px;
+
+    color: white;
+
+    font-size: 0.75rem;
 
     letter-spacing: 0.12em;
 
@@ -1775,9 +1841,9 @@ body.ar-active
 
     margin-top: 7px;
 
-    color: #abb4cd;
+    color: #aaa4b3;
 
-    font-size: 0.70rem;
+    font-size: 0.68rem;
 
 }
 
@@ -1786,7 +1852,6 @@ body.ar-active
 /* =========================================================
    AR CONTROLS
 ========================================================= */
-
 
 .ar-controls {
 
@@ -1805,7 +1870,10 @@ body.ar-active
     display: none;
 
     grid-template-columns:
-        repeat(4, 1fr);
+        repeat(
+            4,
+            1fr
+        );
 
     gap: 7px;
 
@@ -1820,6 +1888,11 @@ body.ar-active
 
 }
 
+
+
+/* =========================================================
+   CONTROL BUTTON
+========================================================= */
 
 .control-button {
 
@@ -1839,14 +1912,16 @@ body.ar-active
     border-radius: 13px;
 
     background:
-        rgba(5,8,23,0.76);
+        rgba(10,6,13,0.78);
 
     backdrop-filter:
         blur(15px);
 
-    font-size: 1.25rem;
+    font-size: 1.20rem;
 
     font-weight: 900;
+
+    cursor: pointer;
 
 }
 
@@ -1857,18 +1932,19 @@ body.ar-active
 
     margin-top: 5px;
 
-    color: #bcc4d9;
+    color: #bfb8c7;
 
-    font-size: 0.48rem;
+    font-size: 0.47rem;
+
+    letter-spacing: 0.04em;
 
 }
 
 
 
 /* =========================================================
-   EXIT
+   EXIT BUTTON
 ========================================================= */
-
 
 .exit-button {
 
@@ -1887,8 +1963,6 @@ body.ar-active
     padding:
         0 13px;
 
-    pointer-events: auto;
-
     color: white;
 
     border:
@@ -1898,11 +1972,15 @@ body.ar-active
     border-radius: 11px;
 
     background:
-        rgba(5,8,23,0.76);
+        rgba(10,6,13,0.80);
+
+    pointer-events: auto;
 
     font-size: 0.61rem;
 
     font-weight: 900;
+
+    cursor: pointer;
 
 }
 
@@ -1911,7 +1989,6 @@ body.ar-active
 /* =========================================================
    ANIMATIONS
 ========================================================= */
-
 
 @keyframes rotateOrbit {
 
@@ -1956,7 +2033,10 @@ body.ar-active
     0% {
 
         transform:
-            translate(-50%, 0);
+            translate(
+                -50%,
+                -90px
+            );
 
         opacity: 0;
 
@@ -1973,7 +2053,10 @@ body.ar-active
     50% {
 
         transform:
-            translate(-50%, 170px);
+            translate(
+                -50%,
+                90px
+            );
 
         opacity: 1;
 
@@ -1990,7 +2073,10 @@ body.ar-active
     100% {
 
         transform:
-            translate(-50%, 0);
+            translate(
+                -50%,
+                -90px
+            );
 
         opacity: 0;
 
@@ -2004,26 +2090,37 @@ body.ar-active
    TABLET
 ========================================================= */
 
-
 @media (
     max-width: 1150px
 ) {
 
-
     .landing-page {
 
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
 
     }
 
 
-    .solar-title,
-    .ar-title {
+    .main-title {
 
         white-space: normal;
 
     }
 
+
+    .sub-title {
+
+        white-space: normal;
+
+    }
+
+
+    .model-preview {
+
+        margin-top: 20px;
+
+    }
 
 }
 
@@ -2033,11 +2130,9 @@ body.ar-active
    MOBILE
 ========================================================= */
 
-
 @media (
     max-width: 650px
 ) {
-
 
     .landing-page {
 
@@ -2046,19 +2141,23 @@ body.ar-active
         overflow: visible;
 
         padding:
-            45px 18px
+            42px
+            18px
             60px;
 
     }
 
 
-    .solar-title {
+
+    /* TITLE */
+
+    .main-title {
 
         font-size:
             clamp(
                 3rem,
-                15vw,
-                4.6rem
+                14vw,
+                4.5rem
             );
 
         white-space: normal;
@@ -2066,7 +2165,7 @@ body.ar-active
     }
 
 
-    .ar-title {
+    .sub-title {
 
         margin-top: 10px;
 
@@ -2084,9 +2183,24 @@ body.ar-active
     }
 
 
+
+    /* DESCRIPTION */
+
+    .description {
+
+        margin:
+            25px 0;
+
+    }
+
+
+
+    /* STEPS */
+
     .steps {
 
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
 
     }
 
@@ -2098,6 +2212,9 @@ body.ar-active
     }
 
 
+
+    /* START BUTTON */
+
     .start-button {
 
         width: 100%;
@@ -2105,12 +2222,19 @@ body.ar-active
     }
 
 
+
+    /* DEVICE CARDS */
+
     .device-options {
 
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
 
     }
 
+
+
+    /* PREVIEW */
 
     .model-preview {
 
@@ -2120,6 +2244,9 @@ body.ar-active
 
     }
 
+
+
+    /* ORBITS */
 
     .orbit-one {
 
@@ -2132,21 +2259,15 @@ body.ar-active
 
     .orbit-two {
 
-        width: 275px;
+        width: 270px;
 
-        height: 275px;
-
-    }
-
-
-    .orbit-three {
-
-        width: 200px;
-
-        height: 200px;
+        height: 270px;
 
     }
 
+
+
+    /* PREVIEW CARD */
 
     .preview-card {
 
@@ -2154,6 +2275,9 @@ body.ar-active
 
     }
 
+
+
+    /* QR */
 
     .qr-frame {
 
@@ -2167,6 +2291,146 @@ body.ar-active
     .qr-area {
 
         min-height: 320px;
+
+    }
+
+
+    .scan-line {
+
+        width: 195px;
+
+    }
+
+
+
+    /* AR TOP BAR */
+
+    .ar-top-bar {
+
+        right: 74px;
+
+    }
+
+
+
+    /* CONTROLS */
+
+    .ar-controls {
+
+        gap: 5px;
+
+    }
+
+
+    .control-button {
+
+        min-height: 62px;
+
+        font-size: 1.05rem;
+
+    }
+
+
+    .control-button span {
+
+        font-size: 0.43rem;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (
+    max-width: 390px
+) {
+
+    .landing-page {
+
+        padding-left: 14px;
+
+        padding-right: 14px;
+
+    }
+
+
+    .main-title {
+
+        font-size:
+            2.8rem;
+
+    }
+
+
+    .sub-title {
+
+        font-size:
+            1.7rem;
+
+    }
+
+
+    .qr-frame {
+
+        width: 200px;
+
+        height: 200px;
+
+    }
+
+
+    .scan-line {
+
+        width: 175px;
+
+    }
+
+
+    .ar-top-bar {
+
+        left: 8px;
+
+        right: 68px;
+
+    }
+
+
+    .exit-button {
+
+        right: 8px;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .orbit-one,
+    .orbit-two,
+    .scan-line {
+
+        animation: none;
+
+    }
+
+
+    .start-button,
+    .iphone-ar-button {
+
+        transition: none;
 
     }
 

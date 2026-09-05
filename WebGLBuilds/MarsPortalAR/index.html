@@ -12,15 +12,15 @@
 
     <meta
         name="theme-color"
-        content="#050817"
+        content="#080510"
     >
 
     <meta
         name="description"
-        content="Explore the Solar System in augmented reality."
+        content="Open a portal to Mars in augmented reality."
     >
 
-    <title>Solar System AR</title>
+    <title>Mars Portal AR</title>
 
 
     <!-- =====================================================
@@ -62,7 +62,7 @@
     >
 
 
-        <!-- BACKGROUND EFFECTS -->
+        <!-- BACKGROUND -->
 
         <div class="background-stars"></div>
 
@@ -87,7 +87,7 @@
 
                 <span class="status-dot"></span>
 
-                WEB AR EXPERIENCE
+                WEB AR PORTAL EXPERIENCE
 
             </div>
 
@@ -97,12 +97,12 @@
 
             <h1 class="hero-title">
 
-                <span class="solar-title">
-                    SOLAR SYSTEM AR
+                <span class="main-title">
+                    MARS PORTAL AR
                 </span>
 
-                <span class="ar-title">
-                    EXPLORE THE UNIVERSE
+                <span class="sub-title">
+                    OPEN ANOTHER WORLD
                 </span>
 
             </h1>
@@ -113,9 +113,9 @@
 
             <p class="description">
 
-                Bring the Solar System into your real-world
-                environment. Place the Sun and planets in your
-                space and walk around them in augmented reality.
+                Place a life-size portal in your real-world
+                environment and look through the doorway
+                onto the surface of Mars.
 
             </p>
 
@@ -128,6 +128,8 @@
             <div class="steps">
 
 
+                <!-- STEP 1 -->
+
                 <div class="step">
 
                     <span>
@@ -139,12 +141,14 @@
                     </strong>
 
                     <p>
-                        Choose your phone's AR experience.
+                        Choose the experience for your phone.
                     </p>
 
                 </div>
 
 
+
+                <!-- STEP 2 -->
 
                 <div class="step">
 
@@ -153,16 +157,18 @@
                     </span>
 
                     <strong>
-                        Find a Surface
+                        Find the Floor
                     </strong>
 
                     <p>
-                        Slowly move your phone around your room.
+                        Slowly move your phone around the room.
                     </p>
 
                 </div>
 
 
+
+                <!-- STEP 3 -->
 
                 <div class="step">
 
@@ -171,11 +177,11 @@
                     </span>
 
                     <strong>
-                        Place the Solar System
+                        Open the Portal
                     </strong>
 
                     <p>
-                        Tap to bring the planets into your space.
+                        Tap to place the doorway and look into Mars.
                     </p>
 
                 </div>
@@ -186,7 +192,7 @@
 
 
             <!-- =================================================
-                 ANDROID WEBXR BUTTON
+                 ANDROID START AR BUTTON
             ================================================== -->
 
             <button
@@ -200,7 +206,7 @@
                     ◉
                 </span>
 
-                START AR
+                START MARS PORTAL AR
 
             </button>
 
@@ -219,7 +225,7 @@
 
                 <div
                     id="androidCard"
-                    class="device-card android-card"
+                    class="device-card"
                 >
 
                     <div class="device-icon android-icon">
@@ -234,13 +240,13 @@
                         </span>
 
                         <strong>
-                            WebXR Augmented Reality
+                            Interactive WebXR Portal
                         </strong>
 
                         <p>
-                            Open this page in Chrome and use
-                            START AR to detect a surface and
-                            place the Solar System.
+                            Open this page in Chrome to place
+                            the portal and view the Mars world
+                            through the doorway.
                         </p>
 
                     </div>
@@ -274,18 +280,23 @@
                         </strong>
 
                         <p>
-                            Open this page in Safari and launch
-                            the Solar System directly into your space.
+                            Safari uses USDZ. Open the portal
+                            or the Mars environment below.
                         </p>
 
                     </div>
 
 
+
+                    <!-- =================================================
+                         iPHONE PORTAL USDZ
+                    ================================================== -->
+
                     <a
-                        id="iphoneARButton"
+                        id="iphonePortalButton"
                         class="iphone-ar-button"
                         rel="ar"
-                        href="./models/SolarSystem.usdz"
+                        href="./models/Portal.usdz"
                     >
 
                         <img
@@ -294,11 +305,38 @@
                             alt=""
                         >
 
-                        <span class="apple-button-symbol">
+                        <span>
                             
                         </span>
 
-                        OPEN iPHONE AR
+                        OPEN PORTAL AR
+
+                    </a>
+
+
+
+                    <!-- =================================================
+                         iPHONE MARS USDZ
+                    ================================================== -->
+
+                    <a
+                        id="iphoneMarsButton"
+                        class="iphone-ar-button mars-button"
+                        rel="ar"
+                        href="./models/Background.usdz"
+                    >
+
+                        <img
+                            class="quick-look-marker"
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                            alt=""
+                        >
+
+                        <span>
+                            ♂
+                        </span>
+
+                        OPEN MARS WORLD AR
 
                     </a>
 
@@ -319,7 +357,7 @@
                 class="support-message"
             >
 
-                Checking your device...
+                Loading Mars Portal...
 
             </p>
 
@@ -340,7 +378,7 @@
                 </span>
 
                 <span>
-                    WEBGL
+                    STENCIL MASK
                 </span>
 
                 <span>
@@ -349,6 +387,10 @@
 
                 <span>
                     USDZ
+                </span>
+
+                <span>
+                    HIT TEST
                 </span>
 
             </div>
@@ -360,10 +402,9 @@
 
         <!-- =================================================
              RIGHT SIDE
-             QR CARD
         ================================================== -->
 
-        <section class="model-preview qr-preview">
+        <section class="model-preview">
 
 
             <!-- DECORATIVE ORBITS -->
@@ -372,11 +413,13 @@
 
             <div class="orbit orbit-two"></div>
 
-            <div class="orbit orbit-three"></div>
 
 
+            <!-- =================================================
+                 PREVIEW CARD
+            ================================================== -->
 
-            <div class="preview-card qr-preview-card">
+            <div class="preview-card">
 
 
                 <!-- HEADER -->
@@ -384,7 +427,7 @@
                 <div class="preview-header">
 
                     <span>
-                        MOBILE AR
+                        MARS PORTAL
                     </span>
 
                     <span class="live-label">
@@ -405,17 +448,15 @@
                     <div class="qr-glow"></div>
 
 
-
                     <div class="qr-frame">
 
                         <img
-                            src="./images/solar-system-ar-qr.png"
-                            alt="Scan to launch Solar System AR"
+                            src="./images/mars-portal-ar-qr.png"
+                            alt="Scan to launch Mars Portal AR"
                             class="qr-image"
                         >
 
                     </div>
-
 
 
                     <div class="scan-line"></div>
@@ -431,24 +472,22 @@
 
                 <div class="qr-copy">
 
-
                     <span class="scan-label">
                         SCAN WITH YOUR PHONE
                     </span>
 
 
                     <h3>
-                        Launch Solar System AR
+                        Open the Mars Portal
                     </h3>
 
 
                     <p>
 
-                        Scan this code with your phone to open
-                        the Solar System AR experience.
+                        Scan this code to open the experience
+                        on Android, iPhone, or iPad.
 
                     </p>
-
 
                 </div>
 
@@ -465,7 +504,7 @@
                     </span>
 
                     <strong>
-                        Solar System AR
+                        Portal to Mars
                     </strong>
 
                 </div>
@@ -491,7 +530,9 @@
     >
 
 
-        <!-- TOP BAR -->
+        <!-- =================================================
+             AR TOP BAR
+        ================================================== -->
 
         <div class="ar-top-bar">
 
@@ -504,14 +545,11 @@
             <div class="ar-top-text">
 
                 <strong>
-                    SOLAR SYSTEM AR
+                    MARS PORTAL
                 </strong>
 
-
                 <span id="arStatus">
-
-                    Move your phone to find a surface
-
+                    Move your phone to find the floor
                 </span>
 
             </div>
@@ -535,7 +573,7 @@
             </div>
 
             <strong>
-                FIND A SURFACE
+                FIND THE FLOOR
             </strong>
 
             <span>
@@ -556,6 +594,8 @@
         >
 
 
+            <!-- ROTATE -->
+
             <button
                 id="rotateButton"
                 class="control-button"
@@ -571,6 +611,8 @@
             </button>
 
 
+
+            <!-- SMALLER -->
 
             <button
                 id="smallerButton"
@@ -588,6 +630,8 @@
 
 
 
+            <!-- LARGER -->
+
             <button
                 id="largerButton"
                 class="control-button"
@@ -603,6 +647,8 @@
             </button>
 
 
+
+            <!-- PLACE AGAIN -->
 
             <button
                 id="replaceButton"
@@ -623,7 +669,9 @@
 
 
 
-        <!-- EXIT -->
+        <!-- =================================================
+             EXIT
+        ================================================== -->
 
         <button
             id="exitARButton"
@@ -650,9 +698,10 @@
 
     <!-- =====================================================
          IMPORTANT:
-         LOAD OUR REAL SCRIPT.JS
+         PLAIN LOCAL JAVASCRIPT
 
-         DO NOT REPLACE THIS WITH /assets/index-xxxx.js
+         DO NOT REPLACE THIS WITH:
+         /assets/index-xxxx.js
     ====================================================== -->
 
     <script

@@ -1,6 +1,5 @@
 /* =========================================================
-   SOLAR SYSTEM AR
-   SCRIPT.JS
+   MARS PORTAL AR
 ========================================================= */
 
 
@@ -16,52 +15,94 @@ from "three/addons/loaders/GLTFLoader.js";
 
 
 /* =========================================================
-   MODEL
+   FILE PATHS
 ========================================================= */
 
 
-/*
-    Android WebXR model.
+const PORTAL_MODEL_PATH =
+    "./models/Portalbox.glb";
 
-    Exact folder:
 
-    SolarSystemAR/models/SolarSystem.glb
-*/
+const MARS_MODEL_PATH =
+    "./models/MarsBackground.glb";
 
-const MODEL_PATH =
-    "./models/SolarSystem.glb";
+
+const PORTAL_MASK_NAME =
+    "PortalMask";
 
 
 
 /* =========================================================
-   AR SIZE
+   PORTAL SIZE
 ========================================================= */
 
 
 /*
-    This is the approximate longest dimension
-    of the complete Solar System after placement.
-
-    3 = smaller
-    5 = large
-    7 = very large
+    Portal will be roughly doorway height.
 */
 
-const TARGET_MODEL_SIZE =
-    5;
+const TARGET_PORTAL_HEIGHT =
+    2.2;
+
+
+
+/* =========================================================
+   MARS WORLD ADJUSTMENTS
+
+   Change these if the Mars world needs moving.
+========================================================= */
+
+
+const MARS_OFFSET_X =
+    0;
+
+
+const MARS_OFFSET_Y =
+    0;
+
+
+const MARS_OFFSET_Z =
+    -1;
+
+
+const MARS_SCALE =
+    1;
+
+
+const MARS_ROTATION_Y =
+    0;
+
+
+
+/* =========================================================
+   MASK DEBUG
+
+   Change to true if you want to see
+   PortalMask as a bright pink rectangle.
+========================================================= */
+
+
+const SHOW_MASK =
+    false;
+
+
+
+/* =========================================================
+   USER SCALE
+========================================================= */
 
 
 const MIN_USER_SCALE =
-    0.15;
+    0.4;
 
 
 const MAX_USER_SCALE =
-    5;
+    3;
 
 
 
 /* =========================================================
-   HTML ELEMENTS
+   HTML
 ========================================================= */
 
 
@@ -95,12 +136,6 @@ const arControls =
     );
 
 
-const exitARButton =
-    document.getElementById(
-        "exitARButton"
-    );
-
-
 const rotateButton =
     document.getElementById(
         "rotateButton"
@@ -125,9 +160,9 @@ const replaceButton =
     );
 
 
-const canvas =
+const exitARButton =
     document.getElementById(
-        "arCanvas"
+        "exitARButton"
     );
 
 
@@ -140,6 +175,12 @@ const androidCard =
 const iphoneCard =
     document.getElementById(
         "iphoneCard"
+    );
+
+
+const canvas =
+    document.getElementById(
+        "arCanvas"
     );
 
 
@@ -178,7 +219,7 @@ const isAndroid =
 
 
 /* =========================================================
-   THREE.JS VARIABLES
+   THREE VARIABLES
 ========================================================= */
 
 
@@ -205,32 +246,54 @@ let hitTestSource =
     null;
 
 
-let reticle;
-
 let controller;
 
+let reticle;
 
-let solarSystem =
+
+
+/* =========================================================
+   PORTAL VARIABLES
+========================================================= */
+
+
+let portalRoot =
     null;
 
 
-let solarSystemVisual =
+let contentGroup =
     null;
 
 
-let animationMixer =
+let portalScene =
     null;
 
 
-let modelLoaded =
+let marsScene =
+    null;
+
+
+let portalMask =
+    null;
+
+
+let portalMixer =
+    null;
+
+
+let marsMixer =
+    null;
+
+
+let experienceReady =
     false;
 
 
-let modelPlaced =
+let portalPlaced =
     false;
 
 
-let modelRotation =
+let portalRotation =
     0;
 
 
@@ -238,13 +301,13 @@ let userScale =
     1;
 
 
-const animationClock =
+const clock =
     new THREE.Clock();
 
 
 
 /* =========================================================
-   INITIAL PAGE
+   START PAGE
 ========================================================= */
 
 
@@ -257,13 +320,11 @@ function initializePage() {
 
 
     /*
-        =============================================
         iPHONE / iPAD
 
-        Do not need to download the GLB.
+        We do not start WebXR.
 
-        iPhone uses the USDZ link in the HTML.
-        =============================================
+        The HTML Quick Look buttons are used instead.
     */
 
 
@@ -289,7 +350,7 @@ function initializePage() {
                 ◉
             </span>
 
-            ANDROID WEBXR
+            ANDROID WEBXR PORTAL
 
         `;
 
@@ -297,7 +358,7 @@ function initializePage() {
 
         supportMessage.textContent =
 
-            "iPhone/iPad detected — use OPEN iPHONE AR below.";
+            "iPhone/iPad detected — use one of the Apple AR buttons below.";
 
 
 
@@ -311,14 +372,6 @@ function initializePage() {
 
     }
 
-
-
-    /*
-        Android gets the WebXR model.
-
-        Desktop also initializes so the page can
-        report whether WebXR exists.
-    */
 
 
     if (
@@ -343,7 +396,7 @@ function initializePage() {
 
 
 /* =========================================================
-   CREATE THREE.JS
+   CREATE THREE
 ========================================================= */
 
 
@@ -365,11 +418,15 @@ function createThreeJS() {
 
             0.01,
 
-            150
+            100
 
         );
 
 
+
+    /*
+        stencil:true IS REQUIRED
+    */
 
     renderer =
         new THREE.WebGLRenderer({
@@ -381,6 +438,9 @@ function createThreeJS() {
                 true,
 
             antialias:
+                true,
+
+            stencil:
                 true
 
         });
@@ -411,6 +471,16 @@ function createThreeJS() {
 
 
 
+    renderer.setClearColor(
+
+        0x000000,
+
+        0
+
+    );
+
+
+
     renderer.xr.enabled =
         true;
 
@@ -428,54 +498,51 @@ function createThreeJS() {
 
 
     /* =====================================================
-       LIGHTING
+       LIGHTS
     ===================================================== */
 
 
-    const hemisphereLight =
+    const hemisphere =
         new THREE.HemisphereLight(
 
             0xffffff,
 
-            0x222233,
+            0x442211,
 
-            2.5
+            2.4
 
         );
 
 
-
     scene.add(
-        hemisphereLight
+        hemisphere
     );
 
 
 
-    const mainLight =
+    const sunLight =
         new THREE.DirectionalLight(
 
-            0xffffff,
+            0xffd0a0,
 
             2.8
 
         );
 
 
-
-    mainLight.position.set(
+    sunLight.position.set(
 
         4,
 
-        8,
+        7,
 
         4
 
     );
 
 
-
     scene.add(
-        mainLight
+        sunLight
     );
 
 
@@ -483,12 +550,11 @@ function createThreeJS() {
     const fillLight =
         new THREE.DirectionalLight(
 
-            0x6699ff,
+            0x7799ff,
 
-            1.4
+            1.1
 
         );
-
 
 
     fillLight.position.set(
@@ -497,10 +563,9 @@ function createThreeJS() {
 
         3,
 
-        -3
+        -4
 
     );
-
 
 
     scene.add(
@@ -524,7 +589,7 @@ function createThreeJS() {
 
         "select",
 
-        onSelect
+        placePortal
 
     );
 
@@ -536,7 +601,7 @@ function createThreeJS() {
 
 
 
-    loadSolarSystem();
+    loadExperience();
 
 
 
@@ -544,7 +609,7 @@ function createThreeJS() {
 
         "resize",
 
-        onWindowResize
+        resize
 
     );
 
@@ -554,7 +619,7 @@ function createThreeJS() {
 
 
 /* =========================================================
-   CREATE RETICLE
+   RETICLE
 ========================================================= */
 
 
@@ -564,9 +629,9 @@ function createReticle() {
     const geometry =
         new THREE.RingGeometry(
 
-            0.14,
+            0.15,
 
-            0.18,
+            0.20,
 
             64
 
@@ -587,7 +652,7 @@ function createReticle() {
         new THREE.MeshBasicMaterial({
 
             color:
-                0x00e5ff,
+                0xff6a2a,
 
             transparent:
                 true,
@@ -633,11 +698,13 @@ function createReticle() {
 
 
 /* =========================================================
-   LOAD SOLAR SYSTEM GLB
+   LOAD GLB
 ========================================================= */
 
 
-function loadSolarSystem() {
+function loadGLB(
+    path
+) {
 
 
     const loader =
@@ -645,386 +712,674 @@ function loadSolarSystem() {
 
 
 
-    supportMessage.textContent =
+    return new Promise(
 
-        "Loading Solar System 3D model...";
+        (
+            resolve,
+            reject
+        ) => {
+
+
+            loader.load(
+
+                path,
+
+                resolve,
+
+                undefined,
+
+                reject
+
+            );
+
+
+        }
+
+    );
+
+
+}
 
 
 
-    loader.load(
+/* =========================================================
+   LOAD PORTAL + MARS
+========================================================= */
 
 
-        MODEL_PATH,
+async function loadExperience() {
+
+
+    try {
+
+
+        supportMessage.textContent =
+
+            "Loading portal model...";
+
+
+
+        const portalGLTF =
+
+            await loadGLB(
+                PORTAL_MODEL_PATH
+            );
+
+
+
+        portalScene =
+            portalGLTF.scene;
+
+
+
+        supportMessage.textContent =
+
+            "Portal loaded. Loading Mars environment...";
+
+
+
+        const marsGLTF =
+
+            await loadGLB(
+                MARS_MODEL_PATH
+            );
+
+
+
+        marsScene =
+            marsGLTF.scene;
+
+
+
+        /* =================================================
+           ROOT
+        ================================================= */
+
+
+        portalRoot =
+            new THREE.Group();
+
+
+
+        portalRoot.name =
+            "MarsPortalRoot";
+
+
+
+        contentGroup =
+            new THREE.Group();
+
+
+
+        contentGroup.name =
+            "PortalContent";
+
+
+
+        portalRoot.add(
+            contentGroup
+        );
+
+
+
+        /* =================================================
+           MARS POSITION
+        ================================================= */
+
+
+        marsScene.position.set(
+
+            MARS_OFFSET_X,
+
+            MARS_OFFSET_Y,
+
+            MARS_OFFSET_Z
+
+        );
+
+
+
+        marsScene.scale.setScalar(
+            MARS_SCALE
+        );
+
+
+
+        marsScene.rotation.y =
+
+            THREE.MathUtils.degToRad(
+                MARS_ROTATION_Y
+            );
+
+
+
+        contentGroup.add(
+            marsScene
+        );
+
+
+
+        contentGroup.add(
+            portalScene
+        );
+
+
+
+        /* =================================================
+           FIND PORTAL MASK
+        ================================================= */
+
+
+        portalMask =
+
+            portalScene.getObjectByName(
+                PORTAL_MASK_NAME
+            );
+
+
+
+        if (
+            !portalMask
+        ) {
+
+
+            throw new Error(
+
+                "Portalbox.glb loaded but there is no mesh named PortalMask."
+
+            );
+
+
+        }
+
+
+
+        console.log(
+
+            "PortalMask found:",
+
+            portalMask
+
+        );
+
+
+
+        setupMask();
+
+
+
+        setupMarsMaterials();
+
+
+
+        setupPortalFrame();
+
+
+
+        /* =================================================
+           SCALE PORTAL TO DOORWAY HEIGHT
+        ================================================= */
+
+
+        portalScene.updateMatrixWorld(
+            true
+        );
+
+
+
+        const bounds =
+
+            new THREE.Box3()
+                .setFromObject(
+                    portalScene
+                );
+
+
+
+        const size =
+
+            bounds.getSize(
+                new THREE.Vector3()
+            );
+
+
+
+        const center =
+
+            bounds.getCenter(
+                new THREE.Vector3()
+            );
+
+
+
+        if (
+            size.y <= 0
+        ) {
+
+
+            throw new Error(
+
+                "Portal model has invalid height."
+
+            );
+
+
+        }
+
 
 
         /*
-            =============================================
-            MODEL LOADED
-            =============================================
+            Put bottom center of portal at origin.
         */
 
 
-        function (gltf) {
+        contentGroup.position.x -=
+            center.x;
 
 
-            solarSystem =
-                new THREE.Group();
+        contentGroup.position.y -=
+            bounds.min.y;
 
 
-
-            solarSystem.name =
-                "SolarSystemRoot";
-
-
-
-            solarSystemVisual =
-                gltf.scene;
+        contentGroup.position.z -=
+            center.z;
 
 
 
-            /* =============================================
-               PREPARE MESHES
-            ============================================= */
+        const baseScale =
 
-
-            solarSystemVisual.traverse(
-
-                function (child) {
-
-
-                    if (
-                        child.isMesh
-                    ) {
-
-
-                        child.frustumCulled =
-                            false;
+            TARGET_PORTAL_HEIGHT /
+            size.y;
 
 
 
-                        if (
-                            child.material
-                        ) {
+        contentGroup.scale.setScalar(
+            baseScale
+        );
 
 
-                            child.material.needsUpdate =
-                                true;
+
+        portalRoot.visible =
+            false;
 
 
-                        }
+
+        scene.add(
+            portalRoot
+        );
 
 
-                    }
 
+        /* =================================================
+           PORTAL ANIMATIONS
+        ================================================= */
+
+
+        if (
+            portalGLTF.animations.length >
+            0
+        ) {
+
+
+            portalMixer =
+                new THREE.AnimationMixer(
+                    portalScene
+                );
+
+
+
+            portalGLTF.animations.forEach(
+
+                clip => {
+
+                    portalMixer
+                        .clipAction(
+                            clip
+                        )
+                        .play();
 
                 }
 
             );
 
 
-
-            /* =============================================
-               ORIGINAL BOUNDS
-            ============================================= */
-
-
-            solarSystemVisual.updateMatrixWorld(
-                true
-            );
+        }
 
 
 
-            const originalBounds =
-                new THREE.Box3()
-                    .setFromObject(
-                        solarSystemVisual
-                    );
+        /* =================================================
+           MARS ANIMATIONS
+        ================================================= */
 
 
+        if (
+            marsGLTF.animations.length >
+            0
+        ) {
 
-            const originalSize =
-                originalBounds.getSize(
-                    new THREE.Vector3()
+
+            marsMixer =
+                new THREE.AnimationMixer(
+                    marsScene
                 );
 
 
 
-            const longestDimension =
-                Math.max(
+            marsGLTF.animations.forEach(
 
-                    originalSize.x,
+                clip => {
 
-                    originalSize.y,
-
-                    originalSize.z
-
-                );
-
-
-
-            if (
-                !Number.isFinite(
-                    longestDimension
-                )
-
-                ||
-
-                longestDimension <= 0
-            ) {
-
-
-                throw new Error(
-                    "Solar System model has invalid dimensions."
-                );
-
-
-            }
-
-
-
-            /* =============================================
-               SCALE TO METERS
-            ============================================= */
-
-
-            const modelScale =
-
-                TARGET_MODEL_SIZE /
-                longestDimension;
-
-
-
-            solarSystemVisual.scale.setScalar(
-                modelScale
-            );
-
-
-
-            solarSystemVisual.updateMatrixWorld(
-                true
-            );
-
-
-
-            /* =============================================
-               NEW BOUNDS AFTER SCALE
-            ============================================= */
-
-
-            const scaledBounds =
-                new THREE.Box3()
-                    .setFromObject(
-                        solarSystemVisual
-                    );
-
-
-
-            const scaledCenter =
-                scaledBounds.getCenter(
-                    new THREE.Vector3()
-                );
-
-
-
-            /*
-                Center X and Z around the AR placement point.
-            */
-
-
-            solarSystemVisual.position.x -=
-                scaledCenter.x;
-
-
-            solarSystemVisual.position.z -=
-                scaledCenter.z;
-
-
-
-            /*
-                Put the lowest part of the model
-                at the detected surface.
-            */
-
-
-            solarSystemVisual.position.y -=
-                scaledBounds.min.y;
-
-
-
-            solarSystem.add(
-                solarSystemVisual
-            );
-
-
-
-            solarSystem.visible =
-                false;
-
-
-
-            scene.add(
-                solarSystem
-            );
-
-
-
-            /* =============================================
-               GLB ANIMATIONS
-
-               If your Blender Solar System already contains
-               planet animation, it will automatically play.
-            ============================================= */
-
-
-            if (
-
-                gltf.animations
-
-                &&
-
-                gltf.animations.length >
-                0
-
-            ) {
-
-
-                animationMixer =
-                    new THREE.AnimationMixer(
-                        solarSystemVisual
-                    );
-
-
-
-                gltf.animations.forEach(
-
-                    function (clip) {
-
-
-                        const action =
-
-                            animationMixer
-                                .clipAction(
-                                    clip
-                                );
-
-
-
-                        action.play();
-
-
-                    }
-
-                );
-
-
-            }
-
-
-
-            modelLoaded =
-                true;
-
-
-
-            console.log(
-
-                "Solar System GLB loaded successfully."
-
-            );
-
-
-
-            checkWebXRSupport();
-
-
-        },
-
-
-
-        /*
-            =============================================
-            LOAD PROGRESS
-            =============================================
-        */
-
-
-        function (progress) {
-
-
-            if (
-                progress.total >
-                0
-            ) {
-
-
-                const percent =
-
-                    Math.round(
-
-                        (
-                            progress.loaded /
-                            progress.total
+                    marsMixer
+                        .clipAction(
+                            clip
                         )
+                        .play();
 
-                        *
-
-                        100
-
-                    );
-
-
-
-                supportMessage.textContent =
-
-                    "Loading Solar System: " +
-                    percent +
-                    "%";
-
-
-            }
-
-
-        },
-
-
-
-        /*
-            =============================================
-            LOAD ERROR
-            =============================================
-        */
-
-
-        function (error) {
-
-
-            console.error(
-
-                "Solar System model failed to load:",
-
-                error
+                }
 
             );
-
-
-
-            supportMessage.textContent =
-
-                "Could not load models/SolarSystem.glb. Check the filename and models folder.";
-
-
-
-            supportMessage.className =
-                "support-message bad";
-
-
-
-            startARButton.disabled =
-                true;
 
 
         }
 
+
+
+        experienceReady =
+            true;
+
+
+
+        supportMessage.textContent =
+
+            "Portal and Mars environment loaded.";
+
+
+
+        supportMessage.className =
+            "support-message good";
+
+
+
+        checkARSupport();
+
+
+    }
+
+    catch (
+        error
+    ) {
+
+
+        console.error(
+
+            "Portal loading error:",
+
+            error
+
+        );
+
+
+
+        supportMessage.textContent =
+
+            error.message;
+
+
+
+        supportMessage.className =
+            "support-message bad";
+
+
+
+        startARButton.disabled =
+            true;
+
+
+    }
+
+
+}
+
+
+
+/* =========================================================
+   PORTAL MASK
+
+   Does not draw color.
+   Writes stencil value 1.
+========================================================= */
+
+
+function setupMask() {
+
+
+    portalMask.frustumCulled =
+        false;
+
+
+
+    portalMask.renderOrder =
+        1;
+
+
+
+    portalMask.material =
+
+        new THREE.MeshBasicMaterial({
+
+            color:
+                0xff00ff,
+
+            colorWrite:
+                SHOW_MASK,
+
+            depthWrite:
+                false,
+
+            depthTest:
+                false,
+
+            side:
+                THREE.DoubleSide,
+
+            stencilWrite:
+                true,
+
+            stencilRef:
+                1,
+
+            stencilFunc:
+                THREE.AlwaysStencilFunc,
+
+            stencilFail:
+                THREE.KeepStencilOp,
+
+            stencilZFail:
+                THREE.KeepStencilOp,
+
+            stencilZPass:
+                THREE.ReplaceStencilOp
+
+        });
+
+
+}
+
+
+
+/* =========================================================
+   MARS MATERIALS
+========================================================= */
+
+
+function setupMarsMaterials() {
+
+
+    marsScene.traverse(
+
+        child => {
+
+
+            if (
+                !child.isMesh
+            ) {
+
+                return;
+
+            }
+
+
+
+            child.frustumCulled =
+                false;
+
+
+
+            child.renderOrder =
+                2;
+
+
+
+            if (
+                Array.isArray(
+                    child.material
+                )
+            ) {
+
+
+                child.material =
+
+                    child.material.map(
+                        makeStencilMaterial
+                    );
+
+
+            }
+
+            else if (
+                child.material
+            ) {
+
+
+                child.material =
+
+                    makeStencilMaterial(
+                        child.material
+                    );
+
+
+            }
+
+
+        }
+
+    );
+
+
+}
+
+
+
+/* =========================================================
+   COPY MATERIAL + REQUIRE STENCIL 1
+========================================================= */
+
+
+function makeStencilMaterial(
+    original
+) {
+
+
+    const material =
+        original.clone();
+
+
+
+    material.stencilWrite =
+        true;
+
+
+
+    material.stencilRef =
+        1;
+
+
+
+    material.stencilFunc =
+        THREE.EqualStencilFunc;
+
+
+
+    material.stencilFail =
+        THREE.KeepStencilOp;
+
+
+
+    material.stencilZFail =
+        THREE.KeepStencilOp;
+
+
+
+    material.stencilZPass =
+        THREE.KeepStencilOp;
+
+
+
+    material.needsUpdate =
+        true;
+
+
+
+    return material;
+
+
+}
+
+
+
+/* =========================================================
+   PORTAL FRAME
+========================================================= */
+
+
+function setupPortalFrame() {
+
+
+    portalScene.traverse(
+
+        child => {
+
+
+            if (
+                !child.isMesh
+            ) {
+
+                return;
+
+            }
+
+
+
+            if (
+                child === portalMask
+            ) {
+
+                return;
+
+            }
+
+
+
+            child.frustumCulled =
+                false;
+
+
+
+            child.renderOrder =
+                3;
+
+
+        }
 
     );
 
@@ -1038,24 +1393,17 @@ function loadSolarSystem() {
 ========================================================= */
 
 
-async function checkWebXRSupport() {
+async function checkARSupport() {
 
 
     if (
-        !modelLoaded
+        !experienceReady
     ) {
-
 
         return;
 
-
     }
 
-
-
-    /* =============================================
-       HTTPS IS REQUIRED
-    ============================================= */
 
 
     if (
@@ -1065,17 +1413,12 @@ async function checkWebXRSupport() {
 
         supportMessage.textContent =
 
-            "AR requires HTTPS. Open the published GitHub Pages version on your Android phone.";
+            "AR requires HTTPS.";
 
 
 
         supportMessage.className =
             "support-message bad";
-
-
-
-        startARButton.disabled =
-            true;
 
 
 
@@ -1086,42 +1429,14 @@ async function checkWebXRSupport() {
 
 
 
-    /* =============================================
-       DOES BROWSER HAVE WEBXR?
-    ============================================= */
-
-
     if (
         !navigator.xr
     ) {
 
 
-        startARButton.disabled =
-            true;
+        supportMessage.textContent =
 
-
-
-        if (
-            isAndroid
-        ) {
-
-
-            supportMessage.textContent =
-
-                "WebXR AR is not available in this browser. Try opening the page in Chrome on Android.";
-
-
-        }
-
-        else {
-
-
-            supportMessage.textContent =
-
-                "Desktop detected. Scan the QR code and open this experience on a phone.";
-
-
-        }
+            "WebXR is unavailable. Android users should open this page in Chrome.";
 
 
 
@@ -1135,11 +1450,6 @@ async function checkWebXRSupport() {
 
     }
 
-
-
-    /* =============================================
-       IMMERSIVE AR SUPPORT
-    ============================================= */
 
 
     try {
@@ -1165,7 +1475,7 @@ async function checkWebXRSupport() {
 
             supportMessage.textContent =
 
-                "Solar System loaded — your device is ready for AR.";
+                "Mars Portal ready — tap START MARS PORTAL AR.";
 
 
 
@@ -1198,32 +1508,14 @@ async function checkWebXRSupport() {
 
     }
 
-    catch (error) {
+    catch (
+        error
+    ) {
 
 
         console.error(
-
-            "WebXR support check failed:",
-
             error
-
         );
-
-
-
-        startARButton.disabled =
-            true;
-
-
-
-        supportMessage.textContent =
-
-            "Unable to confirm WebXR AR support on this device.";
-
-
-
-        supportMessage.className =
-            "support-message bad";
 
 
     }
@@ -1234,72 +1526,20 @@ async function checkWebXRSupport() {
 
 
 /* =========================================================
-   START WEBXR AR
+   START AR
 ========================================================= */
 
 
-async function startWebXR() {
+async function startAR() {
 
 
     if (
-        isIOS
-    ) {
-
-
-        return;
-
-
-    }
-
-
-
-    if (
-        !modelLoaded
+        !experienceReady
     ) {
 
 
         alert(
-
-            "The Solar System model is still loading."
-
-        );
-
-
-        return;
-
-
-    }
-
-
-
-    if (
-        !window.isSecureContext
-    ) {
-
-
-        alert(
-
-            "AR requires HTTPS. Open the published GitHub Pages URL."
-
-        );
-
-
-        return;
-
-
-    }
-
-
-
-    if (
-        !navigator.xr
-    ) {
-
-
-        alert(
-
-            "This browser does not support WebXR augmented reality."
-
+            "Portal is still loading."
         );
 
 
@@ -1311,38 +1551,6 @@ async function startWebXR() {
 
 
     try {
-
-
-        const supported =
-
-            await navigator.xr.isSessionSupported(
-                "immersive-ar"
-            );
-
-
-
-        if (
-            !supported
-        ) {
-
-
-            alert(
-
-                "This device does not support immersive WebXR AR."
-
-            );
-
-
-            return;
-
-
-        }
-
-
-
-        /* =============================================
-           REQUEST AR SESSION
-        ============================================= */
 
 
         xrSession =
@@ -1380,67 +1588,16 @@ async function startWebXR() {
 
 
 
-        /* =============================================
-           PAGE INTO AR MODE
-        ============================================= */
-
-
         document.body.classList.add(
             "ar-active"
         );
 
 
 
-        arControls.classList.remove(
-            "visible"
-        );
-
-
-
-        placementMessage.classList.remove(
-            "hidden"
-        );
-
-
-
-        placementMessage.innerHTML = `
-
-            <div class="scan-icon">
-                ◎
-            </div>
-
-            <strong>
-                FIND A SURFACE
-            </strong>
-
-            <span>
-                Slowly move your phone around
-            </span>
-
-        `;
-
-
-
-        arStatus.textContent =
-
-            "Move your phone to find a surface";
-
-
-
-        /* =============================================
-           CONNECT THREE.JS TO XR SESSION
-        ============================================= */
-
-
         await renderer.xr.setSession(
             xrSession
         );
 
-
-
-        /* =============================================
-           REFERENCE SPACES
-        ============================================= */
 
 
         viewerReferenceSpace =
@@ -1459,11 +1616,6 @@ async function startWebXR() {
 
 
 
-        /* =============================================
-           HIT TEST
-        ============================================= */
-
-
         hitTestSource =
 
             await xrSession.requestHitTestSource({
@@ -1479,23 +1631,18 @@ async function startWebXR() {
 
             "end",
 
-            onSessionEnded
+            sessionEnded
 
         );
 
 
 
-        /* =============================================
-           RESET MODEL
-        ============================================= */
-
-
-        modelPlaced =
+        portalPlaced =
             false;
 
 
 
-        modelRotation =
+        portalRotation =
             0;
 
 
@@ -1505,37 +1652,7 @@ async function startWebXR() {
 
 
 
-        solarSystem.position.set(
-
-            0,
-
-            0,
-
-            0
-
-        );
-
-
-
-        solarSystem.rotation.set(
-
-            0,
-
-            0,
-
-            0
-
-        );
-
-
-
-        solarSystem.scale.setScalar(
-            1
-        );
-
-
-
-        solarSystem.visible =
+        portalRoot.visible =
             false;
 
 
@@ -1545,7 +1662,19 @@ async function startWebXR() {
 
 
 
-        animationClock.start();
+        arControls.classList.remove(
+            "visible"
+        );
+
+
+
+        placementMessage.classList.remove(
+            "hidden"
+        );
+
+
+
+        clock.start();
 
 
 
@@ -1556,12 +1685,14 @@ async function startWebXR() {
 
     }
 
-    catch (error) {
+    catch (
+        error
+    ) {
 
 
         console.error(
 
-            "Could not start AR session:",
+            "AR failed:",
 
             error
 
@@ -1569,15 +1700,9 @@ async function startWebXR() {
 
 
 
-        document.body.classList.remove(
-            "ar-active"
-        );
-
-
-
         alert(
 
-            "AR could not start. Check camera permissions and make sure you are using a supported Android browser."
+            "Could not start AR. Check camera permissions and Chrome/WebXR support."
 
         );
 
@@ -1590,7 +1715,7 @@ async function startWebXR() {
 
 
 /* =========================================================
-   WEBXR FRAME
+   RENDER LOOP
 ========================================================= */
 
 
@@ -1600,22 +1725,17 @@ function render(
 ) {
 
 
-    /* =============================================
-       UPDATE GLB ANIMATION
-    ============================================= */
-
-
     const delta =
-        animationClock.getDelta();
+        clock.getDelta();
 
 
 
     if (
-        animationMixer
+        portalMixer
     ) {
 
 
-        animationMixer.update(
+        portalMixer.update(
             delta
         );
 
@@ -1624,9 +1744,18 @@ function render(
 
 
 
-    /* =============================================
-       HIT TEST
-    ============================================= */
+    if (
+        marsMixer
+    ) {
+
+
+        marsMixer.update(
+            delta
+        );
+
+
+    }
+
 
 
     if (
@@ -1643,12 +1772,12 @@ function render(
 
         &&
 
-        !modelPlaced
+        !portalPlaced
 
     ) {
 
 
-        const hitResults =
+        const hits =
 
             frame.getHitTestResults(
                 hitTestSource
@@ -1657,17 +1786,16 @@ function render(
 
 
         if (
-            hitResults.length >
+            hits.length >
             0
         ) {
 
 
             const pose =
 
-                hitResults[0]
-                    .getPose(
-                        localReferenceSpace
-                    );
+                hits[0].getPose(
+                    localReferenceSpace
+                );
 
 
 
@@ -1689,7 +1817,7 @@ function render(
 
                 arStatus.textContent =
 
-                    "Surface found — tap to place the Solar System";
+                    "Floor found — tap to place the portal";
 
 
 
@@ -1704,7 +1832,7 @@ function render(
                     </strong>
 
                     <span>
-                        Place the Solar System here
+                        Open the portal here
                     </span>
 
                 `;
@@ -1725,25 +1853,7 @@ function render(
 
             arStatus.textContent =
 
-                "Move your phone slowly to find a surface";
-
-
-
-            placementMessage.innerHTML = `
-
-                <div class="scan-icon">
-                    ◎
-                </div>
-
-                <strong>
-                    FIND A SURFACE
-                </strong>
-
-                <span>
-                    Slowly move your phone around
-                </span>
-
-            `;
+                "Move your phone slowly to find the floor";
 
 
         }
@@ -1751,11 +1861,6 @@ function render(
 
     }
 
-
-
-    /* =============================================
-       RETICLE PULSE
-    ============================================= */
 
 
     if (
@@ -1809,11 +1914,11 @@ function render(
 
 
 /* =========================================================
-   TAP TO PLACE
+   PLACE PORTAL
 ========================================================= */
 
 
-function onSelect() {
+function placePortal() {
 
 
     if (
@@ -1826,11 +1931,7 @@ function onSelect() {
 
         ||
 
-        !solarSystem
-
-        ||
-
-        modelPlaced
+        !portalRoot
 
     ) {
 
@@ -1852,7 +1953,7 @@ function onSelect() {
 
 
 
-    const reticleScale =
+    const scale =
         new THREE.Vector3();
 
 
@@ -1863,28 +1964,23 @@ function onSelect() {
 
         quaternion,
 
-        reticleScale
+        scale
 
     );
 
 
 
-    /* =============================================
-       PLACE MODEL
-    ============================================= */
-
-
-    solarSystem.position.copy(
+    portalRoot.position.copy(
         position
     );
 
 
 
-    solarSystem.rotation.set(
+    portalRoot.rotation.set(
 
         0,
 
-        modelRotation,
+        portalRotation,
 
         0
 
@@ -1892,18 +1988,18 @@ function onSelect() {
 
 
 
-    solarSystem.scale.setScalar(
+    portalRoot.scale.setScalar(
         userScale
     );
 
 
 
-    solarSystem.visible =
+    portalRoot.visible =
         true;
 
 
 
-    modelPlaced =
+    portalPlaced =
         true;
 
 
@@ -1927,7 +2023,7 @@ function onSelect() {
 
     arStatus.textContent =
 
-        "Solar System placed — walk around it to explore";
+        "Portal opened — move around and look into Mars";
 
 
 }
@@ -1939,28 +2035,20 @@ function onSelect() {
 ========================================================= */
 
 
-function rotateModel() {
+function rotatePortal() {
 
 
     if (
-
-        !solarSystem
-
-        ||
-
-        !modelPlaced
-
+        !portalPlaced
     ) {
 
-
         return;
-
 
     }
 
 
 
-    modelRotation +=
+    portalRotation +=
 
         THREE.MathUtils.degToRad(
             30
@@ -1968,8 +2056,8 @@ function rotateModel() {
 
 
 
-    solarSystem.rotation.y =
-        modelRotation;
+    portalRoot.rotation.y =
+        portalRotation;
 
 
 }
@@ -1985,18 +2073,10 @@ function makeSmaller() {
 
 
     if (
-
-        !solarSystem
-
-        ||
-
-        !modelPlaced
-
+        !portalPlaced
     ) {
 
-
         return;
-
 
     }
 
@@ -2009,13 +2089,13 @@ function makeSmaller() {
             MIN_USER_SCALE,
 
             userScale -
-            0.15
+            0.1
 
         );
 
 
 
-    solarSystem.scale.setScalar(
+    portalRoot.scale.setScalar(
         userScale
     );
 
@@ -2033,18 +2113,10 @@ function makeLarger() {
 
 
     if (
-
-        !solarSystem
-
-        ||
-
-        !modelPlaced
-
+        !portalPlaced
     ) {
 
-
         return;
-
 
     }
 
@@ -2057,13 +2129,13 @@ function makeLarger() {
             MAX_USER_SCALE,
 
             userScale +
-            0.25
+            0.15
 
         );
 
 
 
-    solarSystem.scale.setScalar(
+    portalRoot.scale.setScalar(
         userScale
     );
 
@@ -2081,23 +2153,21 @@ function placeAgain() {
 
 
     if (
-        !solarSystem
+        !portalRoot
     ) {
 
-
         return;
-
 
     }
 
 
 
-    solarSystem.visible =
+    portalRoot.visible =
         false;
 
 
 
-    modelPlaced =
+    portalPlaced =
         false;
 
 
@@ -2130,16 +2200,10 @@ function placeAgain() {
         </strong>
 
         <span>
-            Move your phone and choose another surface
+            Move your phone around
         </span>
 
     `;
-
-
-
-    arStatus.textContent =
-
-        "Find a new location for the Solar System";
 
 
 }
@@ -2147,7 +2211,7 @@ function placeAgain() {
 
 
 /* =========================================================
-   EXIT AR
+   EXIT
 ========================================================= */
 
 
@@ -2155,35 +2219,29 @@ async function exitAR() {
 
 
     if (
-        !xrSession
+        xrSession
     ) {
 
 
-        return;
+        try {
 
 
-    }
+            await xrSession.end();
 
 
+        }
 
-    try {
-
-
-        await xrSession.end();
-
-
-    }
-
-    catch (error) {
-
-
-        console.error(
-
-            "Could not end AR session:",
-
+        catch (
             error
+        ) {
 
-        );
+
+            console.error(
+                error
+            );
+
+
+        }
 
 
     }
@@ -2194,11 +2252,11 @@ async function exitAR() {
 
 
 /* =========================================================
-   SESSION ENDED
+   SESSION END
 ========================================================= */
 
 
-function onSessionEnded() {
+function sessionEnded() {
 
 
     renderer.setAnimationLoop(
@@ -2220,15 +2278,13 @@ function onSessionEnded() {
 
         }
 
-        catch (error) {
+        catch (
+            error
+        ) {
 
 
             console.warn(
-
-                "Could not cancel hit test source:",
-
                 error
-
             );
 
 
@@ -2243,19 +2299,34 @@ function onSessionEnded() {
         null;
 
 
-
     viewerReferenceSpace =
         null;
-
 
 
     localReferenceSpace =
         null;
 
 
-
     xrSession =
         null;
+
+
+
+    portalPlaced =
+        false;
+
+
+
+    if (
+        portalRoot
+    ) {
+
+
+        portalRoot.visible =
+            false;
+
+
+    }
 
 
 
@@ -2272,38 +2343,14 @@ function onSessionEnded() {
 
 
 
-    if (
-        solarSystem
-    ) {
-
-
-        solarSystem.visible =
-            false;
-
-
-    }
-
-
-
-    modelPlaced =
-        false;
-
-
-
-    document.body.classList.remove(
-        "ar-active"
-    );
-
-
-
     arControls.classList.remove(
         "visible"
     );
 
 
 
-    placementMessage.classList.remove(
-        "hidden"
+    document.body.classList.remove(
+        "ar-active"
     );
 
 
@@ -2316,22 +2363,15 @@ function onSessionEnded() {
 ========================================================= */
 
 
-function onWindowResize() {
+function resize() {
 
 
     if (
-
-        !camera
-
-        ||
-
+        !camera ||
         !renderer
-
     ) {
 
-
         return;
-
 
     }
 
@@ -2362,7 +2402,7 @@ function onWindowResize() {
 
 
 /* =========================================================
-   BUTTON EVENTS
+   EVENTS
 ========================================================= */
 
 
@@ -2370,10 +2410,45 @@ startARButton.addEventListener(
 
     "click",
 
-    startWebXR
+    startAR
 
 );
 
+
+rotateButton.addEventListener(
+
+    "click",
+
+    rotatePortal
+
+);
+
+
+smallerButton.addEventListener(
+
+    "click",
+
+    makeSmaller
+
+);
+
+
+largerButton.addEventListener(
+
+    "click",
+
+    makeLarger
+
+);
+
+
+replaceButton.addEventListener(
+
+    "click",
+
+    placeAgain
+
+);
 
 
 exitARButton.addEventListener(
@@ -2386,48 +2461,8 @@ exitARButton.addEventListener(
 
 
 
-rotateButton.addEventListener(
-
-    "click",
-
-    rotateModel
-
-);
-
-
-
-smallerButton.addEventListener(
-
-    "click",
-
-    makeSmaller
-
-);
-
-
-
-largerButton.addEventListener(
-
-    "click",
-
-    makeLarger
-
-);
-
-
-
-replaceButton.addEventListener(
-
-    "click",
-
-    placeAgain
-
-);
-
-
-
 /* =========================================================
-   START PAGE
+   INITIALIZE
 ========================================================= */
 
 
