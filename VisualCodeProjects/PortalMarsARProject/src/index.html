@@ -17,15 +17,13 @@
 
     <meta
         name="description"
-        content="Place a portal to Mars in augmented reality."
+        content="Open a portal to Mars in augmented reality."
     >
 
     <title>Mars Portal AR</title>
 
 
-    <!-- =====================================================
-         CSS
-    ====================================================== -->
+    <!-- CSS -->
 
     <link
         rel="stylesheet"
@@ -33,9 +31,7 @@
     >
 
 
-    <!-- =====================================================
-         THREE.JS
-    ====================================================== -->
+    <!-- THREE.JS -->
 
     <script type="importmap">
     {
@@ -131,7 +127,7 @@
                     </strong>
 
                     <p>
-                        Allow camera access on your phone.
+                        Choose the experience for your phone.
                     </p>
 
                 </div>
@@ -149,7 +145,7 @@
                     </strong>
 
                     <p>
-                        Move your phone slowly to detect a surface.
+                        Slowly move your phone around the room.
                     </p>
 
                 </div>
@@ -163,11 +159,11 @@
                     </span>
 
                     <strong>
-                        Place the Portal
+                        Open the Portal
                     </strong>
 
                     <p>
-                        Tap and look through the doorway into Mars.
+                        Tap to place the doorway and look into Mars.
                     </p>
 
                 </div>
@@ -178,7 +174,7 @@
 
 
             <!-- =================================================
-                 START AR
+                 ANDROID WEBXR BUTTON
             ================================================== -->
 
             <button
@@ -205,12 +201,16 @@
             <div class="device-options">
 
 
+                <!-- =============================================
+                     ANDROID
+                ============================================== -->
+
                 <div
                     id="androidCard"
                     class="device-card"
                 >
 
-                    <div class="device-icon">
+                    <div class="device-icon android-icon">
                         ◉
                     </div>
 
@@ -222,12 +222,13 @@
                         </span>
 
                         <strong>
-                            Interactive WebXR Portal
+                            Interactive Portal
                         </strong>
 
                         <p>
-                            Use Chrome to place and explore
-                            the real-time Mars portal.
+                            Use Chrome for the full WebXR portal
+                            with the Mars world visible through
+                            the doorway.
                         </p>
 
                     </div>
@@ -236,9 +237,13 @@
 
 
 
+                <!-- =============================================
+                     iPHONE / iPAD
+                ============================================== -->
+
                 <div
                     id="iphoneCard"
-                    class="device-card"
+                    class="device-card iphone-card"
                 >
 
                     <div class="device-icon apple-icon">
@@ -253,16 +258,66 @@
                         </span>
 
                         <strong>
-                            Apple AR Fallback
+                            Apple AR Quick Look
                         </strong>
 
                         <p>
-                            The stencil portal requires WebXR.
-                            A USDZ Quick Look fallback can be
-                            added separately for Apple devices.
+                            Safari uses USDZ. Choose the portal
+                            or the Mars environment below.
                         </p>
 
                     </div>
+
+
+
+                    <!-- PORTAL USDZ -->
+
+                    <a
+                        id="iphonePortalButton"
+                        class="iphone-ar-button"
+                        rel="ar"
+                        href="./models/Portal.usdz"
+                    >
+
+                        <img
+                            class="quick-look-marker"
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                            alt=""
+                        >
+
+                        <span>
+                            
+                        </span>
+
+                        OPEN PORTAL AR
+
+                    </a>
+
+
+
+                    <!-- MARS BACKGROUND USDZ -->
+
+                    <a
+                        id="iphoneMarsButton"
+                        class="iphone-ar-button mars-button"
+                        rel="ar"
+                        href="./models/Background.usdz"
+                    >
+
+                        <img
+                            class="quick-look-marker"
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                            alt=""
+                        >
+
+                        <span>
+                            ♂
+                        </span>
+
+                        OPEN MARS WORLD AR
+
+                    </a>
+
 
                 </div>
 
@@ -280,11 +335,15 @@
                 class="support-message"
             >
 
-                Loading portal...
+                Loading Mars Portal...
 
             </p>
 
 
+
+            <!-- =================================================
+                 TECHNOLOGY
+            ================================================== -->
 
             <div class="technology">
 
@@ -305,7 +364,7 @@
                 </span>
 
                 <span>
-                    HIT TEST
+                    USDZ
                 </span>
 
             </div>
@@ -316,7 +375,7 @@
 
 
         <!-- =================================================
-             RIGHT CARD
+             RIGHT SIDE
         ================================================== -->
 
         <section class="model-preview">
@@ -346,7 +405,7 @@
 
 
                 <!-- =================================================
-                     QR PLACEHOLDER
+                     REAL QR
                 ================================================== -->
 
                 <div class="qr-area">
@@ -357,28 +416,11 @@
 
                     <div class="qr-frame">
 
-
-                        <div class="qr-placeholder">
-
-                            <div class="portal-symbol">
-
-                                <div class="portal-inner">
-                                    MARS
-                                </div>
-
-                            </div>
-
-
-                            <strong>
-                                QR CODE
-                            </strong>
-
-                            <small>
-                                ADD AFTER PUBLISHING
-                            </small>
-
-                        </div>
-
+                        <img
+                            src="./images/mars-portal-ar-qr.png"
+                            alt="Scan to launch Mars Portal AR"
+                            class="qr-image"
+                        >
 
                     </div>
 
@@ -396,13 +438,15 @@
                         SCAN WITH YOUR PHONE
                     </span>
 
+
                     <h3>
                         Open the Mars Portal
                     </h3>
 
+
                     <p>
-                        Scan the QR code to place a portal
-                        into another world.
+                        Scan this code to open the experience
+                        on Android, iPhone, or iPad.
                     </p>
 
                 </div>
@@ -433,7 +477,7 @@
 
 
     <!-- =====================================================
-         AR OVERLAY
+         ANDROID WEBXR OVERLAY
     ====================================================== -->
 
     <div
@@ -467,9 +511,7 @@
 
 
 
-        <!-- =================================================
-             PLACEMENT MESSAGE
-        ================================================== -->
+        <!-- PLACEMENT -->
 
         <div
             id="placementMessage"
@@ -492,9 +534,7 @@
 
 
 
-        <!-- =================================================
-             CONTROLS
-        ================================================== -->
+        <!-- CONTROLS -->
 
         <div
             id="arControls"
@@ -593,9 +633,7 @@
 
 
     <!-- =====================================================
-         IMPORTANT:
-         PLAIN SCRIPT.JS
-         DO NOT VITE BUILD
+         OUR JS
     ====================================================== -->
 
     <script

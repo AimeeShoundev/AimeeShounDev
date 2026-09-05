@@ -15,9 +15,7 @@ from "three/addons/loaders/GLTFLoader.js";
 
 
 /* =========================================================
-   FILES
-
-   CAPITALIZATION MUST MATCH GITHUB EXACTLY
+   FILE PATHS
 ========================================================= */
 
 
@@ -29,22 +27,19 @@ const MARS_MODEL_PATH =
     "./models/MarsBackground.glb";
 
 
-/*
-    The plane inside Portalbox.glb MUST
-    have this Blender object name.
-*/
-
-const MASK_OBJECT_NAME =
+const PORTAL_MASK_NAME =
     "PortalMask";
 
 
 
 /* =========================================================
    PORTAL SIZE
-
-   Approximately normal doorway height.
 ========================================================= */
 
+
+/*
+    Portal will be roughly doorway height.
+*/
 
 const TARGET_PORTAL_HEIGHT =
     2.2;
@@ -52,60 +47,42 @@ const TARGET_PORTAL_HEIGHT =
 
 
 /* =========================================================
-   MARS POSITION
+   MARS WORLD ADJUSTMENTS
 
-   ASSUMPTION:
-
-   Portal faces +Z toward the user.
-   Mars extends behind it toward -Z.
-
-   If Mars appears on the wrong side,
-   change -1.0 to +1.0.
+   Change these if the Mars world needs moving.
 ========================================================= */
 
 
-const MARS_WORLD_OFFSET_X =
+const MARS_OFFSET_X =
     0;
 
 
-const MARS_WORLD_OFFSET_Y =
+const MARS_OFFSET_Y =
     0;
 
 
-const MARS_WORLD_OFFSET_Z =
-    -1.0;
+const MARS_OFFSET_Z =
+    -1;
 
 
-
-/* =========================================================
-   MARS SCALE / ROTATION
-
-   These are easy adjustment controls.
-========================================================= */
-
-
-const MARS_WORLD_SCALE =
+const MARS_SCALE =
     1;
 
 
-const MARS_WORLD_ROTATION_Y =
+const MARS_ROTATION_Y =
     0;
 
 
 
 /* =========================================================
-   DEBUG MASK
+   MASK DEBUG
 
-   FALSE:
-   mask is invisible like it should be.
-
-   TRUE:
-   mask becomes bright pink so you can
-   see exactly where it is.
+   Change to true if you want to see
+   PortalMask as a bright pink rectangle.
 ========================================================= */
 
 
-const SHOW_MASK_FOR_DEBUG =
+const SHOW_MASK =
     false;
 
 
@@ -209,7 +186,7 @@ const canvas =
 
 
 /* =========================================================
-   DEVICE
+   DEVICE DETECTION
 ========================================================= */
 
 
@@ -232,6 +209,7 @@ const isIOS =
     );
 
 
+
 const isAndroid =
 
     /Android/i.test(
@@ -241,7 +219,7 @@ const isAndroid =
 
 
 /* =========================================================
-   THREE.JS VARIABLES
+   THREE VARIABLES
 ========================================================= */
 
 
@@ -275,7 +253,7 @@ let reticle;
 
 
 /* =========================================================
-   PORTAL
+   PORTAL VARIABLES
 ========================================================= */
 
 
@@ -299,12 +277,12 @@ let portalMask =
     null;
 
 
-let portalLoaded =
-    false;
+let portalMixer =
+    null;
 
 
-let marsLoaded =
-    false;
+let marsMixer =
+    null;
 
 
 let experienceReady =
@@ -315,7 +293,7 @@ let portalPlaced =
     false;
 
 
-let modelRotation =
+let portalRotation =
     0;
 
 
@@ -323,27 +301,13 @@ let userScale =
     1;
 
 
-
-/* =========================================================
-   ANIMATION MIXERS
-========================================================= */
-
-
-let portalMixer =
-    null;
-
-
-let marsMixer =
-    null;
-
-
-const animationClock =
+const clock =
     new THREE.Clock();
 
 
 
 /* =========================================================
-   INITIALIZE
+   START PAGE
 ========================================================= */
 
 
@@ -353,6 +317,15 @@ function initializePage() {
     startARButton.disabled =
         true;
 
+
+
+    /*
+        iPHONE / iPAD
+
+        We do not start WebXR.
+
+        The HTML Quick Look buttons are used instead.
+    */
 
 
     if (
@@ -366,14 +339,31 @@ function initializePage() {
 
 
 
+        startARButton.disabled =
+            true;
+
+
+
+        startARButton.innerHTML = `
+
+            <span class="button-icon">
+                ◉
+            </span>
+
+            ANDROID WEBXR PORTAL
+
+        `;
+
+
+
         supportMessage.textContent =
 
-            "iPhone/iPad detected. The full stencil portal currently requires WebXR on Android.";
+            "iPhone/iPad detected — use one of the Apple AR buttons below.";
 
 
 
         supportMessage.className =
-            "support-message warning";
+            "support-message good";
 
 
 
@@ -406,7 +396,7 @@ function initializePage() {
 
 
 /* =========================================================
-   THREE.JS
+   CREATE THREE
 ========================================================= */
 
 
@@ -435,7 +425,7 @@ function createThreeJS() {
 
 
     /*
-        STENCIL MUST BE TRUE.
+        stencil:true IS REQUIRED
     */
 
     renderer =
@@ -491,11 +481,6 @@ function createThreeJS() {
 
 
 
-    renderer.autoClear =
-        true;
-
-
-
     renderer.xr.enabled =
         true;
 
@@ -522,9 +507,9 @@ function createThreeJS() {
 
             0xffffff,
 
-            0x332211,
+            0x442211,
 
-            2.2
+            2.4
 
         );
 
@@ -535,29 +520,29 @@ function createThreeJS() {
 
 
 
-    const keyLight =
+    const sunLight =
         new THREE.DirectionalLight(
 
             0xffd0a0,
 
-            2.5
+            2.8
 
         );
 
 
-    keyLight.position.set(
+    sunLight.position.set(
 
         4,
 
-        6,
+        7,
 
-        3
+        4
 
     );
 
 
     scene.add(
-        keyLight
+        sunLight
     );
 
 
@@ -574,7 +559,7 @@ function createThreeJS() {
 
     fillLight.position.set(
 
-        -3,
+        -4,
 
         3,
 
@@ -604,7 +589,7 @@ function createThreeJS() {
 
         "select",
 
-        onSelect
+        placePortal
 
     );
 
@@ -616,7 +601,7 @@ function createThreeJS() {
 
 
 
-    loadPortalExperience();
+    loadExperience();
 
 
 
@@ -624,7 +609,7 @@ function createThreeJS() {
 
         "resize",
 
-        onWindowResize
+        resize
 
     );
 
@@ -646,7 +631,7 @@ function createReticle() {
 
             0.15,
 
-            0.19,
+            0.20,
 
             64
 
@@ -713,7 +698,7 @@ function createReticle() {
 
 
 /* =========================================================
-   GLTF LOADER PROMISE
+   LOAD GLB
 ========================================================= */
 
 
@@ -729,10 +714,10 @@ function loadGLB(
 
     return new Promise(
 
-        function (
+        (
             resolve,
             reject
-        ) {
+        ) => {
 
 
             loader.load(
@@ -758,11 +743,11 @@ function loadGLB(
 
 
 /* =========================================================
-   LOAD BOTH MODELS
+   LOAD PORTAL + MARS
 ========================================================= */
 
 
-async function loadPortalExperience() {
+async function loadExperience() {
 
 
     try {
@@ -770,7 +755,7 @@ async function loadPortalExperience() {
 
         supportMessage.textContent =
 
-            "Loading portal frame...";
+            "Loading portal model...";
 
 
 
@@ -787,14 +772,9 @@ async function loadPortalExperience() {
 
 
 
-        portalLoaded =
-            true;
-
-
-
         supportMessage.textContent =
 
-            "Portal loaded. Loading Mars...";
+            "Portal loaded. Loading Mars environment...";
 
 
 
@@ -811,13 +791,8 @@ async function loadPortalExperience() {
 
 
 
-        marsLoaded =
-            true;
-
-
-
         /* =================================================
-           ROOT STRUCTURE
+           ROOT
         ================================================= */
 
 
@@ -837,7 +812,7 @@ async function loadPortalExperience() {
 
 
         contentGroup.name =
-            "MarsPortalContent";
+            "PortalContent";
 
 
 
@@ -848,44 +823,40 @@ async function loadPortalExperience() {
 
 
         /* =================================================
-           POSITION MARS BEHIND PORTAL
+           MARS POSITION
         ================================================= */
 
 
         marsScene.position.set(
 
-            MARS_WORLD_OFFSET_X,
+            MARS_OFFSET_X,
 
-            MARS_WORLD_OFFSET_Y,
+            MARS_OFFSET_Y,
 
-            MARS_WORLD_OFFSET_Z
+            MARS_OFFSET_Z
 
         );
 
 
 
         marsScene.scale.setScalar(
-            MARS_WORLD_SCALE
+            MARS_SCALE
         );
 
 
 
         marsScene.rotation.y =
+
             THREE.MathUtils.degToRad(
-                MARS_WORLD_ROTATION_Y
+                MARS_ROTATION_Y
             );
 
-
-
-        /*
-            Mars first or portal first here does not matter.
-            renderOrder controls rendering.
-        */
 
 
         contentGroup.add(
             marsScene
         );
+
 
 
         contentGroup.add(
@@ -895,14 +866,14 @@ async function loadPortalExperience() {
 
 
         /* =================================================
-           FIND MASK
+           FIND PORTAL MASK
         ================================================= */
 
 
         portalMask =
 
             portalScene.getObjectByName(
-                MASK_OBJECT_NAME
+                PORTAL_MASK_NAME
             );
 
 
@@ -914,7 +885,7 @@ async function loadPortalExperience() {
 
             throw new Error(
 
-                "Portalbox.glb loaded, but no Blender object named PortalMask was found."
+                "Portalbox.glb loaded but there is no mesh named PortalMask."
 
             );
 
@@ -933,25 +904,20 @@ async function loadPortalExperience() {
 
 
 
-        /* =================================================
-           CONFIGURE STENCIL
-        ================================================= */
-
-
-        configurePortalMask();
+        setupMask();
 
 
 
-        configureMarsWorld();
+        setupMarsMaterials();
 
 
 
-        configurePortalFrame();
+        setupPortalFrame();
 
 
 
         /* =================================================
-           PORTAL SIZE
+           SCALE PORTAL TO DOORWAY HEIGHT
         ================================================= */
 
 
@@ -961,7 +927,7 @@ async function loadPortalExperience() {
 
 
 
-        const portalBounds =
+        const bounds =
 
             new THREE.Box3()
                 .setFromObject(
@@ -970,38 +936,30 @@ async function loadPortalExperience() {
 
 
 
-        const portalSize =
+        const size =
 
-            portalBounds.getSize(
+            bounds.getSize(
                 new THREE.Vector3()
             );
 
 
 
-        const portalCenter =
+        const center =
 
-            portalBounds.getCenter(
+            bounds.getCenter(
                 new THREE.Vector3()
             );
 
 
 
         if (
-
-            !Number.isFinite(
-                portalSize.y
-            )
-
-            ||
-
-            portalSize.y <= 0
-
+            size.y <= 0
         ) {
 
 
             throw new Error(
 
-                "Portal model has invalid dimensions."
+                "Portal model has invalid height."
 
             );
 
@@ -1010,36 +968,28 @@ async function loadPortalExperience() {
 
 
 
-        /* =================================================
-           MOVE PORTAL BOTTOM CENTER TO ORIGIN
-
-           Because world and portal are in contentGroup,
-           both move together.
-        ================================================= */
+        /*
+            Put bottom center of portal at origin.
+        */
 
 
         contentGroup.position.x -=
-            portalCenter.x;
+            center.x;
 
 
         contentGroup.position.y -=
-            portalBounds.min.y;
+            bounds.min.y;
 
 
         contentGroup.position.z -=
-            portalCenter.z;
+            center.z;
 
-
-
-        /* =================================================
-           SCALE PORTAL TO ABOUT 2.2 METERS TALL
-        ================================================= */
 
 
         const baseScale =
 
             TARGET_PORTAL_HEIGHT /
-            portalSize.y;
+            size.y;
 
 
 
@@ -1061,23 +1011,17 @@ async function loadPortalExperience() {
 
 
         /* =================================================
-           ANIMATIONS
+           PORTAL ANIMATIONS
         ================================================= */
 
 
         if (
-
-            portalGLTF.animations
-
-            &&
-
-            portalGLTF.animations.length > 0
-
+            portalGLTF.animations.length >
+            0
         ) {
 
 
             portalMixer =
-
                 new THREE.AnimationMixer(
                     portalScene
                 );
@@ -1086,15 +1030,13 @@ async function loadPortalExperience() {
 
             portalGLTF.animations.forEach(
 
-                function (clip) {
-
+                clip => {
 
                     portalMixer
                         .clipAction(
                             clip
                         )
                         .play();
-
 
                 }
 
@@ -1105,19 +1047,18 @@ async function loadPortalExperience() {
 
 
 
+        /* =================================================
+           MARS ANIMATIONS
+        ================================================= */
+
+
         if (
-
-            marsGLTF.animations
-
-            &&
-
-            marsGLTF.animations.length > 0
-
+            marsGLTF.animations.length >
+            0
         ) {
 
 
             marsMixer =
-
                 new THREE.AnimationMixer(
                     marsScene
                 );
@@ -1126,15 +1067,13 @@ async function loadPortalExperience() {
 
             marsGLTF.animations.forEach(
 
-                function (clip) {
-
+                clip => {
 
                     marsMixer
                         .clipAction(
                             clip
                         )
                         .play();
-
 
                 }
 
@@ -1152,7 +1091,7 @@ async function loadPortalExperience() {
 
         supportMessage.textContent =
 
-            "Portal and Mars world loaded successfully.";
+            "Portal and Mars environment loaded.";
 
 
 
@@ -1161,7 +1100,7 @@ async function loadPortalExperience() {
 
 
 
-        checkWebXRSupport();
+        checkARSupport();
 
 
     }
@@ -1173,7 +1112,7 @@ async function loadPortalExperience() {
 
         console.error(
 
-            "Mars Portal loading error:",
+            "Portal loading error:",
 
             error
 
@@ -1206,12 +1145,12 @@ async function loadPortalExperience() {
 /* =========================================================
    PORTAL MASK
 
-   Invisible to the camera,
-   but writes 1 into stencil buffer.
+   Does not draw color.
+   Writes stencil value 1.
 ========================================================= */
 
 
-function configurePortalMask() {
+function setupMask() {
 
 
     portalMask.frustumCulled =
@@ -1231,14 +1170,8 @@ function configurePortalMask() {
             color:
                 0xff00ff,
 
-            /*
-                FALSE = invisible.
-
-                TRUE = bright pink debugging mask.
-            */
-
             colorWrite:
-                SHOW_MASK_FOR_DEBUG,
+                SHOW_MASK,
 
             depthWrite:
                 false,
@@ -1248,8 +1181,6 @@ function configurePortalMask() {
 
             side:
                 THREE.DoubleSide,
-
-
 
             stencilWrite:
                 true,
@@ -1277,29 +1208,23 @@ function configurePortalMask() {
 
 
 /* =========================================================
-   MARS WORLD
-
-   Only render wherever stencil = 1.
+   MARS MATERIALS
 ========================================================= */
 
 
-function configureMarsWorld() {
+function setupMarsMaterials() {
 
 
     marsScene.traverse(
 
-        function (
-            child
-        ) {
+        child => {
 
 
             if (
                 !child.isMesh
             ) {
 
-
                 return;
-
 
             }
 
@@ -1325,9 +1250,7 @@ function configureMarsWorld() {
                 child.material =
 
                     child.material.map(
-
-                        prepareMarsMaterial
-
+                        makeStencilMaterial
                     );
 
 
@@ -1340,7 +1263,7 @@ function configureMarsWorld() {
 
                 child.material =
 
-                    prepareMarsMaterial(
+                    makeStencilMaterial(
                         child.material
                     );
 
@@ -1358,17 +1281,17 @@ function configureMarsWorld() {
 
 
 /* =========================================================
-   CLONE MATERIAL + ADD STENCIL
+   COPY MATERIAL + REQUIRE STENCIL 1
 ========================================================= */
 
 
-function prepareMarsMaterial(
-    originalMaterial
+function makeStencilMaterial(
+    original
 ) {
 
 
     const material =
-        originalMaterial.clone();
+        original.clone();
 
 
 
@@ -1416,41 +1339,32 @@ function prepareMarsMaterial(
 
 /* =========================================================
    PORTAL FRAME
-
-   Everything except PortalMask renders normally.
 ========================================================= */
 
 
-function configurePortalFrame() {
+function setupPortalFrame() {
 
 
     portalScene.traverse(
 
-        function (
-            child
-        ) {
+        child => {
 
 
             if (
                 !child.isMesh
             ) {
 
-
                 return;
-
 
             }
 
 
 
             if (
-                child ===
-                portalMask
+                child === portalMask
             ) {
 
-
                 return;
-
 
             }
 
@@ -1475,20 +1389,18 @@ function configurePortalFrame() {
 
 
 /* =========================================================
-   WEBXR SUPPORT
+   CHECK WEBXR
 ========================================================= */
 
 
-async function checkWebXRSupport() {
+async function checkARSupport() {
 
 
     if (
         !experienceReady
     ) {
 
-
         return;
-
 
     }
 
@@ -1501,17 +1413,12 @@ async function checkWebXRSupport() {
 
         supportMessage.textContent =
 
-            "AR requires HTTPS. Open the published GitHub Pages URL.";
+            "AR requires HTTPS.";
 
 
 
         supportMessage.className =
             "support-message bad";
-
-
-
-        startARButton.disabled =
-            true;
 
 
 
@@ -1529,17 +1436,12 @@ async function checkWebXRSupport() {
 
         supportMessage.textContent =
 
-            "WebXR is not available. Use Chrome on a supported Android device.";
+            "WebXR is unavailable. Android users should open this page in Chrome.";
 
 
 
         supportMessage.className =
             "support-message warning";
-
-
-
-        startARButton.disabled =
-            true;
 
 
 
@@ -1573,7 +1475,7 @@ async function checkWebXRSupport() {
 
             supportMessage.textContent =
 
-                "Mars Portal loaded — tap START MARS PORTAL AR.";
+                "Mars Portal ready — tap START MARS PORTAL AR.";
 
 
 
@@ -1593,7 +1495,7 @@ async function checkWebXRSupport() {
 
             supportMessage.textContent =
 
-                "This phone does not report immersive WebXR AR support.";
+                "This device does not report immersive WebXR AR support.";
 
 
 
@@ -1614,17 +1516,6 @@ async function checkWebXRSupport() {
         console.error(
             error
         );
-
-
-
-        supportMessage.textContent =
-
-            "Could not confirm WebXR support.";
-
-
-
-        supportMessage.className =
-            "support-message bad";
 
 
     }
@@ -1648,28 +1539,7 @@ async function startAR() {
 
 
         alert(
-
-            "Portal models are still loading."
-
-        );
-
-
-        return;
-
-
-    }
-
-
-
-    if (
-        !navigator.xr
-    ) {
-
-
-        alert(
-
-            "WebXR is not available on this browser."
-
+            "Portal is still loading."
         );
 
 
@@ -1761,7 +1631,7 @@ async function startAR() {
 
             "end",
 
-            onSessionEnded
+            sessionEnded
 
         );
 
@@ -1771,12 +1641,14 @@ async function startAR() {
             false;
 
 
+
+        portalRotation =
+            0;
+
+
+
         userScale =
             1;
-
-
-        modelRotation =
-            0;
 
 
 
@@ -1802,7 +1674,7 @@ async function startAR() {
 
 
 
-        animationClock.start();
+        clock.start();
 
 
 
@@ -1820,7 +1692,7 @@ async function startAR() {
 
         console.error(
 
-            "Could not start AR:",
+            "AR failed:",
 
             error
 
@@ -1830,7 +1702,7 @@ async function startAR() {
 
         alert(
 
-            "AR could not start. Check Chrome, camera permissions and WebXR support."
+            "Could not start AR. Check camera permissions and Chrome/WebXR support."
 
         );
 
@@ -1843,7 +1715,7 @@ async function startAR() {
 
 
 /* =========================================================
-   RENDER
+   RENDER LOOP
 ========================================================= */
 
 
@@ -1854,7 +1726,7 @@ function render(
 
 
     const delta =
-        animationClock.getDelta();
+        clock.getDelta();
 
 
 
@@ -1886,11 +1758,6 @@ function render(
 
 
 
-    /* =====================================================
-       HIT TEST
-    ===================================================== */
-
-
     if (
 
         frame
@@ -1910,7 +1777,7 @@ function render(
     ) {
 
 
-        const results =
+        const hits =
 
             frame.getHitTestResults(
                 hitTestSource
@@ -1919,13 +1786,14 @@ function render(
 
 
         if (
-            results.length > 0
+            hits.length >
+            0
         ) {
 
 
             const pose =
 
-                results[0].getPose(
+                hits[0].getPose(
                     localReferenceSpace
                 );
 
@@ -1949,7 +1817,7 @@ function render(
 
                 arStatus.textContent =
 
-                    "Floor found — tap to place the Mars portal";
+                    "Floor found — tap to place the portal";
 
 
 
@@ -1964,7 +1832,7 @@ function render(
                     </strong>
 
                     <span>
-                        Place the portal here
+                        Open the portal here
                     </span>
 
                 `;
@@ -1995,11 +1863,6 @@ function render(
 
 
 
-    /* =====================================================
-       RETICLE PULSE
-    ===================================================== */
-
-
     if (
         reticle.visible
     ) {
@@ -2013,12 +1876,12 @@ function render(
 
             Math.sin(
                 timestamp *
-                .005
+                0.005
             )
 
             *
 
-            .08;
+            0.08;
 
 
 
@@ -2051,11 +1914,11 @@ function render(
 
 
 /* =========================================================
-   TAP TO PLACE
+   PLACE PORTAL
 ========================================================= */
 
 
-function onSelect() {
+function placePortal() {
 
 
     if (
@@ -2084,8 +1947,10 @@ function onSelect() {
         new THREE.Vector3();
 
 
+
     const quaternion =
         new THREE.Quaternion();
+
 
 
     const scale =
@@ -2115,7 +1980,7 @@ function onSelect() {
 
         0,
 
-        modelRotation,
+        portalRotation,
 
         0
 
@@ -2158,7 +2023,7 @@ function onSelect() {
 
     arStatus.textContent =
 
-        "Mars Portal placed — move around and look through it";
+        "Portal opened — move around and look into Mars";
 
 
 }
@@ -2177,15 +2042,13 @@ function rotatePortal() {
         !portalPlaced
     ) {
 
-
         return;
-
 
     }
 
 
 
-    modelRotation +=
+    portalRotation +=
 
         THREE.MathUtils.degToRad(
             30
@@ -2194,7 +2057,7 @@ function rotatePortal() {
 
 
     portalRoot.rotation.y =
-        modelRotation;
+        portalRotation;
 
 
 }
@@ -2213,9 +2076,7 @@ function makeSmaller() {
         !portalPlaced
     ) {
 
-
         return;
-
 
     }
 
@@ -2228,7 +2089,7 @@ function makeSmaller() {
             MIN_USER_SCALE,
 
             userScale -
-            .1
+            0.1
 
         );
 
@@ -2255,9 +2116,7 @@ function makeLarger() {
         !portalPlaced
     ) {
 
-
         return;
-
 
     }
 
@@ -2270,7 +2129,7 @@ function makeLarger() {
             MAX_USER_SCALE,
 
             userScale +
-            .15
+            0.15
 
         );
 
@@ -2291,6 +2150,16 @@ function makeLarger() {
 
 
 function placeAgain() {
+
+
+    if (
+        !portalRoot
+    ) {
+
+        return;
+
+    }
+
 
 
     portalRoot.visible =
@@ -2331,7 +2200,7 @@ function placeAgain() {
         </strong>
 
         <span>
-            Move your phone to detect another surface
+            Move your phone around
         </span>
 
     `;
@@ -2354,7 +2223,25 @@ async function exitAR() {
     ) {
 
 
-        await xrSession.end();
+        try {
+
+
+            await xrSession.end();
+
+
+        }
+
+        catch (
+            error
+        ) {
+
+
+            console.error(
+                error
+            );
+
+
+        }
 
 
     }
@@ -2365,11 +2252,11 @@ async function exitAR() {
 
 
 /* =========================================================
-   SESSION ENDED
+   SESSION END
 ========================================================= */
 
 
-function onSessionEnded() {
+function sessionEnded() {
 
 
     renderer.setAnimationLoop(
@@ -2412,15 +2299,15 @@ function onSessionEnded() {
         null;
 
 
-    xrSession =
-        null;
-
-
     viewerReferenceSpace =
         null;
 
 
     localReferenceSpace =
+        null;
+
+
+    xrSession =
         null;
 
 
@@ -2443,8 +2330,16 @@ function onSessionEnded() {
 
 
 
-    reticle.visible =
-        false;
+    if (
+        reticle
+    ) {
+
+
+        reticle.visible =
+            false;
+
+
+    }
 
 
 
@@ -2468,22 +2363,15 @@ function onSessionEnded() {
 ========================================================= */
 
 
-function onWindowResize() {
+function resize() {
 
 
     if (
-
-        !camera
-
-        ||
-
+        !camera ||
         !renderer
-
     ) {
 
-
         return;
-
 
     }
 
@@ -2574,7 +2462,7 @@ exitARButton.addEventListener(
 
 
 /* =========================================================
-   START
+   INITIALIZE
 ========================================================= */
 
 
