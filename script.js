@@ -169,7 +169,8 @@ const projects = [
     contribution:
         "Interactive development, 3D learning design and WebGL deployment.",
     tags: ["Unity", "WebGL", "Biology", "3D"],
-    image: "./assets/projects/digestion-expedition.jpg"
+    image: "./assets/projects/digestion-expedition.jpg",
+    video: "https://www.youtube.com/embed/kIepQ8apfgY?rel=0"
 },
 
 
@@ -187,7 +188,8 @@ const projects = [
     contribution:
         "Unity/WebGL interactive development and educational gameplay implementation.",
     tags: ["Unity", "WebGL", "Math"],
-    image: "./assets/projects/melting-room.jpg"
+    image: "./assets/projects/melting-room.jpg",
+    video: "https://www.youtube.com/embed/NDD5Nxt_F_Q?rel=0"
 },
 
 {
@@ -200,7 +202,8 @@ const projects = [
     contribution:
         "Unity/WebGL development, interactions and educational implementation.",
     tags: ["Unity", "WebGL", "Math"],
-    image: "./assets/projects/decorating-room.jpg"
+    image: "./assets/projects/decorating-room.jpg",
+    video: "https://www.youtube.com/embed/NDD5Nxt_F_Q?rel=0"
 },
 
 {
@@ -213,7 +216,8 @@ const projects = [
     contribution:
         "Interactive Unity/WebGL development and educational gameplay systems.",
     tags: ["Unity", "WebGL", "Math"],
-    image: "./assets/projects/packing-room.jpg"
+    image: "./assets/projects/packing-room.jpg",
+    video: "https://www.youtube.com/embed/NDD5Nxt_F_Q?rel=0"
 },
 
 {
@@ -226,7 +230,8 @@ const projects = [
     contribution:
         "Unity/WebGL development and interactive learning systems.",
     tags: ["Unity", "WebGL", "Math"],
-    image: "./assets/projects/shipping-room.jpg"
+    image: "./assets/projects/shipping-room.jpg",
+    video: "https://www.youtube.com/embed/NDD5Nxt_F_Q?rel=0"
 },
 
 {
@@ -239,7 +244,8 @@ const projects = [
     contribution:
         "Unity/WebGL interactive development and educational systems.",
     tags: ["Unity", "WebGL", "Math"],
-    image: "./assets/projects/sip-stop.jpg"
+    image: "./assets/projects/sip-stop.jpg",
+    video: "https://www.youtube.com/embed/NDD5Nxt_F_Q?rel=0"
 },
 
 {
@@ -252,7 +258,8 @@ const projects = [
     contribution:
         "Unity/WebGL development, UI and educational interactions.",
     tags: ["Unity", "WebGL", "Math"],
-    image: "./assets/projects/starter-station.jpg"
+    image: "./assets/projects/starter-station.jpg",
+    video: "https://www.youtube.com/embed/NDD5Nxt_F_Q?rel=0"
 },
 
 {
@@ -265,7 +272,8 @@ const projects = [
     contribution:
         "Unity/WebGL development and educational gameplay systems.",
     tags: ["Unity", "WebGL", "Math"],
-    image: "./assets/projects/main-train.jpg"
+    image: "./assets/projects/main-train.jpg",
+    video: "https://www.youtube.com/embed/NDD5Nxt_F_Q?rel=0"
 },
 
 {
@@ -278,7 +286,8 @@ const projects = [
     contribution:
         "Unity/WebGL development and interactive educational implementation.",
     tags: ["Unity", "WebGL", "Math"],
-    image: "./assets/projects/dessert-den.jpg"
+    image: "./assets/projects/dessert-den.jpg",
+    video: "https://www.youtube.com/embed/NDD5Nxt_F_Q?rel=0"
 },
 
 
@@ -571,7 +580,8 @@ const projects = [
     contribution:
         "Interactive development, educational presentation and 3D experience work.",
     tags: ["WebGL", "History", "Interactive"],
-    image: "./assets/projects/spanish-conquest.jpg"
+    image: "./assets/projects/spanish-conquest.jpg",
+    video: "https://www.youtube.com/embed/Ch2ERNfJYGc?rel=0"
 },
 
 {
@@ -597,7 +607,8 @@ const projects = [
     contribution:
         "Interactive experience development and 3D educational presentation.",
     tags: ["WebGL", "3D", "History"],
-    image: "./assets/projects/threads-innovation.jpg"
+    image: "./assets/projects/threads-innovation.jpg",
+    video: "https://www.youtube.com/embed/1aBrbd3m3nI?rel=0"
 },
 
 {
@@ -610,7 +621,8 @@ const projects = [
     contribution:
         "Interactive game development and educational experience implementation.",
     tags: ["Game", "WebGL", "Language Arts"],
-    image: "./assets/projects/grammar-glider.jpg"
+    image: "./assets/projects/grammar-glider.jpg",
+    video: "https://www.youtube.com/embed/Qeze-hwR49s?rel=0"
 },
 
 
