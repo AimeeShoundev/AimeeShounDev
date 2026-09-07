@@ -1,0 +1,28 @@
+THE SHOUN FILES — AIMEE SHOUN
+
+Use the updated portfolio
+1. Replace index.html, style.css and script.js in your existing portfolio folder.
+2. Keep all three filenames exactly as shown, in the same folder.
+3. Keep your existing assets folder. The resume link still points to
+   assets/Aimee-Shoun-Resume.pdf. Original project images are used when available.
+4. Open index.html, or upload the three files to your existing GitHub Pages folder.
+   No build, installation or API key is required.
+
+The three featured video stills are embedded in the HTML/JavaScript, so the new
+main artwork is already included. Other projects have a designed title display
+if their original image is unavailable. Videos, live demos and Google Fonts use
+the internet; system fonts are available as a fallback. If an embedded YouTube
+video cannot play locally, use its Watch on YouTube link.
+
+The redesign retains all 74 project records, the six demo/reel links, project
+videos, contributions, search, category filters, developer details, experience,
+contact links and the original resume path. The resume PDF and older image
+folder were not supplied with this revision and are not in this ZIP.
+
+Featured image sources (stills from the existing portfolio videos)
+Fun Factory: https://www.youtube.com/watch?v=NDD5Nxt_F_Q
+Digestion Expedition: https://www.youtube.com/watch?v=kIepQ8apfgY
+Thermo Fisher VR: https://www.youtube.com/watch?v=HkSuaNHNdr0
+
+Checks: JavaScript syntax, project-data preservation, search/filter cases,
+HTML structure and link/ID references. Browser testing was not performed.
