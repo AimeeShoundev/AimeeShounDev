@@ -930,16 +930,16 @@ const projects = [
     "title": "Thermo Fisher Scientific Nunc Automatic Cell Factory Manipulator",
     "collection": "VR & Simulation",
     "category": "xr",
-    "type": "3D VR Experience",
+    "type": "VR Training • Senior Team Project",
     "featured": true,
-    "description": "Immersive 3D VR experience showcasing the Thermo Fisher Scientific Nunc Automatic Cell Factory Manipulator inside an interactive virtual environment.",
-    "contribution": "3D VR experience development, interactive presentation and immersive visualization.",
+    "description": "Collaborative Utah Valley University senior project simulating the Thermo Fisher Scientific Nunc Automatic Cell Factory Manipulator in virtual reality.",
+    "contribution": "Created and prepared 3D equipment assets in Autodesk Maya and contributed Unreal Engine 5 Blueprint interactions and VR training workflows as part of the senior project team.",
     "tags": [
       "VR",
-      "3D",
-      "Unity",
-      "Simulation",
-      "Interactive Training"
+      "Unreal Engine 5",
+      "Blueprints",
+      "Autodesk Maya",
+      "Simulation"
     ],
     "image": "https://img.youtube.com/vi/HkSuaNHNdr0/maxresdefault.jpg",
     "video": "https://www.youtube.com/embed/HkSuaNHNdr0?rel=0",
@@ -1083,22 +1083,28 @@ const categoryInfo = [
 
 const featuredProjects = [
   {
-    projectTitle: "Melting Room", title: "Fun\nFactory.",
-    category: "MATH / INTERACTIVE LEARNING", image: "fun-factory",
-    description: "A little geometry. A whole world of candy.",
-    alt: "Colorful geometry quiz kiosk in the Fun Factory project video"
+    "projectTitle": "Thermo Fisher Scientific Nunc Automatic Cell Factory Manipulator",
+    "title": "Virtual\ntraining.",
+    "category": "VR / THERMO FISHER",
+    "image": "vr",
+    "description": "An Unreal Engine VR training experience. UVU senior team project.",
+    "alt": "Presentation of an animated 3D cell factory model from the Thermo Fisher VR project video"
   },
   {
-    projectTitle: "Digestion Expedition", title: "Digestion\nExpedition.",
-    category: "SCIENCE / STRIDER VOYAGER", image: "digestion",
-    description: "Biology becomes a place to explore.",
-    alt: "A learner exploring the digestive-system game in the Digestion Expedition video"
+    "projectTitle": "Melting Room",
+    "title": "Fun\nFactory.",
+    "category": "MATH / INTERACTIVE LEARNING",
+    "image": "fun-factory",
+    "description": "A little geometry. A whole world of candy.",
+    "alt": "Colorful geometry quiz kiosk in the Fun Factory project video"
   },
   {
-    projectTitle: "Thermo Fisher Scientific Nunc Automatic Cell Factory Manipulator",
-    title: "Virtual\ntraining.", category: "VR / THERMO FISHER", image: "vr",
-    description: "Equipment, interaction and a virtual environment.",
-    alt: "Presentation of an animated 3D cell factory model from the Thermo Fisher VR project video"
+    "projectTitle": "Digestion Expedition",
+    "title": "Digestion\nExpedition.",
+    "category": "SCIENCE / STRIDER VOYAGER",
+    "image": "digestion",
+    "description": "Biology becomes a place to explore.",
+    "alt": "A learner exploring the digestive-system game in the Digestion Expedition video"
   }
 ];
 
@@ -1231,7 +1237,7 @@ document.querySelectorAll("[data-total-projects]").forEach(element => {
 function getProjectImage(project) {
   if (project.title === "Digestion Expedition") return projectStills.digestion;
   if (project.collection === "Fun Factory") return projectStills["fun-factory"];
-  if (project.title === featuredProjects[2].projectTitle) return projectStills.vr;
+  if (project.title === featuredProjects.find(feature => feature.image === "vr").projectTitle) return projectStills.vr;
   return project.image || "";
 }
 

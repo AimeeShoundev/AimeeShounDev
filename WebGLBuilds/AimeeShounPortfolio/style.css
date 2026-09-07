@@ -36,6 +36,8 @@ h1, h2, h3, p { margin: 0; }
 .site-nav { display: flex; align-items: center; gap: clamp(1.2rem, 2.3vw, 2.8rem); font-size: .94rem; }
 .site-nav a { padding-block: .6rem; border-bottom: 2px solid transparent; }
 .site-nav a:hover { border-color: var(--orange); }
+.site-nav .nav-resume { padding: .6rem .8rem; background: var(--orange); border: 1px solid var(--ink); white-space: nowrap; }
+.site-nav .nav-resume:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .menu-button { display: none; border: 1px solid var(--ink); background: none; padding: .5rem .85rem; }
 .hero { padding: 1.15rem var(--gutter) 0; }
 .edition-line, .eyebrow, .section-note, .hero-footer, .hero-aside, .feature-meta, .folder-tab, .file-number, .feature-tabs, .side-caption, .demo-type, .archive-status, .experience-date, .footer-line, .modal-topbar, .archive-footnote { font-family: var(--mono); }
@@ -232,6 +234,14 @@ h1, h2, h3, p { margin: 0; }
   .archive-tools { grid-template-columns: 1fr; gap: 1.1rem; }
   .search-field { max-width: 28rem; }
   .about-layout { gap: 5%; }
+}
+@media (max-width: 960px) {
+  .site-header { position: relative; gap: 1rem; }
+  .menu-button { display: inline-flex; align-items: center; gap: .75rem; font-size: .875rem; }
+  .site-nav { display: none; position: absolute; top: 100%; left: 0; right: 0; z-index: 10; padding: .7rem var(--gutter) 1.1rem; border-bottom: 1px solid var(--ink); background: var(--paper); flex-direction: column; align-items: stretch; gap: 0; }
+  .site-nav.is-open { display: flex; }
+  .site-nav a { padding: .8rem 0; }
+  .site-nav .nav-resume { margin-top: .5rem; }
 }
 @media (max-width: 760px) {
   .site-header { gap: 1rem; min-height: 5rem; position: relative; }

@@ -1,28 +1,43 @@
-THE SHOUN FILES — AIMEE SHOUN
+THE SHOUN FILES - AIMEE SHOUN
 
-Use the updated portfolio
-1. Replace index.html, style.css and script.js in your existing portfolio folder.
-2. Keep all three filenames exactly as shown, in the same folder.
-3. Keep your existing assets folder. The resume link still points to
-   assets/Aimee-Shoun-Resume.pdf. Original project images are used when available.
-4. Open index.html, or upload the three files to your existing GitHub Pages folder.
+This update starts with VR and includes your revised resume.
+
+INSTALL
+1. Unzip into your existing portfolio folder.
+2. Replace index.html, style.css and script.js with the versions in this ZIP.
+3. Merge the included assets folder with your existing assets folder.
+   Replace assets/Aimee-Shoun-Resume.pdf with this updated PDF.
+   Keep your other project images and files.
+4. Open index.html or upload the files to your GitHub Pages folder.
    No build, installation or API key is required.
 
-The three featured video stills are embedded in the HTML/JavaScript, so the new
-main artwork is already included. Other projects have a designed title display
-if their original image is unavailable. Videos, live demos and Google Fonts use
-the internet; system fonts are available as a fallback. If an embedded YouTube
-video cannot play locally, use its Watch on YouTube link.
+INCLUDED
+index.html
+style.css
+script.js
+assets/Aimee-Shoun-Resume.pdf
 
-The redesign retains all 74 project records, the six demo/reel links, project
-videos, contributions, search, category filters, developer details, experience,
-contact links and the original resume path. The resume PDF and older image
-folder were not supplied with this revision and are not in this ZIP.
+The navigation and About section both link to the included resume.
+VR is the first featured project, first collection shortcut and first archive
+category. The Thermo Fisher entry now correctly describes your UVU senior team
+project with Unreal Engine Blueprints and Autodesk Maya.
 
-Featured image sources (stills from the existing portfolio videos)
+All 74 project records remain available. Three project stills are embedded in
+the files. Your existing project images will be used when present; a readable
+project-title display appears when an older image is unavailable.
+
+Videos, demos and Google Fonts use the internet. System fonts are available as
+a fallback. If a YouTube embed cannot play locally, use Watch on YouTube.
+
+The resume is a one-page PDF with clickable email, portfolio, LinkedIn and
+ArtStation links. It covers VR, Unity, WebGL, 3D production, optimization and
+Python/OpenAI Agents SDK prototyping. GSAP has been removed.
+
+Featured image sources (stills from your existing portfolio videos)
+Thermo Fisher VR: https://www.youtube.com/watch?v=HkSuaNHNdr0
 Fun Factory: https://www.youtube.com/watch?v=NDD5Nxt_F_Q
 Digestion Expedition: https://www.youtube.com/watch?v=kIepQ8apfgY
-Thermo Fisher VR: https://www.youtube.com/watch?v=HkSuaNHNdr0
 
-Checks: JavaScript syntax, project-data preservation, search/filter cases,
-HTML structure and link/ID references. Browser testing was not performed.
+Checks: resume rendering, PDF text and links, JavaScript syntax, project record
+integrity, VR-first ordering, thumbnail mapping and local resume references.
+Browser testing was not performed.
