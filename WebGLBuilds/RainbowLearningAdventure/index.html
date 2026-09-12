@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rainbow Learning Adventure</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section id="startScreen" class="screen active" aria-labelledby="gameTitle">
+      <div class="rainbow-title">🌈</div>
+      <h1 id="gameTitle">Rainbow Learning Adventure!</h1>
+      <p class="subtitle">Learn colors, numbers, letters, shapes, animals, and objects.</p>
+
+      <div class="category-grid" aria-label="Learning categories">
+        <div class="category-card">🎨<span>Colors</span></div>
+        <div class="category-card">🔢<span>Numbers</span></div>
+        <div class="category-card">🔤<span>Alphabet</span></div>
+        <div class="category-card">⭐<span>Shapes</span></div>
+        <div class="category-card">🐶<span>Animals</span></div>
+        <div class="category-card">🧸<span>Objects</span></div>
+      </div>
+
+      <button id="startButton" class="big-button">Start Playing! 🚀</button>
+    </section>
+
+    <section id="gameScreen" class="screen" aria-live="polite">
+      <header class="game-header">
+        <div id="categoryBadge" class="badge">🎨 Colors</div>
+        <div class="score-box">⭐ <span id="score">0</span></div>
+      </header>
+
+      <div class="progress-wrap">
+        <div class="progress-text">
+          <span id="progressLabel">Question 1 of 12</span>
+          <span id="starsLabel">0 stars</span>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+
+      <section class="question-card">
+        <h2 id="questionText">Which one is red?</h2>
+        <div id="visual" class="visual" aria-hidden="true">🍎</div>
+        <div id="answerGrid" class="answer-grid"></div>
+        <div id="feedback" class="feedback" role="status"></div>
+      </section>
+    </section>
+
+    <section id="rewardScreen" class="screen reward-screen">
+      <div id="confetti" class="confetti-layer" aria-hidden="true"></div>
+      <div class="reward-card">
+        <div class="trophy">🏆</div>
+        <h1>YOU DID IT!</h1>
+        <p class="reward-message">Amazing learning!</p>
+        <div class="reward-stars" aria-label="Celebration stars">⭐ ⭐ ⭐ ⭐ ⭐</div>
+        <p id="finalScore" class="final-score">You earned 12 stars!</p>
+        <div class="reward-friends">🦄 🐶 🐱 🐸 🐼</div>
+        <button id="playAgainButton" class="big-button">Play Again! 🎉</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
