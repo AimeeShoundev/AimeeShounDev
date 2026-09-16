@@ -599,7 +599,8 @@ const projects = [
       "History",
       "3D"
     ],
-    "image": "./assets/projects/mongol-invasion.jpg"
+    "image": "./assets/projects/mongol-invasion.jpg",
+    "video": "https://www.youtube.com/embed/O1w2OF6Hdgs?rel=0"
   },
   {
     "title": "Threads of Innovation",
