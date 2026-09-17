@@ -1149,9 +1149,18 @@ function createProjectRow(project) {
   const row = document.createElement("button");
   row.type = "button";
   row.className = "project-row";
-  row.setAttribute("aria-label", `Open project: ${project.title}`);
+  row.setAttribute("aria-label", `Open project: ${project.title}${project.video ? ", video available" : ""}`);
   const name = document.createElement("span");
-  name.append(span("project-name", project.title));
+  const titleLine = span("project-title-line", "");
+  titleLine.append(span("project-name", project.title));
+  if (project.video) {
+    const badge = span("project-video-badge", "");
+    const playIcon = span("", "▶");
+    playIcon.setAttribute("aria-hidden", "true");
+    badge.append(playIcon, document.createTextNode("Video"));
+    titleLine.append(badge);
+  }
+  name.append(titleLine);
   name.append(span("project-collection", project.collection));
   row.append(span("project-file", fileNumber(project)), name,
     span("project-type", project.type), span("project-open", "Open ↗"));
@@ -1283,13 +1292,26 @@ function openProjectModal(project) {
   const videoContainer = document.getElementById("modalVideoContainer");
   const watchLink = document.getElementById("modalWatchLink");
   const hasVideo = Boolean(project.video);
-  videoContainer.hidden = !hasVideo;
+  // Local files cannot provide the HTTP referrer required by YouTube embeds.
+  const canEmbed = /^https?:$/.test(window.location.protocol) && window.origin !== "null";
+  const videoNote = document.getElementById("modalVideoNote");
+  videoContainer.hidden = !hasVideo || !canEmbed;
   watchLink.hidden = !hasVideo;
+  videoNote.hidden = !hasVideo;
+  videoNote.textContent = canEmbed
+    ? "Player unavailable? Choose Watch on YouTube above."
+    : "To watch this project, choose Watch on YouTube above.";
   modalVideo.removeAttribute("src");
   if (hasVideo) {
-    modalVideo.title = `${project.title} — project demonstration`;
-    modalVideo.src = project.video;
     watchLink.href = watchUrl(project.video);
+    if (canEmbed) {
+      const embedUrl = new URL(project.video);
+      embedUrl.searchParams.set("origin", window.location.origin);
+      embedUrl.searchParams.set("playsinline", "1");
+      modalVideo.referrerPolicy = "strict-origin-when-cross-origin";
+      modalVideo.title = `${project.title} — project demonstration`;
+      modalVideo.src = embedUrl.href;
+    }
   } else {
     watchLink.removeAttribute("href");
   }

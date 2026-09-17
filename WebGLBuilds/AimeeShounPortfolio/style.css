@@ -145,6 +145,9 @@ h1, h2, h3, p { margin: 0; }
 .project-row:hover, .project-row:focus-visible { background: #ede8d7; }
 .project-file { font-family: var(--mono); font-size: .75rem; color: var(--muted); }
 .project-name { display: block; font-size: 1.12rem; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.project-title-line { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .65rem; min-width: 0; }
+.project-title-line .project-name { min-width: 0; max-width: 100%; }
+.project-video-badge { display: inline-flex; align-items: center; gap: .35rem; flex-shrink: 0; padding: .2rem .55rem; border: 1px solid #22523c; border-radius: 999px; background: #e3f1e8; color: #17432e; font-size: .875rem; font-weight: 700; line-height: 1.4; white-space: nowrap; }
 .project-collection { display: block; margin-top: .2rem; font-size: .875rem; color: var(--muted); }
 .project-type { font-size: .875rem; color: var(--muted); }
 .project-open { font-family: var(--mono); font-size: .875rem; justify-self: end; }

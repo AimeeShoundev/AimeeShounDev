@@ -41,3 +41,14 @@ Digestion Expedition: https://www.youtube.com/watch?v=kIepQ8apfgY
 Checks: resume rendering, PDF text and links, JavaScript syntax, project record
 integrity, VR-first ordering, thumbnail mapping and local resume references.
 Browser testing was not performed.
+
+VIDEO PLAYBACK UPDATE
+Mongol Invasion of China includes the requested YouTube video.
+When index.html is opened directly from disk, use Watch on YouTube.
+Embedded playback is enabled when served over HTTP/HTTPS, including GitHub Pages.
+YouTube requires referrer identification; browser privacy settings or preview
+restrictions can still block embeds. The direct YouTube link remains available.
+
+VIDEO BADGES
+Projects with a linked video now show a green play icon and Video badge in
+the project archive. The badge wraps with the title on smaller screens.
