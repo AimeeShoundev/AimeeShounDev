@@ -21,6 +21,8 @@ body {
         sans-serif;
 
     background: #87ceeb;
+
+    touch-action: none;
 }
 
 
@@ -163,6 +165,10 @@ body {
             92vw
         );
 
+    max-height: 90vh;
+
+    overflow-y: auto;
+
     padding:
         42px
         44px;
@@ -246,6 +252,10 @@ body {
     color: #53616b;
 }
 
+.mobileHelp {
+    display: none;
+}
+
 #startGameButton {
     margin-top: 8px;
 
@@ -327,15 +337,6 @@ body {
         );
 
     font-weight: 900;
-
-    box-shadow:
-        0 8px 25px
-        rgba(
-            0,
-            0,
-            0,
-            0.25
-        );
 }
 
 .instructions {
@@ -365,15 +366,6 @@ body {
         );
 
     line-height: 1.6;
-
-    box-shadow:
-        0 8px 25px
-        rgba(
-            0,
-            0,
-            0,
-            0.2
-        );
 }
 
 
@@ -417,15 +409,6 @@ body {
 
     font-weight: 900;
 
-    box-shadow:
-        0 7px 22px
-        rgba(
-            0,
-            0,
-            0,
-            0.18
-        );
-
     pointer-events: none;
 }
 
@@ -466,15 +449,6 @@ body {
         );
 
     font-weight: 900;
-
-    box-shadow:
-        0 8px 25px
-        rgba(
-            0,
-            0,
-            0,
-            0.22
-        );
 
     pointer-events: none;
 }
@@ -561,15 +535,6 @@ body {
     color: #27333d;
 
     text-align: center;
-
-    box-shadow:
-        0 25px 70px
-        rgba(
-            0,
-            0,
-            0,
-            0.38
-        );
 }
 
 #flowerInfoIcon {
@@ -597,8 +562,6 @@ body {
             4vw,
             42px
         );
-
-    line-height: 1.1;
 }
 
 #flowerInfoText {
@@ -640,14 +603,7 @@ body {
 
     font-weight: 900;
 
-    line-height: 1;
-
     cursor: pointer;
-}
-
-#closeFlowerInfo:hover {
-    transform:
-        scale(1.08);
 }
 
 #returnToNeighborhood {
@@ -670,69 +626,257 @@ body {
     font-weight: 900;
 
     cursor: pointer;
-
-    box-shadow:
-        0 7px 18px
-        rgba(
-            151,
-            21,
-            82,
-            0.25
-        );
-}
-
-#returnToNeighborhood:hover {
-    transform:
-        translateY(-2px);
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   MOBILE CONTROLS
+========================================================= */
+
+#mobileControls {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 18px;
+
+    z-index: 100;
+
+    display: none;
+
+    justify-content: space-between;
+    align-items: flex-end;
+
+    padding:
+        0
+        18px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   MOVE PAD
+========================================================= */
+
+.movePad {
+    position: relative;
+
+    width: 170px;
+    height: 170px;
+
+    pointer-events: auto;
+}
+
+.moveButton {
+    position: absolute;
+
+    width: 58px;
+    height: 58px;
+
+    border: none;
+
+    border-radius: 18px;
+
+    background:
+        rgba(
+            18,
+            30,
+            50,
+            0.86
+        );
+
+    color: white;
+
+    font-size: 28px;
+
+    font-weight: 900;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+
+    touch-action: none;
+}
+
+.moveButton.active {
+    background:
+        rgba(
+            215,
+            44,
+            120,
+            0.95
+        );
+
+    transform:
+        scale(0.94);
+}
+
+.upButton {
+    top: 0;
+    left: 56px;
+}
+
+.leftButton {
+    top: 56px;
+    left: 0;
+}
+
+.downButton {
+    top: 112px;
+    left: 56px;
+}
+
+.rightButton {
+    top: 56px;
+    left: 112px;
+}
+
+
+/* =========================================================
+   RUN BUTTON
+========================================================= */
+
+#mobileRunButton {
+    width: 82px;
+    height: 82px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background:
+        rgba(
+            215,
+            44,
+            120,
+            0.92
+        );
+
+    color: white;
+
+    font-size: 17px;
+
+    font-weight: 900;
+
+    pointer-events: auto;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+
+    touch-action: none;
+}
+
+#mobileRunButton.active {
+    background: #9d164e;
+
+    transform:
+        scale(0.94);
+}
+
+
+/* =========================================================
+   MOBILE
 ========================================================= */
 
 @media (
-    max-width: 750px
+    max-width: 900px
+),
+(
+    pointer: coarse
 ) {
 
-    #hud {
-        top: 10px;
-        left: 10px;
+    #mobileControls {
+        display: flex;
     }
 
-    #flowerCounter {
-        top: 10px;
-        right: 10px;
+    .mobileHelp {
+        display: block;
+    }
+
+    #hud {
+        top: 8px;
+        left: 8px;
+    }
+
+    .gameTitle {
+        padding:
+            8px
+            11px;
 
         font-size: 15px;
     }
 
+    .instructions {
+        display: none;
+    }
+
+    #flowerCounter {
+        top: 8px;
+        right: 8px;
+
+        padding:
+            8px
+            11px;
+
+        font-size: 14px;
+    }
+
     #objective {
-        top: auto;
-        bottom: 18px;
+        top: 52px;
 
         width:
-            calc(
-                100% - 40px
+            min(
+                90vw,
+                400px
             );
 
-        text-align: center;
-    }
-
-    .gameTitle {
-        font-size: 18px;
-    }
-
-    .instructions {
-        max-width: 225px;
-
-        font-size: 13px;
-    }
-
-    #startCard {
         padding:
-            32px
-            22px;
+            8px
+            12px;
+
+        text-align: center;
+
+        font-size: 14px;
+    }
+
+    #startScreen,
+    #flowerInfoModal {
+        padding: 12px;
+    }
+
+    #startCard,
+    #flowerInfoCard {
+        width: 96vw;
+
+        max-height: 88vh;
+
+        padding:
+            28px
+            20px;
+
+        border-radius: 20px;
+    }
+
+    #startCard h1,
+    #flowerInfoTitle {
+        font-size:
+            clamp(
+                26px,
+                8vw,
+                38px
+            );
+    }
+
+    #startCard p,
+    #flowerInfoText {
+        font-size:
+            clamp(
+                16px,
+                4.7vw,
+                20px
+            );
     }
 
     #startGameButton,
@@ -740,13 +884,66 @@ body {
         width: 100%;
 
         min-width: 0;
+
+        font-size: 18px;
     }
 
-    #flowerInfoCard {
+}
+
+
+/* =========================================================
+   SMALL PHONE
+========================================================= */
+
+@media (
+    max-width: 480px
+) {
+
+    #mobileControls {
+        bottom: 8px;
+
         padding:
-            34px
-            22px
-            26px;
+            0
+            8px;
+    }
+
+    .movePad {
+        width: 150px;
+        height: 150px;
+    }
+
+    .moveButton {
+        width: 50px;
+        height: 50px;
+
+        border-radius: 15px;
+
+        font-size: 23px;
+    }
+
+    .upButton {
+        left: 50px;
+    }
+
+    .leftButton {
+        top: 50px;
+    }
+
+    .downButton {
+        top: 100px;
+        left: 50px;
+    }
+
+    .rightButton {
+        top: 50px;
+        left: 100px;
+    }
+
+    #mobileRunButton {
+        width: 68px;
+        height: 68px;
+
+        font-size: 14px;
     }
 
 }

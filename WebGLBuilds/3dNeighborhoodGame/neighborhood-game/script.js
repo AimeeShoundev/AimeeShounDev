@@ -11,75 +11,54 @@ from "three/addons/loaders/GLTFLoader.js";
 // ============================================================
 
 const canvas =
-    document.querySelector(
-        ".webgl"
-    );
+    document.querySelector(".webgl");
 
 const loadingScreen =
-    document.querySelector(
-        "#loadingScreen"
-    );
+    document.querySelector("#loadingScreen");
 
 const loadingText =
-    document.querySelector(
-        "#loadingText"
-    );
+    document.querySelector("#loadingText");
 
 const startScreen =
-    document.querySelector(
-        "#startScreen"
-    );
+    document.querySelector("#startScreen");
 
 const startGameButton =
-    document.querySelector(
-        "#startGameButton"
-    );
+    document.querySelector("#startGameButton");
 
 const flowerCounter =
-    document.querySelector(
-        "#flowerCount"
-    );
+    document.querySelector("#flowerCount");
 
 const objective =
-    document.querySelector(
-        "#objective"
-    );
+    document.querySelector("#objective");
 
 const flowerInfoModal =
-    document.querySelector(
-        "#flowerInfoModal"
-    );
+    document.querySelector("#flowerInfoModal");
 
 const flowerInfoTitle =
-    document.querySelector(
-        "#flowerInfoTitle"
-    );
+    document.querySelector("#flowerInfoTitle");
 
 const flowerInfoText =
-    document.querySelector(
-        "#flowerInfoText"
-    );
+    document.querySelector("#flowerInfoText");
 
 const closeFlowerInfo =
-    document.querySelector(
-        "#closeFlowerInfo"
-    );
+    document.querySelector("#closeFlowerInfo");
 
 const returnToNeighborhood =
-    document.querySelector(
-        "#returnToNeighborhood"
-    );
+    document.querySelector("#returnToNeighborhood");
+
+const mobileMoveButtons =
+    document.querySelectorAll(".moveButton");
+
+const mobileRunButton =
+    document.querySelector("#mobileRunButton");
 
 
 // ============================================================
 // GAME STATE
 // ============================================================
 
-let gameStarted =
-    false;
-
-let gamePaused =
-    false;
+let gameStarted = false;
+let gamePaused = false;
 
 
 // ============================================================
@@ -387,7 +366,8 @@ loader.load(
 
         if (
             gltf.animations &&
-            gltf.animations.length > 0
+            gltf.animations.length >
+            0
         ) {
 
             mixer =
@@ -452,7 +432,7 @@ const flowerFacts = [
             "Pollination",
 
         text:
-            "Pollination happens when pollen moves from one flower to another. This process helps many flowering plants produce seeds."
+            "Pollination happens when pollen moves from one flower to another. This helps many flowering plants produce seeds."
     },
 
     {
@@ -515,7 +495,7 @@ const flowerFacts = [
 
 
 // ============================================================
-// FLOWER SETTINGS
+// FLOWERS
 // ============================================================
 
 const TOTAL_FLOWERS =
@@ -551,7 +531,7 @@ let flowerCount =
 
 
 // ============================================================
-// FLOWER UI
+// UPDATE FLOWER UI
 // ============================================================
 
 function updateFlowerUI() {
@@ -596,10 +576,9 @@ function updateFlowerUI() {
 
 function createRandomFlowerPosition() {
 
-    let x;
-    let z;
-    let valid =
-        false;
+    let x = 0;
+    let z = 0;
+    let valid = false;
 
 
     while (
@@ -651,7 +630,7 @@ function createRandomFlowerPosition() {
                     existingFlower.position.z;
 
 
-                const flowerDistance =
+                const distance =
                     Math.sqrt(
                         dx * dx +
                         dz * dz
@@ -659,7 +638,7 @@ function createRandomFlowerPosition() {
 
 
                 if (
-                    flowerDistance <
+                    distance <
                     3
                 ) {
 
@@ -724,12 +703,8 @@ function spawnFlowers() {
         );
 
 
-        const position =
-            createRandomFlowerPosition();
-
-
         flower.position.copy(
-            position
+            createRandomFlowerPosition()
         );
 
 
@@ -859,28 +834,60 @@ scene.add(
 
 
 // ============================================================
-// KEY INPUT
+// INPUT
 // ============================================================
 
 const keys = {
 
-    forward:
-        false,
-
-    backward:
-        false,
-
-    left:
-        false,
-
-    right:
-        false,
-
-    run:
-        false
+    forward: false,
+    backward: false,
+    left: false,
+    right: false,
+    run: false
 
 };
 
+
+// ============================================================
+// CLEAR MOVEMENT
+// ============================================================
+
+function clearMovement() {
+
+    keys.forward = false;
+    keys.backward = false;
+    keys.left = false;
+    keys.right = false;
+    keys.run = false;
+
+
+    mobileMoveButtons.forEach(
+        (button) => {
+
+            button.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+
+    if (
+        mobileRunButton
+    ) {
+
+        mobileRunButton.classList.remove(
+            "active"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// DESKTOP KEY DOWN
+// ============================================================
 
 window.addEventListener(
 
@@ -889,7 +896,8 @@ window.addEventListener(
     (event) => {
 
         if (
-            event.code === "Escape" &&
+            event.code ===
+            "Escape" &&
             gamePaused
         ) {
 
@@ -969,6 +977,10 @@ window.addEventListener(
 );
 
 
+// ============================================================
+// DESKTOP KEY UP
+// ============================================================
+
 window.addEventListener(
 
     "keyup",
@@ -1035,6 +1047,244 @@ window.addEventListener(
 
 
 // ============================================================
+// MOBILE MOVEMENT
+// ============================================================
+
+function setMobileMovement(
+    direction,
+    active
+) {
+
+    if (
+        !gameStarted ||
+        gamePaused
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        direction ===
+        "forward"
+    ) {
+
+        keys.forward =
+            active;
+
+    }
+
+
+    if (
+        direction ===
+        "backward"
+    ) {
+
+        keys.backward =
+            active;
+
+    }
+
+
+    if (
+        direction ===
+        "left"
+    ) {
+
+        keys.left =
+            active;
+
+    }
+
+
+    if (
+        direction ===
+        "right"
+    ) {
+
+        keys.right =
+            active;
+
+    }
+
+}
+
+
+// ============================================================
+// MOBILE BUTTON EVENTS
+// ============================================================
+
+mobileMoveButtons.forEach(
+    (button) => {
+
+        const direction =
+            button.dataset.move;
+
+
+        button.addEventListener(
+            "pointerdown",
+            (event) => {
+
+                event.preventDefault();
+
+                if (
+                    !gameStarted ||
+                    gamePaused
+                ) {
+
+                    return;
+
+                }
+
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                setMobileMovement(
+                    direction,
+                    true
+                );
+
+
+                try {
+
+                    button.setPointerCapture(
+                        event.pointerId
+                    );
+
+                } catch (
+                    error
+                ) {
+
+                    // Ignore
+                }
+
+            }
+        );
+
+
+        const releaseButton =
+            () => {
+
+                button.classList.remove(
+                    "active"
+                );
+
+
+                setMobileMovement(
+                    direction,
+                    false
+                );
+
+            };
+
+
+        button.addEventListener(
+            "pointerup",
+            releaseButton
+        );
+
+
+        button.addEventListener(
+            "pointercancel",
+            releaseButton
+        );
+
+
+        button.addEventListener(
+            "lostpointercapture",
+            releaseButton
+        );
+
+    }
+);
+
+
+// ============================================================
+// MOBILE RUN
+// ============================================================
+
+mobileRunButton.addEventListener(
+
+    "pointerdown",
+
+    (event) => {
+
+        event.preventDefault();
+
+
+        if (
+            !gameStarted ||
+            gamePaused
+        ) {
+
+            return;
+
+        }
+
+
+        keys.run =
+            true;
+
+
+        mobileRunButton.classList.add(
+            "active"
+        );
+
+
+        try {
+
+            mobileRunButton.setPointerCapture(
+                event.pointerId
+            );
+
+        } catch (
+            error
+        ) {
+
+            // Ignore
+        }
+
+    }
+
+);
+
+
+function releaseRunButton() {
+
+    keys.run =
+        false;
+
+
+    mobileRunButton.classList.remove(
+        "active"
+    );
+
+}
+
+
+mobileRunButton.addEventListener(
+    "pointerup",
+    releaseRunButton
+);
+
+
+mobileRunButton.addEventListener(
+    "pointercancel",
+    releaseRunButton
+);
+
+
+mobileRunButton.addEventListener(
+    "lostpointercapture",
+    releaseRunButton
+);
+
+
+// ============================================================
 // START GAME
 // ============================================================
 
@@ -1060,7 +1310,7 @@ startGameButton.addEventListener(
 
 
 // ============================================================
-// FLOWER INFO
+// FLOWER INFORMATION
 // ============================================================
 
 function showFlowerInformation(
@@ -1071,20 +1321,7 @@ function showFlowerInformation(
         true;
 
 
-    keys.forward =
-        false;
-
-    keys.backward =
-        false;
-
-    keys.left =
-        false;
-
-    keys.right =
-        false;
-
-    keys.run =
-        false;
+    clearMovement();
 
 
     updateWalkAnimation(
@@ -1135,6 +1372,10 @@ function showFlowerInformation(
 
 }
 
+
+// ============================================================
+// CLOSE INFO
+// ============================================================
 
 function hideFlowerInformation() {
 
@@ -1227,20 +1468,6 @@ window.addEventListener(
 
 window.addEventListener(
 
-    "mouseleave",
-
-    () => {
-
-        dragging =
-            false;
-
-    }
-
-);
-
-
-window.addEventListener(
-
     "mousemove",
 
     (event) => {
@@ -1272,6 +1499,163 @@ window.addEventListener(
                 -0.6,
                 0.35
             );
+
+    }
+
+);
+
+
+// ============================================================
+// MOBILE CAMERA SWIPE
+// ============================================================
+
+let cameraTouchId =
+    null;
+
+let lastTouchX =
+    0;
+
+let lastTouchY =
+    0;
+
+
+canvas.addEventListener(
+
+    "pointerdown",
+
+    (event) => {
+
+        if (
+            event.pointerType !==
+            "touch"
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            !gameStarted ||
+            gamePaused
+        ) {
+
+            return;
+
+        }
+
+
+        cameraTouchId =
+            event.pointerId;
+
+
+        lastTouchX =
+            event.clientX;
+
+
+        lastTouchY =
+            event.clientY;
+
+    }
+
+);
+
+
+canvas.addEventListener(
+
+    "pointermove",
+
+    (event) => {
+
+        if (
+            event.pointerId !==
+            cameraTouchId
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            !gameStarted ||
+            gamePaused
+        ) {
+
+            return;
+
+        }
+
+
+        const deltaX =
+            event.clientX -
+            lastTouchX;
+
+
+        const deltaY =
+            event.clientY -
+            lastTouchY;
+
+
+        lastTouchX =
+            event.clientX;
+
+
+        lastTouchY =
+            event.clientY;
+
+
+        cameraYaw -=
+            deltaX *
+            0.008;
+
+
+        cameraPitch -=
+            deltaY *
+            0.006;
+
+
+        cameraPitch =
+            THREE.MathUtils.clamp(
+                cameraPitch,
+                -0.6,
+                0.35
+            );
+
+    }
+
+);
+
+
+canvas.addEventListener(
+
+    "pointerup",
+
+    (event) => {
+
+        if (
+            event.pointerId ===
+            cameraTouchId
+        ) {
+
+            cameraTouchId =
+                null;
+
+        }
+
+    }
+
+);
+
+
+canvas.addEventListener(
+
+    "pointercancel",
+
+    () => {
+
+        cameraTouchId =
+            null;
 
     }
 
