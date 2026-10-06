@@ -5,25 +5,86 @@ import {
 }
 from "three/addons/loaders/GLTFLoader.js";
 
-import {
-    DRACOLoader
-}
-from "three/addons/loaders/DRACOLoader.js";
 
-
-// =========================================================
-// CANVAS
-// =========================================================
+// ============================================================
+// DOM
+// ============================================================
 
 const canvas =
     document.querySelector(
         ".webgl"
     );
 
+const loadingScreen =
+    document.querySelector(
+        "#loadingScreen"
+    );
 
-// =========================================================
+const loadingText =
+    document.querySelector(
+        "#loadingText"
+    );
+
+const startScreen =
+    document.querySelector(
+        "#startScreen"
+    );
+
+const startGameButton =
+    document.querySelector(
+        "#startGameButton"
+    );
+
+const flowerCounter =
+    document.querySelector(
+        "#flowerCount"
+    );
+
+const objective =
+    document.querySelector(
+        "#objective"
+    );
+
+const flowerInfoModal =
+    document.querySelector(
+        "#flowerInfoModal"
+    );
+
+const flowerInfoTitle =
+    document.querySelector(
+        "#flowerInfoTitle"
+    );
+
+const flowerInfoText =
+    document.querySelector(
+        "#flowerInfoText"
+    );
+
+const closeFlowerInfo =
+    document.querySelector(
+        "#closeFlowerInfo"
+    );
+
+const returnToNeighborhood =
+    document.querySelector(
+        "#returnToNeighborhood"
+    );
+
+
+// ============================================================
+// GAME STATE
+// ============================================================
+
+let gameStarted =
+    false;
+
+let gamePaused =
+    false;
+
+
+// ============================================================
 // SCENE
-// =========================================================
+// ============================================================
 
 const scene =
     new THREE.Scene();
@@ -36,14 +97,14 @@ scene.background =
 scene.fog =
     new THREE.Fog(
         0x87ceeb,
-        40,
-        180
+        60,
+        220
     );
 
 
-// =========================================================
+// ============================================================
 // CAMERA
-// =========================================================
+// ============================================================
 
 const camera =
     new THREE.PerspectiveCamera(
@@ -56,22 +117,18 @@ const camera =
 
 camera.position.set(
     0,
-    5,
+    4,
     8
 );
 
-scene.add(
-    camera
-);
 
-
-// =========================================================
+// ============================================================
 // RENDERER
-// =========================================================
+// ============================================================
 
 const renderer =
     new THREE.WebGLRenderer({
-        canvas,
+        canvas: canvas,
         antialias: true
     });
 
@@ -96,22 +153,16 @@ renderer.shadowMap.type =
 renderer.outputColorSpace =
     THREE.SRGBColorSpace;
 
-renderer.toneMapping =
-    THREE.ACESFilmicToneMapping;
 
-renderer.toneMappingExposure =
-    1;
-
-
-// =========================================================
-// LIGHTING
-// =========================================================
+// ============================================================
+// LIGHTS
+// ============================================================
 
 const hemisphereLight =
     new THREE.HemisphereLight(
-        0xcfeeff,
-        0x6b7c4b,
-        2.5
+        0xffffff,
+        0x61774b,
+        2
     );
 
 scene.add(
@@ -122,74 +173,77 @@ scene.add(
 const sun =
     new THREE.DirectionalLight(
         0xffffff,
-        3
+        2
     );
 
 sun.position.set(
     30,
-    50,
-    20
+    45,
+    25
 );
 
 sun.castShadow =
     true;
-
-sun.shadow.mapSize.set(
-    2048,
-    2048
-);
-
-sun.shadow.camera.left =
-    -80;
-
-sun.shadow.camera.right =
-    80;
-
-sun.shadow.camera.top =
-    80;
-
-sun.shadow.camera.bottom =
-    -80;
 
 scene.add(
     sun
 );
 
 
-// =========================================================
-// LOADERS
-// =========================================================
+// ============================================================
+// LOADING
+// ============================================================
 
 const loadingManager =
     new THREE.LoadingManager();
 
 
-const loadingScreen =
-    document.querySelector(
-        "#loadingScreen"
-    );
+loadingManager.onProgress =
+    (
+        url,
+        loaded,
+        total
+    ) => {
+
+        if (
+            loadingText
+        ) {
+
+            loadingText.textContent =
+                `Loading ${loaded} / ${total}`;
+
+        }
+
+    };
 
 
 loadingManager.onLoad =
     () => {
 
-        loadingScreen
-            .classList
-            .add(
-                "hidden"
-            );
+        if (
+            loadingScreen
+        ) {
+
+            loadingScreen
+                .classList
+                .add(
+                    "hidden"
+                );
+
+        }
 
     };
 
 
-const dracoLoader =
-    new DRACOLoader(
-        loadingManager
-    );
+loadingManager.onError =
+    (url) => {
 
-dracoLoader.setDecoderPath(
-    "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/libs/draco/"
-);
+        console.error(
+            "Could not load:",
+            url
+        );
+
+    };
 
 
 const loader =
@@ -197,16 +251,13 @@ const loader =
         loadingManager
     );
 
-loader.setDRACOLoader(
-    dracoLoader
-);
 
-
-// =========================================================
+// ============================================================
 // NEIGHBORHOOD
-// =========================================================
+// ============================================================
 
-let neighborhood;
+let neighborhood =
+    null;
 
 
 loader.load(
@@ -217,10 +268,6 @@ loader.load(
 
         neighborhood =
             gltf.scene;
-
-        scene.add(
-            neighborhood
-        );
 
 
         neighborhood.traverse(
@@ -241,6 +288,11 @@ loader.load(
             }
         );
 
+
+        scene.add(
+            neighborhood
+        );
+
     },
 
     undefined,
@@ -248,7 +300,7 @@ loader.load(
     (error) => {
 
         console.error(
-            "Neighborhood loading error:",
+            "Neighborhood error:",
             error
         );
 
@@ -257,9 +309,9 @@ loader.load(
 );
 
 
-// =========================================================
+// ============================================================
 // PLAYER
-// =========================================================
+// ============================================================
 
 const player =
     new THREE.Group();
@@ -268,7 +320,6 @@ scene.add(
     player
 );
 
-
 player.position.set(
     0,
     0,
@@ -276,18 +327,22 @@ player.position.set(
 );
 
 
-let characterModel;
+// ============================================================
+// CHARACTER
+// ============================================================
 
-let mixer;
+let characterModel =
+    null;
 
-let walkAction;
+let mixer =
+    null;
 
-let idleAction;
+let walkAction =
+    null;
 
+let isWalking =
+    false;
 
-// =========================================================
-// LOAD CHARACTER
-// =========================================================
 
 loader.load(
 
@@ -300,9 +355,9 @@ loader.load(
 
 
         characterModel.scale.set(
-            .2,
-            .2,
-            .2
+            0.3,
+            0.3,
+            0.3
         );
 
 
@@ -330,44 +385,27 @@ loader.load(
         );
 
 
-        // ---------------------------------------------
-        // ANIMATION MIXER
-        // ---------------------------------------------
-
-        mixer =
-            new THREE.AnimationMixer(
-                characterModel
-            );
-
-
-        console.log(
-            "Animations:",
-            gltf.animations
-        );
-
-
         if (
+            gltf.animations &&
             gltf.animations.length > 0
         ) {
+
+            mixer =
+                new THREE.AnimationMixer(
+                    characterModel
+                );
+
 
             walkAction =
                 mixer.clipAction(
                     gltf.animations[0]
                 );
 
-        }
 
-
-        if (
-            gltf.animations.length > 1
-        ) {
-
-            idleAction =
-                mixer.clipAction(
-                    gltf.animations[1]
-                );
-
-            idleAction.play();
+            walkAction.setLoop(
+                THREE.LoopRepeat,
+                Infinity
+            );
 
         }
 
@@ -378,7 +416,7 @@ loader.load(
     (error) => {
 
         console.error(
-            "Character loading error:",
+            "Character error:",
             error
         );
 
@@ -387,186 +425,830 @@ loader.load(
 );
 
 
-// =========================================================
-// FLOOR COLLISION HEIGHT
-// =========================================================
+// ============================================================
+// FLOWER FACTS
+// ============================================================
 
-const groundHeight =
+const flowerFacts = [
+
+    {
+        title:
+            "What Is a Flower?",
+
+        text:
+            "A flower is the reproductive part of many plants. Flowers help plants produce seeds so new plants can grow."
+    },
+
+    {
+        title:
+            "Petals",
+
+        text:
+            "Petals are often brightly colored to attract pollinators such as bees, butterflies, birds, and other animals."
+    },
+
+    {
+        title:
+            "Pollination",
+
+        text:
+            "Pollination happens when pollen moves from one flower to another. This process helps many flowering plants produce seeds."
+    },
+
+    {
+        title:
+            "Pollen",
+
+        text:
+            "Pollen contains tiny grains involved in plant reproduction. Pollinators can carry pollen from one flower to another."
+    },
+
+    {
+        title:
+            "Nectar",
+
+        text:
+            "Many flowers produce nectar, a sweet liquid that attracts animals such as bees, butterflies, and hummingbirds."
+    },
+
+    {
+        title:
+            "Seeds",
+
+        text:
+            "After successful pollination and fertilization, many flowering plants produce seeds that can grow into new plants."
+    },
+
+    {
+        title:
+            "Flower Colors",
+
+        text:
+            "Flower colors, scents, shapes, and patterns can help attract different types of pollinators."
+    },
+
+    {
+        title:
+            "Bees and Flowers",
+
+        text:
+            "Bees are important pollinators. Pollen can stick to their bodies while they visit flowers and then travel to other flowers."
+    },
+
+    {
+        title:
+            "Flowers and Fruit",
+
+        text:
+            "In many plants, part of the flower develops into fruit after fertilization. Apples, tomatoes, pumpkins, and many other foods begin as flowers."
+    },
+
+    {
+        title:
+            "Flowers in Ecosystems",
+
+        text:
+            "Flowering plants provide food and habitat for many organisms and play an important role in healthy ecosystems."
+    }
+
+];
+
+
+// ============================================================
+// FLOWER SETTINGS
+// ============================================================
+
+const TOTAL_FLOWERS =
+    10;
+
+const FLOWER_PICKUP_DISTANCE =
+    1.15;
+
+const FLOWER_SCALE =
+    0.32;
+
+const FLOWER_MIN_X =
+    -20;
+
+const FLOWER_MAX_X =
+    20;
+
+const FLOWER_MIN_Z =
+    -20;
+
+const FLOWER_MAX_Z =
+    20;
+
+
+let flowerTemplate =
+    null;
+
+let flowers =
+    [];
+
+let flowerCount =
     0;
 
 
-// =========================================================
-// KEYBOARD INPUT
-// =========================================================
+// ============================================================
+// FLOWER UI
+// ============================================================
+
+function updateFlowerUI() {
+
+    if (
+        flowerCounter
+    ) {
+
+        flowerCounter.textContent =
+            `${flowerCount} / ${TOTAL_FLOWERS}`;
+
+    }
+
+
+    if (
+        objective
+    ) {
+
+        if (
+            flowerCount <
+            TOTAL_FLOWERS
+        ) {
+
+            objective.textContent =
+                `Find the flowers! ${flowerCount} / ${TOTAL_FLOWERS}`;
+
+        } else {
+
+            objective.textContent =
+                "You collected every flower! 🌸";
+
+        }
+
+    }
+
+}
+
+
+// ============================================================
+// RANDOM FLOWER POSITION
+// ============================================================
+
+function createRandomFlowerPosition() {
+
+    let x;
+    let z;
+    let valid =
+        false;
+
+
+    while (
+        !valid
+    ) {
+
+        x =
+            THREE.MathUtils.randFloat(
+                FLOWER_MIN_X,
+                FLOWER_MAX_X
+            );
+
+
+        z =
+            THREE.MathUtils.randFloat(
+                FLOWER_MIN_Z,
+                FLOWER_MAX_Z
+            );
+
+
+        const distanceFromSpawn =
+            Math.sqrt(
+                x * x +
+                z * z
+            );
+
+
+        valid =
+            distanceFromSpawn >
+            4;
+
+
+        if (
+            valid
+        ) {
+
+            for (
+                const existingFlower
+                of flowers
+            ) {
+
+                const dx =
+                    x -
+                    existingFlower.position.x;
+
+
+                const dz =
+                    z -
+                    existingFlower.position.z;
+
+
+                const flowerDistance =
+                    Math.sqrt(
+                        dx * dx +
+                        dz * dz
+                    );
+
+
+                if (
+                    flowerDistance <
+                    3
+                ) {
+
+                    valid =
+                        false;
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    return new THREE.Vector3(
+        x,
+        0,
+        z
+    );
+
+}
+
+
+// ============================================================
+// SPAWN FLOWERS
+// ============================================================
+
+function spawnFlowers() {
+
+    if (
+        !flowerTemplate
+    ) {
+
+        return;
+
+    }
+
+
+    flowers =
+        [];
+
+
+    for (
+        let i = 0;
+        i < TOTAL_FLOWERS;
+        i++
+    ) {
+
+        const flower =
+            flowerTemplate.clone(
+                true
+            );
+
+
+        flower.scale.set(
+            FLOWER_SCALE,
+            FLOWER_SCALE,
+            FLOWER_SCALE
+        );
+
+
+        const position =
+            createRandomFlowerPosition();
+
+
+        flower.position.copy(
+            position
+        );
+
+
+        flower.userData.collected =
+            false;
+
+
+        flower.userData.baseY =
+            0;
+
+
+        flower.userData.animationOffset =
+            Math.random() *
+            Math.PI *
+            2;
+
+
+        flower.traverse(
+            (child) => {
+
+                if (
+                    child.isMesh
+                ) {
+
+                    child.castShadow =
+                        true;
+
+                    child.receiveShadow =
+                        true;
+
+                }
+
+            }
+        );
+
+
+        scene.add(
+            flower
+        );
+
+
+        flowers.push(
+            flower
+        );
+
+    }
+
+
+    updateFlowerUI();
+
+}
+
+
+// ============================================================
+// LOAD FLOWER
+// ============================================================
+
+loader.load(
+
+    "./assets/flower.glb",
+
+    (gltf) => {
+
+        flowerTemplate =
+            gltf.scene;
+
+
+        spawnFlowers();
+
+    },
+
+    undefined,
+
+    (error) => {
+
+        console.error(
+            "Flower error:",
+            error
+        );
+
+    }
+
+);
+
+
+// ============================================================
+// GROUND
+// ============================================================
+
+const groundGeometry =
+    new THREE.PlaneGeometry(
+        300,
+        300
+    );
+
+
+const groundMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x5c9c45,
+        roughness: 1
+    });
+
+
+const ground =
+    new THREE.Mesh(
+        groundGeometry,
+        groundMaterial
+    );
+
+
+ground.rotation.x =
+    -Math.PI /
+    2;
+
+
+ground.position.y =
+    -0.03;
+
+
+ground.receiveShadow =
+    true;
+
+
+scene.add(
+    ground
+);
+
+
+// ============================================================
+// KEY INPUT
+// ============================================================
 
 const keys = {
-    forward: false,
-    backward: false,
-    left: false,
-    right: false,
-    run: false
+
+    forward:
+        false,
+
+    backward:
+        false,
+
+    left:
+        false,
+
+    right:
+        false,
+
+    run:
+        false
+
 };
 
 
 window.addEventListener(
+
     "keydown",
+
     (event) => {
 
-        switch (
-            event.code
+        if (
+            event.code === "Escape" &&
+            gamePaused
         ) {
 
-            case "KeyW":
-            case "ArrowUp":
+            hideFlowerInformation();
 
-                keys.forward =
-                    true;
+            return;
 
-                break;
+        }
 
 
-            case "KeyS":
-            case "ArrowDown":
+        if (
+            !gameStarted ||
+            gamePaused
+        ) {
 
-                keys.backward =
-                    true;
+            return;
 
-                break;
-
-
-            case "KeyA":
-            case "ArrowLeft":
-
-                keys.left =
-                    true;
-
-                break;
+        }
 
 
-            case "KeyD":
-            case "ArrowRight":
+        if (
+            event.code === "KeyW" ||
+            event.code === "ArrowUp"
+        ) {
 
-                keys.right =
-                    true;
+            keys.forward =
+                true;
 
-                break;
+        }
 
 
-            case "ShiftLeft":
-            case "ShiftRight":
+        if (
+            event.code === "KeyS" ||
+            event.code === "ArrowDown"
+        ) {
 
-                keys.run =
-                    true;
+            keys.backward =
+                true;
 
-                break;
+        }
+
+
+        if (
+            event.code === "KeyA" ||
+            event.code === "ArrowLeft"
+        ) {
+
+            keys.left =
+                true;
+
+        }
+
+
+        if (
+            event.code === "KeyD" ||
+            event.code === "ArrowRight"
+        ) {
+
+            keys.right =
+                true;
+
+        }
+
+
+        if (
+            event.code === "ShiftLeft" ||
+            event.code === "ShiftRight"
+        ) {
+
+            keys.run =
+                true;
 
         }
 
     }
+
 );
 
 
 window.addEventListener(
+
     "keyup",
+
     (event) => {
 
-        switch (
-            event.code
+        if (
+            event.code === "KeyW" ||
+            event.code === "ArrowUp"
         ) {
 
-            case "KeyW":
-            case "ArrowUp":
+            keys.forward =
+                false;
 
-                keys.forward =
-                    false;
-
-                break;
+        }
 
 
-            case "KeyS":
-            case "ArrowDown":
+        if (
+            event.code === "KeyS" ||
+            event.code === "ArrowDown"
+        ) {
 
-                keys.backward =
-                    false;
+            keys.backward =
+                false;
 
-                break;
-
-
-            case "KeyA":
-            case "ArrowLeft":
-
-                keys.left =
-                    false;
-
-                break;
+        }
 
 
-            case "KeyD":
-            case "ArrowRight":
+        if (
+            event.code === "KeyA" ||
+            event.code === "ArrowLeft"
+        ) {
 
-                keys.right =
-                    false;
+            keys.left =
+                false;
 
-                break;
+        }
 
 
-            case "ShiftLeft":
-            case "ShiftRight":
+        if (
+            event.code === "KeyD" ||
+            event.code === "ArrowRight"
+        ) {
 
-                keys.run =
-                    false;
+            keys.right =
+                false;
 
-                break;
+        }
+
+
+        if (
+            event.code === "ShiftLeft" ||
+            event.code === "ShiftRight"
+        ) {
+
+            keys.run =
+                false;
 
         }
 
     }
+
 );
 
 
-// =========================================================
-// CAMERA ORBIT CONTROL
-// =========================================================
+// ============================================================
+// START GAME
+// ============================================================
+
+startGameButton.addEventListener(
+
+    "click",
+
+    () => {
+
+        gameStarted =
+            true;
+
+
+        startScreen
+            .classList
+            .add(
+                "hidden"
+            );
+
+    }
+
+);
+
+
+// ============================================================
+// FLOWER INFO
+// ============================================================
+
+function showFlowerInformation(
+    flowerNumber
+) {
+
+    gamePaused =
+        true;
+
+
+    keys.forward =
+        false;
+
+    keys.backward =
+        false;
+
+    keys.left =
+        false;
+
+    keys.right =
+        false;
+
+    keys.run =
+        false;
+
+
+    updateWalkAnimation(
+        false
+    );
+
+
+    const factIndex =
+        (
+            flowerNumber -
+            1
+        ) %
+        flowerFacts.length;
+
+
+    const fact =
+        flowerFacts[
+            factIndex
+        ];
+
+
+    flowerInfoTitle.textContent =
+        fact.title;
+
+
+    flowerInfoText.textContent =
+        fact.text;
+
+
+    flowerInfoModal
+        .classList
+        .remove(
+            "modalHidden"
+        );
+
+
+    flowerInfoModal
+        .classList
+        .add(
+            "modalVisible"
+        );
+
+
+    flowerInfoModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+function hideFlowerInformation() {
+
+    flowerInfoModal
+        .classList
+        .remove(
+            "modalVisible"
+        );
+
+
+    flowerInfoModal
+        .classList
+        .add(
+            "modalHidden"
+        );
+
+
+    flowerInfoModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    gamePaused =
+        false;
+
+}
+
+
+closeFlowerInfo.addEventListener(
+    "click",
+    hideFlowerInformation
+);
+
+
+returnToNeighborhood.addEventListener(
+    "click",
+    hideFlowerInformation
+);
+
+
+// ============================================================
+// CAMERA INPUT
+// ============================================================
 
 let cameraYaw =
     0;
 
 let cameraPitch =
-    -0.25;
+    -0.2;
 
-
-let mouseDown =
+let dragging =
     false;
 
 
 window.addEventListener(
+
     "mousedown",
+
     () => {
 
-        mouseDown =
-            true;
+        if (
+            gameStarted &&
+            !gamePaused
+        ) {
+
+            dragging =
+                true;
+
+        }
 
     }
+
 );
 
 
 window.addEventListener(
+
     "mouseup",
+
     () => {
 
-        mouseDown =
+        dragging =
             false;
 
     }
+
 );
 
 
 window.addEventListener(
+
+    "mouseleave",
+
+    () => {
+
+        dragging =
+            false;
+
+    }
+
+);
+
+
+window.addEventListener(
+
     "mousemove",
+
     (event) => {
 
         if (
-            !mouseDown
+            !dragging ||
+            !gameStarted ||
+            gamePaused
         ) {
 
             return;
@@ -587,48 +1269,68 @@ window.addEventListener(
         cameraPitch =
             THREE.MathUtils.clamp(
                 cameraPitch,
-                -0.75,
-                0.45
+                -0.6,
+                0.35
             );
 
     }
+
 );
 
 
-// =========================================================
-// MOVEMENT SETTINGS
-// =========================================================
-
-const WALK_SPEED =
-    4;
-
-const RUN_SPEED =
-    7;
-
+// ============================================================
+// MOVEMENT
+// ============================================================
 
 const direction =
     new THREE.Vector3();
 
 
-const cameraForward =
+const forward =
     new THREE.Vector3();
 
 
-const cameraRight =
+const right =
     new THREE.Vector3();
 
 
-let currentlyWalking =
-    false;
+const up =
+    new THREE.Vector3(
+        0,
+        1,
+        0
+    );
 
 
-// =========================================================
-// PLAYER MOVEMENT
-// =========================================================
+const WALK_SPEED =
+    4;
+
+
+const RUN_SPEED =
+    7;
+
+
+// ============================================================
+// UPDATE PLAYER
+// ============================================================
 
 function updatePlayer(
     delta
 ) {
+
+    if (
+        !gameStarted ||
+        gamePaused
+    ) {
+
+        updateWalkAnimation(
+            false
+        );
+
+        return;
+
+    }
+
 
     direction.set(
         0,
@@ -638,27 +1340,24 @@ function updatePlayer(
 
 
     camera.getWorldDirection(
-        cameraForward
+        forward
     );
 
 
-    cameraForward.y =
+    forward.y =
         0;
 
-    cameraForward.normalize();
+
+    forward.normalize();
 
 
-    cameraRight.crossVectors(
-        cameraForward,
-        new THREE.Vector3(
-            0,
-            1,
-            0
-        )
+    right.crossVectors(
+        forward,
+        up
     );
 
 
-    cameraRight.normalize();
+    right.normalize();
 
 
     if (
@@ -666,7 +1365,7 @@ function updatePlayer(
     ) {
 
         direction.add(
-            cameraForward
+            forward
         );
 
     }
@@ -677,7 +1376,7 @@ function updatePlayer(
     ) {
 
         direction.sub(
-            cameraForward
+            forward
         );
 
     }
@@ -688,7 +1387,7 @@ function updatePlayer(
     ) {
 
         direction.add(
-            cameraRight
+            right
         );
 
     }
@@ -699,7 +1398,7 @@ function updatePlayer(
     ) {
 
         direction.sub(
-            cameraRight
+            right
         );
 
     }
@@ -730,35 +1429,29 @@ function updatePlayer(
         );
 
 
-        // ---------------------------------------------
-        // ROTATE CHARACTER TOWARD MOVEMENT
-        // ---------------------------------------------
-
-        const targetAngle =
+        const angle =
             Math.atan2(
                 direction.x,
                 direction.z
             );
 
 
-        const targetQuaternion =
-            new THREE.Quaternion()
-                .setFromAxisAngle(
-                    new THREE.Vector3(
-                        0,
-                        1,
-                        0
-                    ),
-                    targetAngle
-                );
+        const targetRotation =
+            new THREE.Quaternion();
+
+
+        targetRotation.setFromAxisAngle(
+            up,
+            angle
+        );
 
 
         player.quaternion.slerp(
-            targetQuaternion,
+            targetRotation,
             Math.min(
-                1,
-                10 *
-                delta
+                delta *
+                10,
+                1
             )
         );
 
@@ -766,21 +1459,21 @@ function updatePlayer(
 
 
     player.position.y =
-        groundHeight;
+        0;
 
 
-    updateAnimation(
+    updateWalkAnimation(
         moving
     );
 
 }
 
 
-// =========================================================
+// ============================================================
 // WALK ANIMATION
-// =========================================================
+// ============================================================
 
-function updateAnimation(
+function updateWalkAnimation(
     moving
 ) {
 
@@ -795,29 +1488,15 @@ function updateAnimation(
 
     if (
         moving &&
-        !currentlyWalking
+        !isWalking
     ) {
-
-        if (
-            idleAction
-        ) {
-
-            idleAction.fadeOut(
-                0.2
-            );
-
-        }
-
 
         walkAction
             .reset()
-            .fadeIn(
-                0.2
-            )
             .play();
 
 
-        currentlyWalking =
+        isWalking =
             true;
 
     }
@@ -825,29 +1504,13 @@ function updateAnimation(
 
     if (
         !moving &&
-        currentlyWalking
+        isWalking
     ) {
 
-        walkAction.fadeOut(
-            0.2
-        );
+        walkAction.stop();
 
 
-        if (
-            idleAction
-        ) {
-
-            idleAction
-                .reset()
-                .fadeIn(
-                    0.2
-                )
-                .play();
-
-        }
-
-
-        currentlyWalking =
+        isWalking =
             false;
 
     }
@@ -855,9 +1518,9 @@ function updateAnimation(
 }
 
 
-// =========================================================
-// THIRD PERSON CAMERA
-// =========================================================
+// ============================================================
+// CAMERA
+// ============================================================
 
 const cameraTarget =
     new THREE.Vector3();
@@ -868,10 +1531,11 @@ const desiredCameraPosition =
 
 
 const CAMERA_DISTANCE =
-    7;
+    6;
+
 
 const CAMERA_HEIGHT =
-    3;
+    2.2;
 
 
 function updateCamera(
@@ -882,18 +1546,19 @@ function updateCamera(
         player.position
     );
 
+
     cameraTarget.y +=
-        1.7;
+        0.8;
 
 
-    const horizontalDistance =
+    const horizontal =
         CAMERA_DISTANCE *
         Math.cos(
             cameraPitch
         );
 
 
-    const verticalDistance =
+    const vertical =
         CAMERA_DISTANCE *
         Math.sin(
             cameraPitch
@@ -906,17 +1571,19 @@ function updateCamera(
         Math.sin(
             cameraYaw
         ) *
-        horizontalDistance,
+        horizontal,
+
 
         player.position.y +
         CAMERA_HEIGHT -
-        verticalDistance,
+        vertical,
+
 
         player.position.z +
         Math.cos(
             cameraYaw
         ) *
-        horizontalDistance
+        horizontal
 
     );
 
@@ -924,9 +1591,9 @@ function updateCamera(
     camera.position.lerp(
         desiredCameraPosition,
         Math.min(
-            1,
-            6 *
-            delta
+            delta *
+            7,
+            1
         )
     );
 
@@ -938,60 +1605,142 @@ function updateCamera(
 }
 
 
-// =========================================================
-// OPTIONAL GROUND
-// =========================================================
+// ============================================================
+// UPDATE FLOWERS
+// ============================================================
 
-const groundGeometry =
-    new THREE.PlaneGeometry(
-        300,
-        300
+function updateFlowers() {
+
+    if (
+        !gameStarted ||
+        gamePaused ||
+        flowers.length ===
+        0
+    ) {
+
+        return;
+
+    }
+
+
+    const time =
+        performance.now() *
+        0.002;
+
+
+    for (
+        const flower
+        of flowers
+    ) {
+
+        if (
+            !flower ||
+            flower.userData.collected
+        ) {
+
+            continue;
+
+        }
+
+
+        flower.rotation.y +=
+            0.012;
+
+
+        flower.position.y =
+            flower.userData.baseY +
+            0.05 +
+            Math.sin(
+                time +
+                flower.userData.animationOffset
+            ) *
+            0.05;
+
+
+        const dx =
+            player.position.x -
+            flower.position.x;
+
+
+        const dz =
+            player.position.z -
+            flower.position.z;
+
+
+        const distance =
+            Math.sqrt(
+                dx * dx +
+                dz * dz
+            );
+
+
+        if (
+            distance <
+            FLOWER_PICKUP_DISTANCE
+        ) {
+
+            collectFlower(
+                flower
+            );
+
+            break;
+
+        }
+
+    }
+
+}
+
+
+// ============================================================
+// COLLECT FLOWER
+// ============================================================
+
+function collectFlower(
+    flower
+) {
+
+    if (
+        !flower ||
+        flower.userData.collected
+    ) {
+
+        return;
+
+    }
+
+
+    flower.userData.collected =
+        true;
+
+
+    flowerCount +=
+        1;
+
+
+    scene.remove(
+        flower
     );
 
 
-const groundMaterial =
-    new THREE.MeshStandardMaterial({
-
-        color:
-            0x63a64c,
-
-        roughness:
-            1
-
-    });
+    updateFlowerUI();
 
 
-const ground =
-    new THREE.Mesh(
-        groundGeometry,
-        groundMaterial
+    showFlowerInformation(
+        flowerCount
     );
 
-
-ground.rotation.x =
-    -Math.PI /
-    2;
+}
 
 
-ground.position.y =
-    -0.02;
-
-
-ground.receiveShadow =
-    true;
-
-
-scene.add(
-    ground
-);
-
-
-// =========================================================
+// ============================================================
 // RESIZE
-// =========================================================
+// ============================================================
 
 window.addEventListener(
+
     "resize",
+
     () => {
 
         camera.aspect =
@@ -1016,16 +1765,21 @@ window.addEventListener(
         );
 
     }
+
 );
 
 
-// =========================================================
-// ANIMATION LOOP
-// =========================================================
+// ============================================================
+// CLOCK
+// ============================================================
 
 const clock =
     new THREE.Clock();
 
+
+// ============================================================
+// GAME LOOP
+// ============================================================
 
 function animate() {
 
@@ -1046,8 +1800,12 @@ function animate() {
     );
 
 
+    updateFlowers();
+
+
     if (
-        mixer
+        mixer &&
+        !gamePaused
     ) {
 
         mixer.update(
@@ -1069,5 +1827,11 @@ function animate() {
 
 }
 
+
+// ============================================================
+// START
+// ============================================================
+
+updateFlowerUI();
 
 animate();

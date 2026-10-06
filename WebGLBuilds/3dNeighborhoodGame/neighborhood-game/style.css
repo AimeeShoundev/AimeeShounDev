@@ -1,3 +1,7 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
 * {
     box-sizing: border-box;
 }
@@ -5,8 +9,10 @@
 html,
 body {
     margin: 0;
+
     width: 100%;
     height: 100%;
+
     overflow: hidden;
 
     font-family:
@@ -17,11 +23,15 @@ body {
     background: #87ceeb;
 }
 
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
 .webgl {
     position: fixed;
 
-    top: 0;
-    left: 0;
+    inset: 0;
 
     width: 100%;
     height: 100%;
@@ -31,8 +41,9 @@ body {
     outline: none;
 }
 
+
 /* =========================================================
-   LOADING
+   LOADING SCREEN
 ========================================================= */
 
 #loadingScreen {
@@ -40,7 +51,7 @@ body {
 
     inset: 0;
 
-    z-index: 100;
+    z-index: 1200;
 
     display: flex;
 
@@ -49,34 +60,44 @@ body {
     justify-content: center;
     align-items: center;
 
+    text-align: center;
+
+    padding: 30px;
+
     background:
         linear-gradient(
             180deg,
-            #5bb7ff,
-            #dff5ff
+            #62bcff 0%,
+            #b7e7ff 60%,
+            #effcff 100%
         );
 
     color: #10243c;
 
     transition:
-        opacity 0.5s ease,
-        visibility 0.5s ease;
+        opacity 0.4s ease,
+        visibility 0.4s ease;
 }
 
 #loadingScreen.hidden {
     opacity: 0;
+
     visibility: hidden;
+
+    pointer-events: none;
 }
 
 #loadingScreen h1 {
-    margin: 0 0 12px;
+    margin: 0 0 14px;
 
     font-size:
         clamp(
             32px,
             5vw,
-            60px
+            62px
         );
+
+    font-weight: 900;
 }
 
 #loadingScreen p {
@@ -86,9 +107,181 @@ body {
         clamp(
             18px,
             2vw,
-            24px
+            26px
+        );
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   START SCREEN
+========================================================= */
+
+#startScreen {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 24px;
+
+    background:
+        rgba(
+            10,
+            24,
+            38,
+            0.72
+        );
+
+    backdrop-filter:
+        blur(7px);
+
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+}
+
+#startScreen.hidden {
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+#startCard {
+    width:
+        min(
+            650px,
+            92vw
+        );
+
+    padding:
+        42px
+        44px;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fffdf8 0%,
+            #fff0f7 100%
+        );
+
+    text-align: center;
+
+    color: #28353e;
+
+    box-shadow:
+        0 25px 70px
+        rgba(
+            0,
+            0,
+            0,
+            0.38
         );
 }
+
+.startFlower {
+    margin-bottom: 8px;
+
+    font-size:
+        clamp(
+            60px,
+            8vw,
+            92px
+        );
+}
+
+#startCard h1 {
+    margin:
+        0
+        0
+        18px;
+
+    color: #c92370;
+
+    font-size:
+        clamp(
+            30px,
+            5vw,
+            48px
+        );
+}
+
+#startCard p {
+    margin:
+        0
+        auto
+        20px;
+
+    max-width: 560px;
+
+    font-size:
+        clamp(
+            19px,
+            2vw,
+            25px
+        );
+
+    line-height: 1.5;
+}
+
+#startCard .startControls {
+    font-size:
+        clamp(
+            16px,
+            1.6vw,
+            20px
+        );
+
+    color: #53616b;
+}
+
+#startGameButton {
+    margin-top: 8px;
+
+    padding:
+        16px
+        32px;
+
+    border: none;
+
+    border-radius: 16px;
+
+    background: #d72c78;
+
+    color: white;
+
+    font-size: 21px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px
+        rgba(
+            160,
+            25,
+            85,
+            0.28
+        );
+}
+
+#startGameButton:hover {
+    transform:
+        translateY(-2px);
+}
+
 
 /* =========================================================
    HUD
@@ -100,41 +293,43 @@ body {
     top: 20px;
     left: 20px;
 
-    z-index: 10;
-
-    pointer-events: none;
+    z-index: 20;
 
     color: white;
+
+    pointer-events: none;
 }
 
-.title {
+.gameTitle {
+    display: inline-block;
+
     margin-bottom: 12px;
 
     padding:
         12px
         18px;
 
-    border-radius: 14px;
+    border-radius: 16px;
 
     background:
         rgba(
-            10,
-            24,
-            45,
-            0.82
+            11,
+            25,
+            44,
+            0.86
         );
 
     font-size:
         clamp(
             20px,
-            2.2vw,
+            2vw,
             30px
         );
 
-    font-weight: 800;
+    font-weight: 900;
 
     box-shadow:
-        0 6px 20px
+        0 8px 25px
         rgba(
             0,
             0,
@@ -144,84 +339,414 @@ body {
 }
 
 .instructions {
+    width: max-content;
+
+    max-width: 320px;
+
     padding:
         12px
         18px;
 
-    border-radius: 14px;
+    border-radius: 16px;
 
     background:
         rgba(
-            10,
-            24,
-            45,
-            0.72
+            11,
+            25,
+            44,
+            0.74
         );
 
     font-size:
         clamp(
             14px,
-            1.4vw,
+            1.3vw,
             18px
         );
 
     line-height: 1.6;
+
+    box-shadow:
+        0 8px 25px
+        rgba(
+            0,
+            0,
+            0,
+            0.2
+        );
 }
 
+
 /* =========================================================
-   CROSSHAIR
+   OBJECTIVE
 ========================================================= */
 
-#crosshair {
+#objective {
     position: fixed;
 
-    top: 50%;
+    top: 20px;
     left: 50%;
 
-    z-index: 10;
-
     transform:
-        translate(
-            -50%,
-            -50%
+        translateX(-50%);
+
+    z-index: 20;
+
+    padding:
+        12px
+        22px;
+
+    border-radius: 16px;
+
+    background:
+        rgba(
+            255,
+            239,
+            115,
+            0.96
         );
 
-    color: white;
+    color: #312f1b;
 
-    font-size: 24px;
+    font-size:
+        clamp(
+            17px,
+            1.6vw,
+            23px
+        );
 
     font-weight: 900;
 
-    text-shadow:
-        0 2px 5px black;
+    box-shadow:
+        0 7px 22px
+        rgba(
+            0,
+            0,
+            0,
+            0.18
+        );
 
     pointer-events: none;
 }
 
+
 /* =========================================================
-   SMALL SCREENS
+   FLOWER COUNTER
+========================================================= */
+
+#flowerCounter {
+    position: fixed;
+
+    top: 20px;
+    right: 20px;
+
+    z-index: 20;
+
+    padding:
+        13px
+        20px;
+
+    border-radius: 16px;
+
+    background:
+        rgba(
+            20,
+            24,
+            45,
+            0.86
+        );
+
+    color: white;
+
+    font-size:
+        clamp(
+            18px,
+            1.7vw,
+            24px
+        );
+
+    font-weight: 900;
+
+    box-shadow:
+        0 8px 25px
+        rgba(
+            0,
+            0,
+            0,
+            0.22
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   FLOWER INFO MODAL
+========================================================= */
+
+#flowerInfoModal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1100;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 24px;
+
+    background:
+        rgba(
+            8,
+            18,
+            30,
+            0.72
+        );
+
+    backdrop-filter:
+        blur(5px);
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+#flowerInfoModal.modalHidden {
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+#flowerInfoModal.modalVisible {
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+}
+
+#flowerInfoCard {
+    position: relative;
+
+    width:
+        min(
+            620px,
+            92vw
+        );
+
+    max-height:
+        88vh;
+
+    overflow-y: auto;
+
+    padding:
+        38px
+        42px
+        34px;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fffdf8 0%,
+            #fff3fa 100%
+        );
+
+    color: #27333d;
+
+    text-align: center;
+
+    box-shadow:
+        0 25px 70px
+        rgba(
+            0,
+            0,
+            0,
+            0.38
+        );
+}
+
+#flowerInfoIcon {
+    margin-bottom: 10px;
+
+    font-size:
+        clamp(
+            52px,
+            7vw,
+            82px
+        );
+}
+
+#flowerInfoTitle {
+    margin:
+        0
+        0
+        18px;
+
+    color: #c7226d;
+
+    font-size:
+        clamp(
+            28px,
+            4vw,
+            42px
+        );
+
+    line-height: 1.1;
+}
+
+#flowerInfoText {
+    margin:
+        0
+        auto
+        28px;
+
+    max-width: 520px;
+
+    font-size:
+        clamp(
+            18px,
+            2vw,
+            24px
+        );
+
+    line-height: 1.55;
+}
+
+#closeFlowerInfo {
+    position: absolute;
+
+    top: 14px;
+    right: 18px;
+
+    width: 44px;
+    height: 44px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #f1d8e5;
+
+    color: #7c214b;
+
+    font-size: 30px;
+
+    font-weight: 900;
+
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+#closeFlowerInfo:hover {
+    transform:
+        scale(1.08);
+}
+
+#returnToNeighborhood {
+    min-width: 240px;
+
+    padding:
+        15px
+        24px;
+
+    border: none;
+
+    border-radius: 16px;
+
+    background: #d92b78;
+
+    color: white;
+
+    font-size: 19px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px
+        rgba(
+            151,
+            21,
+            82,
+            0.25
+        );
+}
+
+#returnToNeighborhood:hover {
+    transform:
+        translateY(-2px);
+}
+
+
+/* =========================================================
+   RESPONSIVE
 ========================================================= */
 
 @media (
-    max-width: 600px
+    max-width: 750px
 ) {
 
     #hud {
         top: 10px;
         left: 10px;
-
-        right: 10px;
     }
 
-    .title {
-        padding:
-            10px
-            14px;
+    #flowerCounter {
+        top: 10px;
+        right: 10px;
+
+        font-size: 15px;
+    }
+
+    #objective {
+        top: auto;
+        bottom: 18px;
+
+        width:
+            calc(
+                100% - 40px
+            );
+
+        text-align: center;
+    }
+
+    .gameTitle {
+        font-size: 18px;
     }
 
     .instructions {
-        padding:
-            10px
-            14px;
+        max-width: 225px;
+
+        font-size: 13px;
     }
+
+    #startCard {
+        padding:
+            32px
+            22px;
+    }
+
+    #startGameButton,
+    #returnToNeighborhood {
+        width: 100%;
+
+        min-width: 0;
+    }
+
+    #flowerInfoCard {
+        padding:
+            34px
+            22px
+            26px;
+    }
+
 }
