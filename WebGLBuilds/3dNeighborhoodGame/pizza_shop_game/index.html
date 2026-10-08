@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#171523" />
+  <title>Pizza Delivery — The Pizza Shop</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"}}
+  </script>
+</head>
+<body>
+  <canvas id="world" aria-label="3D pizza shop game"></canvas>
+  <div class="topbar"><div class="brand"><span>🍕</span><div><strong>PIZZA SHIFT</strong><small>THE PIZZA SHOP</small></div></div><div class="objective"><span class="pulse"></span><span id="objective">Head to the pizza station</span></div></div>
+  <div class="help">WASD / Arrow keys <span>•</span> Walk <span>•</span> Drag mouse to look <span>•</span> Scroll to zoom <span>•</span> Enter / E to interact</div>
+  <div id="loading" class="screen"><div class="panel"><div class="emoji">🍕</div><h1>Pizza Shift</h1><p id="loadingText">Preparing your pizza shop…</p><div class="track"><div id="progress"></div></div></div></div>
+  <div id="start" class="screen hidden"><div class="panel"><div class="eyebrow">YOUR SHIFT STARTS NOW</div><div class="emoji">👨‍🍳</div><h1>Welcome to the Pizza Shop!</h1><p>Walk your pizza guy to the <b>pizza-making station</b> at the back of the shop. When you're close, press <b>Enter</b> or tap <b>Make Pizza</b>.</p><button id="play" class="primary">Start shift <span>→</span></button><div class="hint">Use WASD or arrows to walk; drag the mouse to look around</div></div></div>
+  <div id="interact" class="interact hidden" role="status"><div class="interact-emoji">🍕</div><div class="interact-content"><strong>Pizza-making station</strong><span>Ready to make an order?</span></div><button id="makePizza">Make Pizza <kbd>Enter</kbd></button></div>
+  <div id="mobile" class="mobile-controls"><div class="dpad"><button class="up" data-dir="up" aria-label="Move forward">▲</button><button class="left" data-dir="left" aria-label="Move left">◀</button><button class="down" data-dir="down" aria-label="Move backward">▼</button><button class="right" data-dir="right" aria-label="Move right">▶</button></div></div>
+  <div id="error" class="screen hidden"><div class="panel"><h1>Couldn’t load the 3D game</h1><p id="errorText"></p><p>Extract the ZIP first. On Windows, run <strong>START_GAME_WINDOWS.bat</strong>, or open a terminal in this folder and run <code>npx serve .</code>. Keep your internet connection on to load Three.js.</p></div></div>
+  <script type="module" src="./boot.js"></script>
+</body>
+</html>
