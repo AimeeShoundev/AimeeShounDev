@@ -127,17 +127,17 @@ function showBoxedPizza(){
 }
 function finish(){showBoxedPizza();document.body.classList.add('order-finished');$('exitShop').textContent='🚪 Pizza Ready! Back to Shop →';let score=100;const issues=[];if(chosenSize!==order.size){score-=20;issues.push('Wrong pizza size')}if(sauceMarks.length<6){score-=15;issues.push('Not enough sauce')}if(cheeseMarks.length<6){score-=15;issues.push('Not enough cheese')}if(chosenSauce!==(order.sauce||'Classic Tomato')){score-=12;issues.push('Wrong sauce')}if(chosenCheese!==(order.cheese||'Mozzarella')){score-=12;issues.push('Wrong cheese')}const missing=order.toppings.filter(t=>!selected.includes(t));const extra=selected.filter(t=>!order.toppings.includes(t));score-=missing.length*15+extra.length*10;if(missing.length)issues.push('Missing: '+missing.join(', '));if(extra.length)issues.push('Extra: '+extra.join(', '));if(chosenSeasoning!==(order.seasoning||'Plain Crust')){score-=8;issues.push('Wrong crust seasoning')}if(chosenSeasoning!=='Plain Crust'&&crustMarks.length<4){score-=8;issues.push('Crust not fully seasoned')}if(bakeQuality<100){score-=Math.round((100-bakeQuality)*.25);issues.push('Bake timing was off')}score=Math.max(0,score);$('stepTitle').textContent='Order complete!';$('stage').textContent='DELIVERY READY';$('instruction').textContent=`📦 Pizza boxed! Quality: ${score}%. Exit back to the shop and get ready for delivery!`;$('choices').replaceChildren();$('next').disabled=true;$('next').textContent='Order completed';$('feedback').innerHTML=`<strong>${score>=90?'🌟 Excellent work!':score>=60?'🙂 Customer may notice mistakes':'😠 Customer may be upset'}</strong><br>${issues.length?issues.join('<br>'):'Everything matches the ticket!'}<br>Deliver to: ${order.address}`;const result={type:'pizzaComplete',orderId:round,address:order.address,requestedSize:order.size,actualSize:chosenSize,requestedToppings:order.toppings,actualToppings:selected,toppingPieces:placedPieces,quality:score,bakeQuality,actualSauce:chosenSauce,actualCheese:chosenCheese,sauceCoverage:sauceMarks.length,cheeseCoverage:cheeseMarks.length,crustSeasoning:chosenSeasoning,crustSeasoningMarks:crustMarks.length};try{window.parent.postMessage(result,window.location.origin)}catch(e){}try{localStorage.setItem('pizzaDeliveryLastPizza',JSON.stringify(result))}catch(e){}}
 $('next').addEventListener('click',()=>{if(step===5&&baking)return;if(step===1)hasSauce=sauceMarks.length>=6;if(step===2)hasCheese=cheeseMarks.length>=6;paintMode=null;if(step===6){finish();return}step++;render()});$('restart').addEventListener('click',()=>{document.body.classList.remove('order-finished','pizza-is-boxed');$('deliveryBox').hidden=true;$('exitShop').textContent='🚪 Exit — Back to Shop';externalOrder=null;start()});
+// The Back to Shop button always opens the published 3D pizza shop.
+const PIZZA_SHOP_URL = 'https://aimeeshoundev.github.io/AimeeShounDev/WebGLBuilds/3dNeighborhoodGame/pizza_shop_game/index.html';
 $('exitShop').addEventListener('click',()=>{
-  // When embedded in the 3D shop, ask the parent to close the iframe.
-  if(window.parent!==window){
-    window.parent.postMessage({type:'closePizzaGame'},window.location.origin);
-    return;
+  // A user click permits navigation out of an iframe on most browsers.
+  // Standalone mode navigates this page directly.
+  try {
+    if(window.top !== window.self) window.top.location.href = PIZZA_SHOP_URL;
+    else window.location.href = PIZZA_SHOP_URL;
+  } catch (err) {
+    window.location.href = PIZZA_SHOP_URL;
   }
-  // Standalone mode: allow a safe explicit shop URL or use the default folder.
-  const params=new URLSearchParams(window.location.search);
-  const target=params.get('shop');
-  const safeTarget=target && !target.startsWith('//') && !target.startsWith('\\') && !/^[a-z][a-z0-9+.-]*:/i.test(target) ? target : '../shop/index.html';
-  window.location.href=safeTarget;
 });
 
 // Optionally receive an order from the parent 3D shop using postMessage.
