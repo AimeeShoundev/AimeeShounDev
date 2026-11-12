@@ -1,0 +1,25 @@
+:root { color-scheme: dark; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0c1829; color: #f7f9fe; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 25% 0%, #1b3556, #0c1829 58%); }
+a { color: #72dfda; }
+a:focus-visible { outline: 3px solid #e0b84a; outline-offset: 4px; }
+.container { width: min(960px, calc(100% - 32px)); margin: 0 auto; padding: 54px 0 35px; }
+.intro { text-align: center; }
+.eyebrow { text-transform: uppercase; letter-spacing: .2em; font-weight: 750; color: #72dfda; font-size: .8rem; }
+h1 { font-size: clamp(2rem, 5vw, 3.7rem); line-height: 1.1; margin: 16px 0; }
+.subtitle { font-size: clamp(1.1rem, 2.4vw, 1.55rem); color: #e0b84a; font-weight: 700; }
+.intro > p:not(.eyebrow):not(.subtitle) { color: #c6d3e4; }
+.actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin: 32px 0 20px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 15px 24px; min-height: 52px; font-size: 1rem; font-weight: 750; border-radius: 12px; text-decoration: none; transition: transform .15s ease, background-color .15s ease; }
+.btn:hover { transform: translateY(-2px); }
+.primary { background: #52c6c1; color: #071c2f; }
+.primary:hover { background: #7ee1dc; }
+.secondary { background: #223d63; color: #fff; border: 1px solid #58749b; }
+.secondary:hover { background: #30517e; }
+.small { font-size: .92rem; }
+.preview { border: 1px solid #46607b; background: #162b48; border-radius: 16px; padding: 10px; box-shadow: 0 20px 65px #0005; }
+.preview iframe { width: 100%; height: min(75vh, 1000px); min-height: 500px; border: none; border-radius: 8px; background: #fff; display: block; }
+.fallback { margin: 12px; font-size: .85rem; color: #c6d3e4; }
+footer { text-align: center; padding: 25px 0 0; color: #b5c6d9; }
+@media (max-width: 600px) { .container { padding-top: 35px; } .actions { flex-direction: column; } .btn { width: 100%; } .preview iframe { min-height: 430px; height: 65vh; } }
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
