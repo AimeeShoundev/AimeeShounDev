@@ -1,21 +1,19 @@
-const express=require('express');
-const http=require('http');
-const {Server}=require('socket.io');
-const app=express();const server=http.createServer(app);
-const io=new Server(server,{cors:{origin:'*',methods:['GET','POST']}});
-const rooms=new Map();
-app.get('/',(_,res)=>res.json({ok:true,game:'Skybound AR Racer',rooms:rooms.size}));
-app.get('/health',(_,res)=>res.json({ok:true}));
-const clean=s=>String(s||'').replace(/[^a-zA-Z0-9 _-]/g,'').trim().slice(0,18);
-function code(){let c;do{c=Math.random().toString(36).slice(2,6).toUpperCase()}while(rooms.has(c));return c}
-function broadcast(r){io.to(r.code).emit('room', {code:r.code,players:Object.values(r.players).map(p=>({id:p.id,name:p.name,slot:p.slot,lap:p.lap,progress:p.progress,finished:p.finished})),started:r.started,winner:r.winner});}
-function leave(s){const c=s.data.room;if(!c)return;const r=rooms.get(c);s.leave(c);delete s.data.room;if(!r)return;delete r.players[s.id];if(!Object.keys(r.players).length)rooms.delete(c);else{if(r.started&&!r.winner){r.started=false;Object.values(r.players).forEach(p=>{p.lap=0;p.progress=0;p.finished=false});io.to(c).emit('resetRace')}broadcast(r)}}
-function join(s,r,name){if(Object.keys(r.players).length>=2)return s.emit('notice','This room already has two players.');leave(s);const taken=Object.values(r.players).map(p=>p.slot);const slot=taken.includes(0)?1:0;r.players[s.id]={id:s.id,name:clean(name)||'Racer',slot,lap:0,progress:0,finished:false};s.data.room=r.code;s.join(r.code);s.emit('joined',{code:r.code,slot,id:s.id});broadcast(r)}
-io.on('connection',s=>{
- s.on('create',({name}={})=>{const c=code();const r={code:c,players:{},started:false,winner:null};rooms.set(c,r);join(s,r,name)});
- s.on('join',({code:c,name}={})=>{const r=rooms.get(String(c||'').trim().toUpperCase());if(!r)return s.emit('notice','Room not found. Check the code.');if(r.started)return s.emit('notice','Race already started.');join(s,r,name)});
- s.on('start',()=>{const r=rooms.get(s.data.room);if(!r||Object.keys(r.players).length!==2)return s.emit('notice','Wait for the second player.');r.started=true;r.winner=null;Object.values(r.players).forEach(p=>{p.lap=0;p.progress=0;p.finished=false});broadcast(r);io.to(r.code).emit('raceStart',{at:Date.now()+2500})});
- s.on('drive',({progress,lap}={})=>{const r=rooms.get(s.data.room);if(!r||!r.started||r.winner)return;const p=r.players[s.id];if(!p)return;const n=Number(progress);const l=Number(lap);if(!Number.isFinite(n)||!Number.isInteger(l)||l<0||l>3)return;const delta=(l+n)-(p.lap+p.progress);if(delta<-.12||delta>.16)return;p.progress=Math.max(0,Math.min(.999,n));p.lap=l; s.to(r.code).emit('opponent',{id:s.id,progress:p.progress,lap:p.lap});if(l>=3){p.finished=true;r.winner=p.name;io.to(r.code).emit('winner',{name:p.name,id:s.id});broadcast(r)}});
- s.on('leave',()=>leave(s));s.on('disconnect',()=>leave(s));
+'use strict';
+const express=require('express');const http=require('http');const {Server}=require('socket.io');
+const app=express();app.get('/',(_,res)=>res.send('Skybound Ground AR Racing server online'));app.get('/health',(_,res)=>res.json({ok:true,rooms:rooms.size}));
+const server=http.createServer(app);const io=new Server(server,{cors:{origin:'*',methods:['GET','POST']}});const rooms=new Map();
+const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function code(){let c;do{c=Array.from({length:5},()=>alphabet[Math.random()*alphabet.length|0]).join('')}while(rooms.has(c));return c}
+function snapshot(room){return {code:room.code,started:room.started,winner:room.winner,players:[...room.players.values()].map(p=>({id:p.id,name:p.name,car:p.car,angle:p.angle,speed:p.speed,laps:p.laps,progress:p.progress,ready:p.ready}))}}
+function broadcast(room){io.to(room.code).emit('roomState',snapshot(room))}
+function join(socket,room,name){if(room.players.size>=2)return socket.emit('gameError','This room is full (2 players).');if(socket.data.room)leave(socket);socket.join(room.code);socket.data.room=room.code;const car=room.players.size;room.players.set(socket.id,{id:socket.id,name:String(name||'Driver').trim().slice(0,18)||'Driver',car,angle:-Math.PI/2+(car?-.22:0),speed:0,laps:0,progress:0,ready:false,last:Date.now()});socket.emit('joined',{code:room.code,id:socket.id,car});broadcast(room)}
+function leave(socket){const c=socket.data.room;if(!c)return;const r=rooms.get(c);socket.leave(c);delete socket.data.room;if(!r)return;r.players.delete(socket.id);if(r.players.size===0)rooms.delete(c);else{r.started=false;r.winner=null;for(const p of r.players.values()){p.ready=false;p.laps=0;p.progress=0;p.angle=-Math.PI/2;p.speed=0}broadcast(r)}}
+io.on('connection',socket=>{
+ socket.on('createRoom',data=>{const c=code();const room={code:c,players:new Map(),started:false,winner:null};rooms.set(c,room);join(socket,room,data?.name)});
+ socket.on('joinRoom',data=>{const c=String(data?.code||'').toUpperCase().trim();const r=rooms.get(c);if(!r)return socket.emit('gameError','Room not found. Check the code.');join(socket,r,data?.name)});
+ socket.on('ready',()=>{const r=rooms.get(socket.data.room);const p=r?.players.get(socket.id);if(!p||r.started)return;p.ready=true;if(r.players.size===2&&[...r.players.values()].every(x=>x.ready)){r.started=true;r.winner=null;for(const q of r.players.values()){q.laps=0;q.progress=0;q.speed=0;q.angle=-Math.PI/2+(q.car?-.22:0);q.last=Date.now()}}broadcast(r)});
+ socket.on('drive',data=>{const r=rooms.get(socket.data.room);const p=r?.players.get(socket.id);if(!p||!r.started||r.winner)return;const now=Date.now();const dt=Math.min((now-p.last)/1000,.15);if(dt<.025)return;p.last=now;const throttle=data?.throttle===true;const brake=data?.brake===true;const steer=Math.max(-1,Math.min(1,Number(data?.steer)||0));p.speed=Math.max(0,Math.min(.85,p.speed+(throttle?.62:-.34)*dt-(brake?1.2*dt:0)));const previous=p.progress;p.progress+=p.speed*dt*(1-Math.abs(steer)*.16);p.angle=-Math.PI/2+p.progress*2*Math.PI;p.laps=Math.min(3,Math.floor(p.progress));if(previous<3&&p.progress>=3){r.winner=p.id;r.started=false;io.to(r.code).emit('winner',{id:p.id,name:p.name})}broadcast(r)});
+ socket.on('leaveRoom',()=>leave(socket));socket.on('disconnect',()=>leave(socket));
 });
-server.listen(process.env.PORT||3000,'0.0.0.0',()=>console.log('Skybound AR Racer listening'));
+setInterval(()=>{for(const [c,r] of rooms){if(r.players.size===0)rooms.delete(c)}},60000).unref();
+const port=process.env.PORT||3000;server.listen(port,'0.0.0.0',()=>console.log('Skybound AR racing listening on '+port));
