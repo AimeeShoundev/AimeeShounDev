@@ -10,8 +10,11 @@ const PORT = process.env.PORT || 3000;
 const MAX_PLAYERS = 4;
 const rooms = new Map();
 const colors = [0x4ed5d0, 0xffb84d, 0xff719b, 0x9c8cff];
-const CHECKPOINTS=8, LAPS=3;
-const points=Array.from({length:CHECKPOINTS},(_,i)=>[15*Math.cos(-i*2*Math.PI/CHECKPOINTS),15*Math.sin(-i*2*Math.PI/CHECKPOINTS)]);
+const gems = [
+  [-18, -15], [-12, 14], [16, -12], [19, 12], [0, 19],
+  [-22, 2], [7, -20], [23, -4], [-6, 8], [11, 6],
+  [-17, 19], [20, 20]
+];
 function safeName(value) {
   return String(value || 'Explorer').replace(/[^a-zA-Z0-9 _-]/g, '').trim().slice(0, 18) || 'Explorer';
 }
@@ -23,13 +26,11 @@ function roomCode() {
   return code;
 }
 function makeRoom(code) {
-  const room = { code, players: new Map(), host:null, progress:new Map(), raceState:"waiting", startAt:0, finished:[], createdAt: Date.now() };
+  const room = { code, players: new Map(), collected: new Set(), createdAt: Date.now() };
   rooms.set(code, room);
   return room;
 }
-function progressList(room){return [...room.progress].map(([id,progress])=>({id,...progress}));}
-function snapshot(room) { return { code: room.code, players: [...room.players.values()], host:room.host, raceState:room.raceState, startAt:room.startAt, progress:progressList(room) }; }
-function raceUpdate(room){io.to(room.code).emit("raceUpdate",{state:room.raceState,startAt:room.startAt,host:room.host,progress:progressList(room)});}
+function snapshot(room) { return { code: room.code, players: [...room.players.values()], collected: [...room.collected], gems }; }
 function ackReply(ack, payload) { if (typeof ack === 'function') ack(payload); }
 function removePlayer(socket) {
   const code = socket.data.roomCode;
@@ -38,7 +39,7 @@ function removePlayer(socket) {
   socket.leave(code);
   delete socket.data.roomCode;
   if (!room) return;
-  room.players.delete(socket.id);room.progress.delete(socket.id);if(room.host===socket.id){room.host=room.players.keys().next().value||null;raceUpdate(room);}
+  room.players.delete(socket.id);
   io.to(code).emit('playerLeft', socket.id);
   io.to(code).emit('systemMessage', `${socket.data.playerName || 'A player'} left the world.`);
   if (!room.players.size) rooms.delete(code);
@@ -56,13 +57,13 @@ io.on('connection', (socket) => {
     const used = new Set([...room.players.values()].map(p => p.color));
     const color = colors.find(c => !used.has(c)) || colors[0];
     const index = room.players.size;
-    const player = { id:socket.id, name, color, x: 15, y:0, z: index * .7 - 1, rot:0, score:0, moving:false };
-    room.players.set(socket.id, player);if(!room.host)room.host=socket.id;room.progress.set(socket.id,{lap:0,checkpoint:0,finished:false,place:null,eligible:room.raceState==="waiting"||room.raceState==="finished"});
+    const player = { id:socket.id, name, color, x: index * 2 - 3, y:0, z:0, rot:0, score:0, moving:false };
+    room.players.set(socket.id, player);
     socket.data.roomCode = code;
     socket.data.playerName = name;
     socket.join(code);
     ackReply(ack, {ok:true, selfId:socket.id, world:snapshot(room)});
-    socket.to(code).emit('playerJoined', player);raceUpdate(room);
+    socket.to(code).emit('playerJoined', player);
     io.to(code).emit('systemMessage', `${name} joined the world!`);
   });
   socket.on('move', (state) => {
@@ -77,28 +78,25 @@ io.on('connection', (socket) => {
     player.x=x; player.z=z; player.rot=state.rot; player.moving=!!state.moving;
     socket.to(room.code).emit('playerMoved', {id:socket.id, x,z,rot:player.rot,moving:player.moving});
   });
-  socket.on('startRace',(ack)=>{
-    const room=rooms.get(socket.data.roomCode);
-    if(!room||room.host!==socket.id)return ackReply(ack,{ok:false,error:'Only the room host can start the race.'});
-    if(room.raceState==='running'||room.raceState==='countdown')return ackReply(ack,{ok:false,error:'Race already underway.'});
-    room.raceState='countdown';room.startAt=Date.now()+3500;room.finished=[];
-    let index=0;
-    for(const [id,p] of room.players){p.x=15;p.z=index*.7-1;index++;room.progress.set(id,{lap:0,checkpoint:0,finished:false,place:null,eligible:true});io.to(id).emit('raceReset',{x:p.x,z:p.z});}
-    raceUpdate(room);ackReply(ack,{ok:true});
-    setTimeout(()=>{if(rooms.get(room.code)!==room||room.raceState!=='countdown')return;room.raceState='running';raceUpdate(room);},3500);
-  });
-  socket.on('checkpoint',raw=>{
-    const room=rooms.get(socket.data.roomCode);if(!room||room.raceState!=='running')return;
-    const player=room.players.get(socket.id),p=room.progress.get(socket.id);if(!player||!p||p.finished||!p.eligible)return;
-    const index=Number(raw);if(!Number.isInteger(index)||index!==p.checkpoint)return;
-    const [x,z]=points[index];if(Math.hypot(player.x-x,player.z-z)>2.6)return;
-    // A minimum travel interval prevents repeated checkpoint requests from skipping the track.
-    const now=Date.now();if(p.lastCheckpointAt&&now-p.lastCheckpointAt<450)return;
-    p.lastCheckpointAt=now;p.checkpoint++;
-    if(p.checkpoint===CHECKPOINTS){p.checkpoint=0;p.lap++;}
-    if(p.lap>=LAPS){p.finished=true;p.place=room.finished.length+1;room.finished.push(socket.id);io.to(room.code).emit('raceFinished',{id:socket.id,name:player.name,place:p.place});}
-    io.to(room.code).emit('raceProgress',{id:socket.id,progress:p});
-    if([...room.progress.values()].filter(q=>q.eligible).every(q=>q.finished)){room.raceState='finished';raceUpdate(room);}
+  socket.on('collect', (rawIndex) => {
+    const room = rooms.get(socket.data.roomCode);
+    if (!room) return;
+    const player = room.players.get(socket.id);
+    const index = Number(rawIndex);
+    if (!player || !Number.isInteger(index) || index < 0 || index >= gems.length || room.collected.has(index)) return;
+    const [gx,gz] = gems[index];
+    if (Math.hypot(player.x-gx, player.z-gz) > 2.6) return;
+    room.collected.add(index);
+    player.score++;
+    io.to(room.code).emit('gemCollected', {index, id:socket.id, score:player.score});
+    if (room.collected.size === gems.length) {
+      io.to(room.code).emit('allCollected', {winner:player.name});
+      setTimeout(() => {
+        if (rooms.get(room.code) !== room) return;
+        room.collected.clear();
+        io.to(room.code).emit('gemsReset');
+      }, 7000);
+    }
   });
   socket.on('chat', (raw) => {
     const room = rooms.get(socket.data.roomCode);
@@ -114,5 +112,5 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => removePlayer(socket));
 });
 app.use(express.static(path.join(__dirname, 'public')));
-app.get('/health', (_req,res) => res.json({ok:true, game:'skybound-race', rooms:rooms.size}));
+app.get('/health', (_req,res) => res.json({ok:true, rooms:rooms.size}));
 server.listen(PORT, '0.0.0.0', () => console.log(`Skybound World running at http://localhost:${PORT}`));
