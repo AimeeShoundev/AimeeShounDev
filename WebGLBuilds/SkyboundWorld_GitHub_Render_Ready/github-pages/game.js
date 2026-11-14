@@ -16,7 +16,7 @@ for(let j=0;j<8;j++){const tile=mesh(new THREE.BoxGeometry(.055,.005,.055),j%2?w
 function createCar(color){const group=new THREE.Group();world.add(group);mesh(new THREE.BoxGeometry(.12,.055,.20),mat(color,.35),group,0,.06,0);mesh(new THREE.BoxGeometry(.09,.04,.09),mat(0x9cecff,.15),group,0,.105,-.015);for(const x of [-.067,.067])for(const z of [-.063,.063]){const wheel=mesh(new THREE.BoxGeometry(.025,.047,.045),mat(0x131b26),group,x,.04,z);wheel.rotation.z=.1;}mesh(new THREE.BoxGeometry(.09,.012,.015),gold,group,0,.067,-.104);return group}
 const cars=[createCar(0xffbf4a),createCar(0x3bdbf0)];const ghost=mesh(new THREE.RingGeometry(.095,.12,32),new THREE.MeshBasicMaterial({color:0x8cfff0,side:THREE.DoubleSide}),scene);ghost.rotation.x=-Math.PI/2;ghost.visible=false;
 const socket=window.io?io(serverURL,{autoConnect:true,transports:['websocket','polling'],reconnection:true}):null;
-let me=null,room=null,placed=false,arActive=false,preview=false,hitSource=null,viewerSpace=null,refSpace=null,started=false,latestWinner=null;
+let me=null,room=null,placed=false,arActive=false,preview=false,hitSource=null,viewerSpace=null,refSpace=null,started=false,latestWinner=null,hitPose=null,arSession=null;
 const controls={gas:false,brake:false,left:false,right:false};let lastDrive=0;
 function toast(s){$('toast').textContent=s;$('toast').classList.remove('hidden');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.add('hidden'),3800)}
 function status(s){$('status').textContent=s}
@@ -25,14 +25,59 @@ function updateRoom(){if(!room)return;const players=room.players;$('roomTitle').
 function updateCars(){if(!room)return;room.players.forEach((p,i)=>{const car=cars[i];car.visible=true;const a=-Math.PI/2+p.progress*Math.PI*2;const radius=.89+p.lane*.11;car.position.set(Math.cos(a)*radius*1.12,.03,Math.sin(a)*radius*.78);car.rotation.y=-a;});cars.forEach((c,i)=>{if(i>=room.players.length)c.visible=false});}
 $('join').onclick=()=>{if(!socket?.connected){toast('Waiting for Render server. Try again in a minute.');return}socket.emit('join',{code:$('roomCode').value,name:$('name').value},r=>{if(!r?.ok){toast(r?.error||'Could not join');return}me=r.id;$('menu').classList.add('hidden');$('roomPanel').classList.remove('hidden');toast('Room joined! Choose Ground AR or 3D Preview.');updateRoom()})};
 $('ready').onclick=()=>{if(!placed){toast('Place the racetrack first.');return}socket?.emit('ready')};$('reset').onclick=$('again').onclick=()=>{socket?.emit('restart');latestWinner=null;$('winner').classList.add('hidden')};
-function setPlaced(){placed=true;world.visible=true;ghost.visible=false;$('crosshair').classList.add('hidden');$('placement').textContent='Track placed! Both players can now tap Ready to race.';updateRoom();toast('Track placed on the ground!')}
+function setPlaced(){placed=true;world.visible=true;ghost.visible=false;$('roomPanel').classList.toggle('hidden',!room);$('placeTrack').classList.add('hidden');$('crosshair').classList.add('hidden');$('placement').textContent='Track placed! Both players can now tap Ready to race.';updateRoom();toast('Track placed on the ground!')}
 function startPreview(){preview=true;arActive=false;renderer.xr.enabled=true;scene.background=new THREE.Color(0x102d46);world.position.set(0,0,0);world.scale.setScalar(1);world.rotation.set(0,0,0);camera.position.set(0,2.4,2.7);camera.lookAt(0,0,0);setPlaced();$('menu').classList.add('hidden');$('roomPanel').classList.toggle('hidden',!room);if(!room)toast('Join a multiplayer room to race.');}
 $('preview').onclick=startPreview;$('previewRoom').onclick=startPreview;
-// True WebXR hit-test placement. Android Chrome + ARCore compatible device required.
-async function checkAR(){if(!navigator.xr){$('help').textContent='WebXR unavailable on this browser. Use Chrome on an ARCore-supported Android phone.';return}try{const ok=await navigator.xr.isSessionSupported('immersive-ar');$('ar').disabled=!ok;$('arRoom').disabled=!ok;$('help').textContent=ok?'Ground AR supported! Join a room, then tap Start Ground AR.':'Immersive AR unavailable. Check ARCore / Google Play Services for AR, Chrome, and HTTPS.'}catch(e){$('help').textContent='Unable to check AR support. Use Chrome on an ARCore-compatible Android.'}}
+// True markerless Android ARCore surface detection using WebXR hit-test.
+// Requires Chrome on an ARCore-compatible Android phone, HTTPS, and Google Play Services for AR.
+async function checkAR(){
+ if(!window.isSecureContext || !navigator.xr){$('help').textContent='Ground AR requires HTTPS and Android Chrome on an ARCore-supported phone.';return}
+ try{const ok=await navigator.xr.isSessionSupported('immersive-ar');$('ar').disabled=!ok;$('arRoom').disabled=!ok;
+ $('help').textContent=ok?'Ground AR available. Tap Start Ground AR, scan the floor, then Place Track.':'AR unavailable: update Chrome and Google Play Services for AR, or try an ARCore-supported phone.'}
+ catch(e){$('help').textContent='AR support check failed: '+e.message}
+}
 checkAR();
-const launchAR=async()=>{if(!navigator.xr)return;try{const session=await navigator.xr.requestSession('immersive-ar',{requiredFeatures:['hit-test','local-floor'],optionalFeatures:['dom-overlay'],domOverlay:{root:document.body}});arActive=true;preview=false;placed=false;world.visible=false;scene.background=null;renderer.xr.setReferenceSpaceType('local-floor');await renderer.xr.setSession(session);refSpace=await session.requestReferenceSpace('local-floor');viewerSpace=await session.requestReferenceSpace('viewer');hitSource=await session.requestHitTestSource({space:viewerSpace});$('menu').classList.add('hidden');$('roomPanel').classList.toggle('hidden',!room);$('crosshair').classList.remove('hidden');$('placement').textContent='Move phone slowly to find a flat surface, then tap the screen to place the track.';session.addEventListener('select',()=>{if(placed||!ghost.visible)return;world.position.copy(ghost.position);world.quaternion.copy(ghost.quaternion);world.scale.setScalar(.72);setPlaced()});session.addEventListener('end',()=>{arActive=false;hitSource=null;ghost.visible=false;$('crosshair').classList.add('hidden');if(!preview){world.visible=false;placed=false;updateRoom();toast('AR session ended. Restart AR or use 3D Preview.')}})}catch(e){toast('AR could not start: '+e.message);$('help').textContent='AR failed: '+e.message}};$('ar').onclick=launchAR;$('arRoom').onclick=launchAR;
+function placeAtHit(){
+ if(!arActive||placed||!hitPose){toast('No plane detected yet. Move the phone slowly over a textured, well-lit floor.');return}
+ world.position.copy(ghost.position);world.quaternion.copy(ghost.quaternion);world.scale.setScalar(.72);setPlaced();
+}
+$('placeTrack').addEventListener('click',e=>{e.preventDefault();placeAtHit()});
+async function launchAR(){
+ if(!navigator.xr){toast('WebXR is not available on this phone.');return}
+ try{
+ // DOM overlay is required so steering and Place Track buttons remain usable in immersive AR.
+ // local-floor is NOT required: many valid ARCore devices support local but reject local-floor.
+ const session=await navigator.xr.requestSession('immersive-ar',{
+   requiredFeatures:['hit-test','dom-overlay'],
+   optionalFeatures:['local-floor'],
+   domOverlay:{root:document.body}
+ });
+ arSession=session;arActive=true;preview=false;placed=false;hitPose=null;
+ world.visible=false;scene.background=null;
+ renderer.xr.setReferenceSpaceType('local');
+ await renderer.xr.setSession(session);
+ refSpace=await session.requestReferenceSpace('local');
+ viewerSpace=await session.requestReferenceSpace('viewer');
+ hitSource=await session.requestHitTestSource({space:viewerSpace});
+ $('menu').classList.add('hidden');$('roomPanel').classList.add('hidden');
+ $('crosshair').classList.remove('hidden');$('placeTrack').classList.remove('hidden');$('placeTrack').disabled=true;
+ $('placement').textContent='Scan the floor until the green ring appears, then tap Place Track.';
+ $('crosshair').textContent='Scan a well-lit floor slowly to find a horizontal surface…';
+ session.addEventListener('select',()=>{if(!placed&&hitPose)placeAtHit()});
+ session.addEventListener('end',()=>{
+  arActive=false;arSession=null;hitPose=null;hitSource?.cancel?.();hitSource=null;ghost.visible=false;
+  $('crosshair').classList.add('hidden');$('placeTrack').classList.add('hidden');
+  if(!preview){world.visible=false;placed=false;updateRoom();$('roomPanel').classList.toggle('hidden',!room);toast('AR ended. Restart Ground AR or use 3D Preview.')}
+ });
+ }catch(e){
+  arActive=false;arSession=null;hitPose=null;
+  $('placeTrack').classList.add('hidden');$('crosshair').classList.add('hidden');
+  toast('Could not start ground AR: '+e.message);
+  $('help').textContent='AR error: '+e.message+' — Chrome and Google Play Services for AR must be up to date.';
+ }
+}
+$('ar').onclick=launchAR;$('arRoom').onclick=launchAR;
 function hold(id,key){const b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);controls[key]=true});for(const event of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(event,()=>controls[key]=false)}hold('gas','gas');hold('brake','brake');hold('left','left');hold('right','right');
 window.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const k={ArrowUp:'gas',KeyW:'gas',ArrowDown:'brake',KeyS:'brake',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right'}[e.code];if(k){controls[k]=true;e.preventDefault()}});window.addEventListener('keyup',e=>{const k={ArrowUp:'gas',KeyW:'gas',ArrowDown:'brake',KeyS:'brake',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right'}[e.code];if(k)controls[k]=false});
-renderer.setAnimationLoop((t,frame)=>{if(arActive&&frame&&hitSource&&!placed){const hits=frame.getHitTestResults(hitSource);if(hits.length){const pose=hits[0].getPose(refSpace);if(pose){ghost.visible=true;ghost.position.set(pose.transform.position.x,pose.transform.position.y+.01,pose.transform.position.z);ghost.quaternion.set(pose.transform.orientation.x,pose.transform.orientation.y,pose.transform.orientation.z,pose.transform.orientation.w);$('crosshair').textContent='Ground found! Tap anywhere to place the track.'}}else{ghost.visible=false;$('crosshair').textContent='Move slowly and point at a well-lit, textured floor.'}}if(started&&socket?.connected&&t-lastDrive>80){lastDrive=t;socket.emit('drive',{gas:controls.gas,brake:controls.brake,steer:Number(controls.right)-Number(controls.left)})}renderer.render(scene,camera)});
+renderer.setAnimationLoop((t,frame)=>{if(arActive&&frame&&hitSource&&!placed){const hits=frame.getHitTestResults(hitSource);hitPose=hits.length?hits[0].getPose(refSpace):null;if(hitPose){ghost.visible=true;ghost.position.set(hitPose.transform.position.x,hitPose.transform.position.y+.012,hitPose.transform.position.z);ghost.quaternion.set(hitPose.transform.orientation.x,hitPose.transform.orientation.y,hitPose.transform.orientation.z,hitPose.transform.orientation.w);$('placeTrack').disabled=false;$('crosshair').textContent='Surface detected! Tap PLACE TRACK.'}else{ghost.visible=false;$('placeTrack').disabled=true;$('crosshair').textContent='Scan slowly over a well-lit, textured floor.'}}if(started&&socket?.connected&&t-lastDrive>80){lastDrive=t;socket.emit('drive',{gas:controls.gas,brake:controls.brake,steer:Number(controls.right)-Number(controls.left)})}renderer.render(scene,camera)});
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});

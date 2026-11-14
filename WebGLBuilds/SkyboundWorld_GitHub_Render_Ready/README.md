@@ -1,30 +1,29 @@
-# Skybound Android Ground AR Turbo — 2 Player
+# Skybound Turbo — Android Ground-Tracked AR (2 players)
 
-## Existing URLs remain unchanged
+## No markers. True plane detection.
+Uses **WebXR immersive-ar + hit-test**, backed by **ARCore** on compatible Android phones. Move the phone over a textured, well-lit horizontal surface until a green reticle appears. Tap **PLACE TRACK ON GROUND** to anchor the racetrack at the detected surface. A printed marker is not used.
+
+## Hosting (unchanged)
 - GitHub Pages: https://aimeeshoundev.github.io/AimeeShounDev/WebGLBuilds/SkyboundWorld_GitHub_Render_Ready/github-pages/index.html
 - Render: https://skybound-world-server.onrender.com
-- Frontend repo folder: WebGLBuilds/SkyboundWorld_GitHub_Render_Ready/github-pages/
-- Backend repo folder: WebGLBuilds/SkyboundWorld_GitHub_Render_Ready/render-server/
+- Repo frontend: `WebGLBuilds/SkyboundWorld_GitHub_Render_Ready/github-pages/`
+- Repo backend: `WebGLBuilds/SkyboundWorld_GitHub_Render_Ready/render-server/`
 
-## Installation
-1. Back up the contents of both existing folders.
-2. Copy the **contents** of this ZIP's `github-pages` into the existing `github-pages` folder, replacing old game files.
-3. Copy the **contents** of this ZIP's `render-server` into the existing `render-server` folder, replacing old server files.
-4. Commit and push to `main` (do not force push). Keep Render Root Directory pointing to `WebGLBuilds/SkyboundWorld_GitHub_Render_Ready/render-server`.
-5. Wait for Render to deploy, then hard-refresh the existing GitHub Pages URL. Do not change config.js.
+**Installation:** Back up your current folders, then replace only the contents of the two existing folders with the corresponding contents in this ZIP. Commit/push normally; do not force push. Render must deploy the updated backend from its existing root directory. Do not rename directories or change `config.js`.
 
-## Playing on two Android phones
-- Both devices need Chrome and Google Play Services for AR (ARCore) support for ground AR.
-- Open the same GitHub Pages URL on both phones. Allow camera permissions.
-- Enter the same room code and tap Join. Each phone taps **Start Ground AR**.
-- Slowly scan a textured, well-lit, flat floor. When the reticle appears, tap the screen to place the track.
-- Each phone places the track independently in its own physical space. The cars and race are synchronized over Socket.IO, but the physical anchors are NOT shared across devices.
-- When both players have placed the track, each taps Ready. Hold GO, steer with arrows, and use BRAKE.
-- 3D Preview is provided for unsupported devices and desktop testing.
+## Playing
+1. On both Android phones, update Chrome and Google Play Services for AR, open the HTTPS GitHub Pages link in Chrome, and allow camera access.
+2. Both players enter the same 4–6 character room code and tap Join. The Render free service may take time to wake.
+3. Tap Start Ground AR, move the phone slowly over a textured, well-lit floor, and wait for the green reticle.
+4. Tap PLACE TRACK ON GROUND. Both players independently place their own local copy of the track. The game synchronizes cars and race progress, **not a shared real-world spatial anchor**.
+5. Once both players place their tracks, tap Ready to race and drive with the onscreen buttons.
 
-## Limitations
-- True markerless floor placement is via WebXR Hit Test, available only on compatible Android devices/browsers; it is not supported in standard iOS Safari.
-- This prototype uses WebXR hit-test placement with a local-floor reference space, not persistent cloud anchors. Tracks will not automatically align to the same physical coordinates on different phones.
-- Both clients rely on CDN access for Three.js and Socket.IO.
-- Race is arcade-style around an oval, with steering changing lanes. It is not free-roaming vehicle physics.
-- Test with two actual Android phones before public release.
+## Troubleshooting
+- AR unavailable: requires a compatible ARCore Android phone, current Chrome, Google Play Services for AR, and HTTPS. A normal browser preview or iOS Safari cannot run this Android WebXR mode.
+- No surface detected: move the phone slowly; aim at textured surfaces with good light. Blank/glossy floors can fail.
+- Camera opens but no buttons: the AR browser must support WebXR DOM Overlay; this app requests it explicitly.
+- Can't connect: wait for Render to wake; check the server deployment and `https://skybound-world-server.onrender.com/health`.
+- 3D Preview is a fallback for testing gameplay without AR.
+
+## Verification limitations
+JavaScript syntax and ZIP structure can be checked offline. Actual WebXR hit testing, ARCore compatibility, camera permission, and live two-phone networking require tests on real Android devices.
