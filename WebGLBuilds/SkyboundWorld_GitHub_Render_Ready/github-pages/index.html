@@ -1,6 +1,99 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"><meta name="theme-color" content="#071629"><title>Skybound AR Turbo — Android Ground Racing</title><link rel="stylesheet" href="style.css"></head><body>
-<div id="stage"></div><div id="hud"><header><div class="brand">🏁 SKYBOUND <b>AR TURBO</b></div><div id="status">Connecting…</div></header><div id="score" class="hidden"><span id="lap">Lap 1 / 3</span><span id="speed">0 km/h</span><span id="place">Waiting</span></div></div>
-<div id="menu" class="panel"><div class="eyebrow">ANDROID • MARKERLESS PLANE TRACKING</div><h1>Race on your<br><em>real-world floor.</em></h1><p>Scan the ground, tap to place a miniature racetrack, and race another Android phone online.</p><label>Your racer name<input id="name" maxlength="18" value="Racer" autocomplete="off"></label><label>Shared room code<input id="roomCode" maxlength="6" value="TURBO" autocomplete="off" autocapitalize="characters"></label><button id="join" class="primary">Join multiplayer room</button><div class="split"><button id="ar" disabled>📱 Start Ground AR</button><button id="preview">🎮 3D Preview</button></div><p id="help" class="hint">On Android, use Chrome with ARCore support. AR mode needs HTTPS and camera permission.</p></div>
-<div id="roomPanel" class="panel hidden"><h2 id="roomTitle">Room</h2><p id="players">Waiting for players…</p><div class="split"><button id="arRoom" disabled>📱 Start Ground AR</button><button id="previewRoom">🎮 3D Preview</button></div><p id="placement">Start Ground AR and scan a flat surface, then tap to place the track.</p><button id="ready" class="primary" disabled>Ready to race</button><button id="reset">Reset race</button></div>
-<div id="toast" class="hidden"></div><button id="placeTrack" class="hidden" disabled>◎ PLACE TRACK ON GROUND</button><div id="crosshair" class="hidden">Move your phone slowly to find the ground…</div><div id="controls" class="hidden"><div class="steer"><button id="left" aria-label="Steer left">◀</button><button id="right" aria-label="Steer right">▶</button></div><div class="pedals"><button id="brake">BRAKE</button><button id="gas">GO</button></div></div><div id="winner" class="panel hidden"><h1 id="winnerText">Finish!</h1><button id="again" class="primary">Race again</button></div>
-<script src="config.js"></script><script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script><script type="module" src="game.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#122c24">
+  <title>Skybound Basketball · Half Court Showdown</title>
+  <link rel="icon" href="./icon.png" type="image/png">
+  <link rel="preload" href="./fonts/barlow-condensed-extrabold-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./style.css?v=hoops-1">
+</head>
+<body data-screen="home">
+  <canvas id="courtCanvas" aria-label="Three-dimensional basketball court"></canvas>
+  <div id="overlay">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Skybound<span class="brand-sub">Basketball</span></span></div>
+      <div class="header-actions">
+        <button id="roomTag" class="header-button" type="button" title="Copy room code" hidden>Room <strong id="headerCode"></strong></button>
+        <button id="mute" class="header-button" type="button" aria-pressed="false"><span class="sound-dot" aria-hidden="true"></span><span id="soundLabel">Sound on</span></button>
+        <button id="leave" class="header-button" type="button" hidden>Leave</button>
+      </div>
+    </header>
+
+    <main id="home" class="home-panel">
+      <div class="entry-content">
+        <h1>Half Court<br><em>Showdown</em></h1>
+        <p class="intro">Place a hoop. Trade shots with a friend.<br> First to 10 baskets wins.</p>
+        <form id="entryForm">
+          <div class="tabs" role="group" aria-label="Room options">
+            <button id="createTab" type="button" aria-pressed="true">Create room</button>
+            <button id="joinTab" type="button" aria-pressed="false">Join room</button>
+          </div>
+          <div class="fields">
+            <label>Your name<input id="name" maxlength="18" placeholder="Player name" autocomplete="nickname" enterkeyhint="done"></label>
+            <label id="codeLabel" hidden>Room code<input id="code" maxlength="6" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="ABCDE" autocomplete="off" enterkeyhint="go"></label>
+          </div>
+          <button id="enter" class="primary" type="submit"><span id="enterLabel">Create a room</span><span aria-hidden="true">↗</span></button>
+          <button id="cancelJoin" class="text-button" type="button" hidden>Cancel connection</button>
+        </form>
+        <button id="local" type="button" class="local-link">Play on one device <span aria-hidden="true">→</span></button>
+        <p id="homeStatus" class="status light" role="status" hidden></p>
+      </div>
+    </main>
+
+    <section id="chooser" class="middle" hidden>
+      <div class="card choose-card">
+        <div id="roomInfo" class="room-info">
+          <div><span class="field-name">Room code</span><strong id="lobbyCode"></strong></div>
+          <button id="copy" class="small-button" type="button">Copy code</button>
+        </div>
+        <h2>Set up your hoop</h2>
+        <p id="roomLine" class="room-line"></p>
+        <p id="device" class="muted"></p>
+        <div class="choose-actions">
+          <button id="ar" class="primary" type="button">Place hoop in AR <span aria-hidden="true">↗</span></button>
+          <button id="flat" class="secondary" type="button">Play in 3D <span aria-hidden="true">→</span></button>
+        </div>
+        <p id="roomStatus" class="status" role="status" hidden></p>
+      </div>
+    </section>
+
+    <div id="throwZone" role="presentation" hidden></div>
+    <section id="scan" class="scan-panel" hidden>
+      <div><h2 id="scanTitle">Find the floor</h2><p id="scanHelp"></p></div>
+      <div class="scan-actions"><button id="place" class="primary" type="button" disabled>Place hoop</button><button id="scanBack" type="button" class="quiet">Back</button></div>
+    </section>
+
+    <section id="scoreboard" aria-label="Scoreboard" hidden>
+      <div id="p0" class="tally"><span id="name0">Player 1</span><strong id="score0">0</strong></div>
+      <div class="target">First to<strong>10</strong></div>
+      <div id="p1" class="tally"><span id="name1">Player 2</span><strong id="score1">0</strong></div>
+    </section>
+    <div id="turnBox" class="turn-box" role="status" hidden><span id="turnDot"></span><span id="turnText"></span></div>
+    <div id="result" class="result" role="status" hidden></div>
+    <div id="playDock" class="play-dock" hidden>
+      <div id="power" class="power" hidden><div class="power-head"><span>Shot power</span><b id="powerWord">Build power</b></div><div class="meter"><i></i><b id="needle"></b></div></div>
+      <p id="hint" class="play-hint"></p><p id="keys" class="key-hint" hidden>← → aim　·　Hold and release Space to shoot</p>
+      <button id="viewChoice" type="button" class="view-button">Change view</button>
+    </div>
+    <section id="finish" class="middle" hidden>
+      <div class="card finish-card">
+        <span class="field-name">Final score</span>
+        <div id="finalScore" class="final-score"></div>
+        <h2 id="winner"></h2><p id="finalNames" class="muted"></p>
+        <div class="choose-actions">
+          <button id="again" class="primary" type="button">Play again <span aria-hidden="true">↗</span></button>
+          <button id="finishHome" class="quiet" type="button">Back to lobby</button>
+        </div>
+      </div>
+    </section>
+    <p id="toast" class="toast" role="status" hidden></p>
+  </div>
+  <noscript>This game needs JavaScript enabled.</noscript>
+  <script src="./config.js"></script>
+  <script src="./vendor/socket.io.min.js"></script>
+  <script src="./basketball.js"></script>
+  <script type="module" src="./game.js?v=hoops-1"></script>
+</body>
+</html>
