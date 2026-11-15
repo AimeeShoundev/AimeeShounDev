@@ -1,62 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#10241f">
-  <title>Skybound Turbo | Ground Circuit</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css?v=ground-circuit-2">
-</head>
-<body>
-  <main id="app" data-screen="lobby">
-    <section id="stage" aria-label="Miniature 3D motor circuit"><canvas id="course" aria-label="The circuit and both race cars"></canvas></section>
-    <section id="lobby" aria-labelledby="title">
-      <div class="intro"><h1 id="title">Ground<br><em>Circuit</em></h1><p>Put a miniature racetrack on your floor. <br>Race a friend to the checkered line.</p></div>
-      <form id="roomForm" class="join-card">
-        <div class="card-heading"><h2>Race together</h2><span class="match-tag">2 players · 3 laps</span></div>
-        <div class="fields"><label>Driver name<input id="name" maxlength="18" placeholder="Racer" autocomplete="nickname"></label><label>Room code<input id="code" maxlength="6" placeholder="e.g. TURBO" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-describedby="formHelp"></label></div>
-        <button id="join" class="primary" type="submit">Join room <span aria-hidden="true">→</span></button>
-        <p id="formHelp" class="note" aria-live="polite">Choose the same 4–6 letter or number code on both phones.</p>
-      </form>
-      <p id="lobbyError" class="warning" role="status" hidden></p>
-      <button id="testGround" type="button" class="plain lobby-ground">Try ground placement <span aria-hidden="true">↗</span></button>
-      <p id="deviceNote" class="device-note"></p>
-    </section>
-    <div id="overlay">
-      <header id="mast"><div class="identity"><i class="race-mark" aria-hidden="true"></i><span>Skybound <b>Turbo</b></span></div>
-        <div class="header-tools"><div id="network" data-state="wait"><i></i><span id="netText">Connecting</span></div><button id="sound" type="button" class="small" aria-pressed="true" aria-label="Mute sound">Sound on</button></div>
-      </header>
-      <div id="roomTag" class="room-tag" hidden><span id="roomCode"></span><span id="myCar"></span></div>
-      <section id="pit" class="panel" aria-labelledby="pitTitle" hidden>
-        <h2 id="pitTitle">Set up your track</h2>
-        <p id="lineup" class="lineup"></p><p id="pitHelp"></p>
-        <button id="startAR" class="primary">Start ground AR <span aria-hidden="true">↗</span></button>
-        <button id="preview" class="secondary">Use 3D preview</button>
-        <button id="ready" class="primary" hidden>Ready to race <span aria-hidden="true">→</span></button>
-        <div class="subactions"><button id="reposition" class="plain" hidden>Reposition</button><button id="leave" class="plain">Leave room</button></div>
-        <p id="roomError" role="status" class="warning" hidden></p>
-      </section>
-      <section id="setup" class="setup-bar" aria-live="polite" hidden>
-        <div><h2 id="scanTitle">Find the floor</h2><p id="scanHelp"></p></div>
-        <div class="scan-actions"><button id="place" class="primary" disabled>Place track</button><button id="exitAR" class="small">Exit AR</button></div>
-      </section>
-      <section id="demo" class="setup-bar" hidden><div><h2>Track placed</h2><p>Walk around to view the circuit from another side.</p></div>
-        <div class="scan-actions"><button id="demoDone" class="primary">Back to lobby</button><button id="demoMove" class="small">Reposition</button></div>
-      </section>
-      <section id="raceHud" aria-label="Race status" hidden><strong id="position">On grid</strong><span id="lap">Lap 1 / 3</span><span id="boost">Drive</span></section>
-      <div id="notice" role="status" hidden></div>
-      <div id="controls" aria-label="Driving controls" hidden>
-        <div class="control-set"><span>Steer</span><div><button id="left" aria-label="Steer left">◀</button><button id="right" aria-label="Steer right">▶</button></div></div>
-        <div class="control-set"><span>Pedals</span><div><button id="brake">Brake</button><button id="gas">Gas</button></div></div>
-      </div>
-      <section id="finish" class="panel" aria-labelledby="finishTitle" hidden><i class="finish-flag" aria-hidden="true"></i><h2 id="finishTitle">Race complete</h2><p id="finishBody"></p><button id="again" class="primary">Race again <span aria-hidden="true">↻</span></button><button id="finishLeave" class="plain">Leave room</button></section>
-      <button id="resumeExit" class="small" hidden>Exit AR</button>
-    </div>
-  </main>
-  <noscript>Enable JavaScript in Chrome to open Skybound Turbo.</noscript>
-  <script src="./config.js"></script>
-  <script src="./vendor/socket.io.min.js"></script>
-  <script type="module" src="./game.js?v=ground-circuit-2"></script>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"><meta name="theme-color" content="#071629"><title>Skybound AR Turbo — Android Ground Racing</title><link rel="stylesheet" href="style.css"></head><body>
+<div id="stage"></div><div id="hud"><header><div class="brand">🏁 SKYBOUND <b>AR TURBO</b></div><div id="status">Connecting…</div></header><div id="score" class="hidden"><span id="lap">Lap 1 / 3</span><span id="speed">0 km/h</span><span id="place">Waiting</span></div></div>
+<div id="menu" class="panel"><div class="eyebrow">ANDROID • MARKERLESS PLANE TRACKING</div><h1>Race on your<br><em>real-world floor.</em></h1><p>Scan the ground, tap to place a miniature racetrack, and race another Android phone online.</p><label>Your racer name<input id="name" maxlength="18" value="Racer" autocomplete="off"></label><label>Shared room code<input id="roomCode" maxlength="6" value="TURBO" autocomplete="off" autocapitalize="characters"></label><button id="join" class="primary">Join multiplayer room</button><div class="split"><button id="ar" disabled>📱 Start Ground AR</button><button id="preview">🎮 3D Preview</button></div><p id="help" class="hint">On Android, use Chrome with ARCore support. AR mode needs HTTPS and camera permission.</p></div>
+<div id="roomPanel" class="panel hidden"><h2 id="roomTitle">Room</h2><p id="players">Waiting for players…</p><div class="split"><button id="arRoom" disabled>📱 Start Ground AR</button><button id="previewRoom">🎮 3D Preview</button></div><p id="placement">Start Ground AR and scan a flat surface, then tap to place the track.</p><button id="ready" class="primary" disabled>Ready to race</button><button id="reset">Reset race</button></div>
+<div id="toast" class="hidden"></div><button id="placeTrack" class="hidden" disabled>◎ PLACE TRACK ON GROUND</button><div id="crosshair" class="hidden">Move your phone slowly to find the ground…</div><div id="controls" class="hidden"><div class="steer"><button id="left" aria-label="Steer left">◀</button><button id="right" aria-label="Steer right">▶</button></div><div class="pedals"><button id="brake">BRAKE</button><button id="gas">GO</button></div></div><div id="winner" class="panel hidden"><h1 id="winnerText">Finish!</h1><button id="again" class="primary">Race again</button></div>
+<script src="config.js"></script><script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script><script type="module" src="game.js"></script></body></html>

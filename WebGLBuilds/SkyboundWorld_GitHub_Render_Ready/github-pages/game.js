@@ -1,291 +1,83 @@
-import {createCourse, laneFor, onBoost} from './course.js';
-import {createGroundTracking} from './tracking.js';
-
-const element = id => document.getElementById(id);
-const app = element('app'), overlay = element('overlay');
-const setText = (id,value) => { const el=element(id); if (el.textContent !== value) el.textContent = value; };
-const show = (id,visible) => { element(id).hidden = !visible; };
-const game = {
-  view:null, tracking:null, socket:null, supported:false, supportNote:'Checking ground AR…',
-  room:null, id:null, membership:null, joining:false, mode:'none', groundMessage:'', roomError:'', lobbyError:'',
-  audio:null, sound:true, pendingReady:false, joinEpoch:0, seenId:null, graphicsError:'', noticeTimer:0
-};
-const held = {left:false,right:false,gas:false,brake:false};
-const models = [{progress:0,lane:0},{progress:0,lane:0}];
-let lastRender = 0, wasStarted = false, lastWinner = null, notice = '', lastDrive = '', lastDriveAt = 0;
-
-function storage(key, value) {
-  try { if (value === undefined) return localStorage.getItem(key); localStorage.setItem(key,value); } catch {}
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js';
+const $=id=>document.getElementById(id);const serverURL=window.SKYBOUND_SERVER_URL;
+const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.01,150);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.xr.enabled=true;renderer.outputColorSpace=THREE.SRGBColorSpace;$('stage').appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x435a75,2.6));const sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(2,6,4);scene.add(sun);
+const world=new THREE.Group();scene.add(world);world.visible=false;
+const mat=(c,roughness=.7)=>new THREE.MeshStandardMaterial({color:c,roughness,metalness:.12});
+const asphalt=mat(0x273645),grass=mat(0x247f64),white=mat(0xe9f2e8),gold=mat(0xf9c34e),red=mat(0xf25858),blue=mat(0x37d5e6);
+function mesh(geo,m,parent=world,x=0,y=0,z=0){const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);parent.add(o);return o}
+mesh(new THREE.CylinderGeometry(1.55,1.55,.055,72),grass,world,0,-.055,0);
+// Flat elliptical racing road: scaled ring, with a visible central island.
+const road=mesh(new THREE.RingGeometry(.66,1.12,96),asphalt);road.rotation.x=-Math.PI/2;road.scale.set(1.12,.78,1);road.position.y=.005;
+const island=mesh(new THREE.CircleGeometry(.65,96),mat(0x329b75));island.rotation.x=-Math.PI/2;island.scale.set(1.12,.78,1);island.position.y=.012;
+for(let i=0;i<48;i++){const a=i*Math.PI*2/48;const stripe=mesh(new THREE.BoxGeometry(.055,.004,.025),white);stripe.position.set(Math.cos(a)*.89*1.12,.017,Math.sin(a)*.89*.78);stripe.rotation.y=-a;}
+for(let i=0;i<16;i++){const a=i*Math.PI*2/16;const edge=mesh(new THREE.BoxGeometry(.12,.013,.045),i%2?white:red);edge.position.set(Math.cos(a)*1.12*1.10,.018,Math.sin(a)*.78*1.10);edge.rotation.y=-a;}
+for(let j=0;j<8;j++){const tile=mesh(new THREE.BoxGeometry(.055,.005,.055),j%2?white:asphalt);tile.position.set(.89*1.12,.021,(j-3.5)*.04);}
+function createCar(color){const group=new THREE.Group();world.add(group);mesh(new THREE.BoxGeometry(.12,.055,.20),mat(color,.35),group,0,.06,0);mesh(new THREE.BoxGeometry(.09,.04,.09),mat(0x9cecff,.15),group,0,.105,-.015);for(const x of [-.067,.067])for(const z of [-.063,.063]){const wheel=mesh(new THREE.BoxGeometry(.025,.047,.045),mat(0x131b26),group,x,.04,z);wheel.rotation.z=.1;}mesh(new THREE.BoxGeometry(.09,.012,.015),gold,group,0,.067,-.104);return group}
+const cars=[createCar(0xffbf4a),createCar(0x3bdbf0)];const ghost=mesh(new THREE.RingGeometry(.095,.12,32),new THREE.MeshBasicMaterial({color:0x8cfff0,side:THREE.DoubleSide}),scene);ghost.rotation.x=-Math.PI/2;ghost.visible=false;
+const socket=window.io?io(serverURL,{autoConnect:true,transports:['websocket','polling'],reconnection:true}):null;
+let me=null,room=null,placed=false,arActive=false,preview=false,hitSource=null,viewerSpace=null,refSpace=null,started=false,latestWinner=null,hitPose=null,arSession=null;
+const controls={gas:false,brake:false,left:false,right:false};let lastDrive=0;
+function toast(s){$('toast').textContent=s;$('toast').classList.remove('hidden');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.add('hidden'),3800)}
+function status(s){$('status').textContent=s}
+if(!socket){status('Multiplayer library failed to load');toast('Socket.IO did not load. Check your internet connection.')}else{socket.on('connect',()=>status('Server connected'));socket.on('disconnect',()=>status('Reconnecting to Render…'));socket.on('connect_error',()=>status('Render waking up…'));socket.on('room',r=>{room=r;updateRoom();updateCars()});socket.on('start',()=>{started=true;latestWinner=null;$('winner').classList.add('hidden');toast('GO! Three laps to win!');updateRoom()});socket.on('finish',r=>{started=false;latestWinner=r;$('winnerText').textContent=(r.id===me?'🏆 You win!':'🏁 '+r.name+' wins!');$('winner').classList.remove('hidden');updateRoom()})}
+function updateRoom(){if(!room)return;const players=room.players;$('roomTitle').textContent='Room '+room.code;$('players').textContent=players.map(p=>`${p.name}${p.id===me?' (you)':''}${p.ready?' ✓ Ready':''}`).join('   •   ')+'  — '+players.length+'/2 racers';const mine=players.find(p=>p.id===me);$('ready').disabled=!(placed&&players.length===2&&!started&&!mine?.ready);$('ready').textContent=mine?.ready?'Waiting for opponent…':'Ready to race';$('roomPanel').classList.toggle('hidden',started||Boolean(latestWinner));$('controls').classList.toggle('hidden',!started);$('score').classList.toggle('hidden',!started);if(mine){$('lap').textContent='Lap '+Math.min(3,Math.floor(mine.progress)+1)+' / 3';$('speed').textContent=Math.round(mine.speed*110)+' km/h';$('place').textContent=players.length===2?(mine.progress>=Math.max(...players.filter(p=>p.id!==me).map(p=>p.progress))?'1st place':'2nd place'):'Waiting'}}
+function updateCars(){if(!room)return;room.players.forEach((p,i)=>{const car=cars[i];car.visible=true;const a=-Math.PI/2+p.progress*Math.PI*2;const radius=.89+p.lane*.11;car.position.set(Math.cos(a)*radius*1.12,.03,Math.sin(a)*radius*.78);car.rotation.y=-a;});cars.forEach((c,i)=>{if(i>=room.players.length)c.visible=false});}
+$('join').onclick=()=>{if(!socket?.connected){toast('Waiting for Render server. Try again in a minute.');return}socket.emit('join',{code:$('roomCode').value,name:$('name').value},r=>{if(!r?.ok){toast(r?.error||'Could not join');return}me=r.id;$('menu').classList.add('hidden');$('roomPanel').classList.remove('hidden');toast('Room joined! Choose Ground AR or 3D Preview.');updateRoom()})};
+$('ready').onclick=()=>{if(!placed){toast('Place the racetrack first.');return}socket?.emit('ready')};$('reset').onclick=$('again').onclick=()=>{socket?.emit('restart');latestWinner=null;$('winner').classList.add('hidden')};
+function setPlaced(){placed=true;world.visible=true;ghost.visible=false;$('roomPanel').classList.toggle('hidden',!room);$('placeTrack').classList.add('hidden');$('crosshair').classList.add('hidden');$('placement').textContent='Track placed! Both players can now tap Ready to race.';updateRoom();toast('Track placed on the ground!')}
+function startPreview(){preview=true;arActive=false;renderer.xr.enabled=true;scene.background=new THREE.Color(0x102d46);world.position.set(0,0,0);world.scale.setScalar(1);world.rotation.set(0,0,0);camera.position.set(0,2.4,2.7);camera.lookAt(0,0,0);setPlaced();$('menu').classList.add('hidden');$('roomPanel').classList.toggle('hidden',!room);if(!room)toast('Join a multiplayer room to race.');}
+$('preview').onclick=startPreview;$('previewRoom').onclick=startPreview;
+// True markerless Android ARCore surface detection using WebXR hit-test.
+// Requires Chrome on an ARCore-compatible Android phone, HTTPS, and Google Play Services for AR.
+async function checkAR(){
+ if(!window.isSecureContext || !navigator.xr){$('help').textContent='Ground AR requires HTTPS and Android Chrome on an ARCore-supported phone.';return}
+ try{const ok=await navigator.xr.isSessionSupported('immersive-ar');$('ar').disabled=!ok;$('arRoom').disabled=!ok;
+ $('help').textContent=ok?'Ground AR available. Tap Start Ground AR, scan the floor, then Place Track.':'AR unavailable: update Chrome and Google Play Services for AR, or try an ARCore-supported phone.'}
+ catch(e){$('help').textContent='AR support check failed: '+e.message}
 }
-game.sound = storage('skybound-sound') !== 'off';
-element('name').value = storage('skybound-racer') || '';
-function soundLabel() {
-  setText('sound',game.sound ? 'Sound on' : 'Sound off');
-  element('sound').setAttribute('aria-label',game.sound ? 'Mute sound' : 'Unmute sound');
-  element('sound').setAttribute('aria-pressed',String(game.sound));
+checkAR();
+function placeAtHit(){
+ if(!arActive||placed||!hitPose){toast('No plane detected yet. Move the phone slowly over a textured, well-lit floor.');return}
+ world.position.copy(ghost.position);world.quaternion.copy(ghost.quaternion);world.scale.setScalar(.72);setPlaced();
 }
-function unlockSound() {
-  if (!game.sound) return;
-  try {
-    if (!game.audio) game.audio = new (window.AudioContext || window.webkitAudioContext)();
-    if (game.audio.state === 'suspended') game.audio.resume().catch(()=>{});
-  } catch {}
+$('placeTrack').addEventListener('click',e=>{e.preventDefault();placeAtHit()});
+async function launchAR(){
+ if(!navigator.xr){toast('WebXR is not available on this phone.');return}
+ try{
+ // DOM overlay is required so steering and Place Track buttons remain usable in immersive AR.
+ // local-floor is NOT required: many valid ARCore devices support local but reject local-floor.
+ const session=await navigator.xr.requestSession('immersive-ar',{
+   requiredFeatures:['hit-test','dom-overlay'],
+   optionalFeatures:['local-floor'],
+   domOverlay:{root:document.body}
+ });
+ arSession=session;arActive=true;preview=false;placed=false;hitPose=null;
+ world.visible=false;scene.background=null;
+ renderer.xr.setReferenceSpaceType('local');
+ await renderer.xr.setSession(session);
+ refSpace=await session.requestReferenceSpace('local');
+ viewerSpace=await session.requestReferenceSpace('viewer');
+ hitSource=await session.requestHitTestSource({space:viewerSpace});
+ $('menu').classList.add('hidden');$('roomPanel').classList.add('hidden');
+ $('crosshair').classList.remove('hidden');$('placeTrack').classList.remove('hidden');$('placeTrack').disabled=true;
+ $('placement').textContent='Scan the floor until the green ring appears, then tap Place Track.';
+ $('crosshair').textContent='Scan a well-lit floor slowly to find a horizontal surface…';
+ session.addEventListener('select',()=>{if(!placed&&hitPose)placeAtHit()});
+ session.addEventListener('end',()=>{
+  arActive=false;arSession=null;hitPose=null;hitSource?.cancel?.();hitSource=null;ghost.visible=false;
+  $('crosshair').classList.add('hidden');$('placeTrack').classList.add('hidden');
+  if(!preview){world.visible=false;placed=false;updateRoom();$('roomPanel').classList.toggle('hidden',!room);toast('AR ended. Restart Ground AR or use 3D Preview.')}
+ });
+ }catch(e){
+  arActive=false;arSession=null;hitPose=null;
+  $('placeTrack').classList.add('hidden');$('crosshair').classList.add('hidden');
+  toast('Could not start ground AR: '+e.message);
+  $('help').textContent='AR error: '+e.message+' — Chrome and Google Play Services for AR must be up to date.';
+ }
 }
-function chime(notes) {
-  if (!game.sound || game.audio?.state !== 'running') return;
-  const audio=game.audio, now=audio.currentTime;
-  notes.forEach((pitch,index) => {
-    const at=now+index*0.10, osc=audio.createOscillator(), volume=audio.createGain();
-    osc.type='sine'; osc.frequency.value=pitch;
-    volume.gain.setValueAtTime(0.0001,at); volume.gain.exponentialRampToValueAtTime(0.09,at+0.012);
-    volume.gain.exponentialRampToValueAtTime(0.0001,at+0.13);
-    osc.connect(volume); volume.connect(audio.destination); osc.start(at); osc.stop(at+0.14);
-  });
-}
-element('sound').onclick = () => { game.sound=!game.sound; storage('skybound-sound',game.sound?'on':'off'); soundLabel(); if(game.sound){unlockSound();chime([560]);} };
-soundLabel();
-
-function player() { return game.room?.players.find(p=>p.id===game.id); }
-function mySlot() { return game.room?.players.findIndex(p=>p.id===game.id) ?? -1; }
-function announce(message, duration=3000) {
-  clearTimeout(game.noticeTimer); notice=message; setText('notice',message); show('notice',Boolean(message));
-  if(message && duration) game.noticeTimer=setTimeout(()=>{notice='';show('notice',false);},duration);
-}
-function errors() {
-  setText('lobbyError',game.lobbyError||game.graphicsError);show('lobbyError',Boolean(game.lobbyError||game.graphicsError));
-  setText('roomError',game.roomError||game.graphicsError);show('roomError',Boolean(game.roomError||game.graphicsError));
-}
-function network(state,label) { element('network').dataset.state=state; setText('netText',label); }
-function resize() { game.view?.resize(app.dataset.screen==='lobby'); }
-function updateHUD() {
-  const p=player(); if(!p || !game.room.started) return;
-  const rival=game.room.players.find(r=>r.id!==p.id);
-  const delta=p.progress-(rival?.progress||0);
-  setText('position',Math.abs(delta)<0.0005?'Level':delta>0?'1st':'2nd');
-  setText('lap','Lap '+ Math.min(3,Math.floor(p.progress)+1)+' / 3');
-  setText('boost',onBoost(p.progress,laneFor(p.lane,mySlot())) && held.gas ? 'Boost' : 'Drive');
-}
-function screenState() {
-  const t=game.tracking;
-  if(t?.active && t.phase!=='placed') return 'place';
-  if(!game.membership) return t?.phase==='placed' ? 'demo' : 'lobby';
-  if(game.room?.winner) return 'finish';
-  if(game.room?.started) return 'race';
-  return 'pit';
-}
-function drawUI() {
-  const screen=screenState(), previous=app.dataset.screen, t=game.tracking;
-  app.dataset.screen=screen;
-  overlay.classList.toggle('in-ar',Boolean(t?.active));
-  show('lobby',screen==='lobby'); show('pit',screen==='pit'); show('setup',screen==='place');
-  show('demo',screen==='demo'); show('finish',screen==='finish');
-  show('raceHud',screen==='race'); show('controls',screen==='race' && (game.mode==='preview'||Boolean(t?.usable)));
-  show('resumeExit',screen==='race' && Boolean(t?.active));
-  show('roomTag',Boolean(game.membership));
-  const slot=mySlot(), p=player(), placed=game.mode==='preview'||(t?.phase==='placed'&&t.usable);
-  if(game.membership) {
-    setText('roomCode','Room '+game.membership.code);
-    setText('myCar',slot<0?'Connecting':slot===0?'Orange car':'Teal car');
-    element('myCar').style.setProperty('--car',slot===0?'#ff764e':'#4ad9c1');
-  }
-  element('join').disabled=game.joining||Boolean(game.graphicsError);
-  element('join').firstChild.textContent=game.joining?(game.socket?.connected?'Joining… ':'Connecting… '):'Join room ';
-  setText('deviceNote',game.supportNote);
-  element('testGround').disabled=!game.supported||!game.view||game.joining;
-  show('testGround',game.supported);
-  if(screen==='pit') {
-    setText('pitTitle', placed?'Starting grid':'Set up your track');
-    const lineup=game.room?.players.map(r=>r.name+(r.id===game.id?' (you)':'')+(r.ready?' ✓':'')).join(' · ');
-    setText('lineup',lineup ? lineup+'  ·  '+game.room.players.length+'/2' : 'Rejoining your room…');
-    let hint=game.supported?'Each driver scans the floor and places a track on their own phone.':game.supportNote;
-    if(placed) hint=game.room?.players.length===2?'Both drivers tap Ready. Hold Gas and steer onto the green boost strips.':'Ask the other driver to join room '+game.membership.code+'.';
-    if(p?.ready||game.pendingReady) hint='You’re ready. Waiting for the other driver.';
-    if(t?.phase==='placed'&&!t.usable) hint=game.groundMessage;
-    setText('pitHelp',hint);
-    const chooseAR=!t?.active&&game.mode!=='preview';
-    show('startAR',chooseAR); element('startAR').disabled=!game.supported||!game.view||!p;
-    show('preview',chooseAR); element('preview').disabled=!game.view||!p;
-    show('ready',placed); element('ready').disabled=!p||!game.socket?.connected||game.room.players.length!==2||p.ready||game.pendingReady;
-    element('ready').firstChild.textContent=p?.ready||game.pendingReady?'Ready ✓ ':'Ready to race ';
-    show('reposition',(t?.phase==='placed'||game.mode==='preview')&&!p?.ready&&!game.pendingReady);
-    setText('reposition',game.mode==='preview'?'Change view':'Reposition');
-  }
-  if(screen==='place') {
-    setText('scanTitle',t.phase==='detected'?'Ground found':t.phase==='starting'?'Opening AR':'Find the floor');
-    setText('scanHelp',game.groundMessage);element('place').disabled=!t.canPlace; element('exitAR').disabled=t.phase==='starting';
-  }
-  if(screen==='finish') {
-    const winner=game.room.players.find(r=>r.id===game.room.winner);
-    setText('finishTitle',winner?.id===game.id?'You win!':(winner?.name||'Opponent')+' wins!');
-    setText('finishBody',winner?.id===game.id?'You crossed the line first after three laps.':(winner?.name||'The other driver')+' crossed the line first after three laps.');
-  }
-  if(screen==='demo' || screen==='race') {
-    if(t?.phase==='placed' && !t.usable) { if(notice!==game.groundMessage) announce(game.groundMessage,0); }
-    else if(notice.startsWith('Tracking paused')) announce('');
-  }
-  updateHUD(); errors();
-  if(previous!==screen) resize();
-}
-
-async function checkSupport() {
-  let available=false;
-  try { available=Boolean(window.isSecureContext && navigator.xr && await navigator.xr.isSessionSupported('immersive-ar')); } catch {}
-  game.supported=available;
-  game.supportNote=available?'Ground AR is available on this device.':!isSecureContext?'Open the HTTPS game page to use ground AR.':'Ground AR needs Android Chrome on an ARCore phone with Google Play Services for AR. You can race here in 3D.';
-  drawUI();
-}
-function beginAR() {
-  if(!game.supported||game.tracking?.active||!game.tracking || (game.membership&&!player())) return;
-  game.lobbyError=''; game.roomError=''; unlockSound(); announce('');
-  void game.tracking.start();
-}
-function stopKeys() {
-  for(const key of Object.keys(held)){ held[key]=false; element(key).classList.remove('held'); }
-  sendDrive(true);
-}
-async function endView() {
-  if(game.tracking?.active) await game.tracking.end();
-  else { game.mode='none'; game.view?.resetWorld(); drawUI(); resize(); }
-}
-function leaveRoom() {
-  const socket=game.socket;
-  game.joinEpoch++; game.joining=false; game.membership=null; game.room=null; game.id=null; game.seenId=null; game.pendingReady=false;
-  wasStarted=false; lastWinner=null; game.mode='none'; game.roomError=''; game.lobbyError=''; announce(''); stopKeys();
-  // Closing the old socket uses the deployed server’s existing disconnect/leave path.
-  if(socket){socket.disconnect();socket.connect();}
-  void endView(); drawUI();
-}
-function joined(snapshot) {
-  if(!snapshot || snapshot.code!==game.membership?.code || !snapshot.players?.some(p=>p.id===game.id)) return;
-  game.room=snapshot;
-  if(snapshot.started&&!wasStarted) { chime([420,630,840]); announce('Go! Green strips boost your car.'); }
-  if((wasStarted||lastWinner)&&!snapshot.started&&!snapshot.winner) {
-    stopKeys(); announce(snapshot.players.length===1?'The other driver left. Invite a driver to this room.':'Back on the grid.');
-  }
-  if(snapshot.winner&&snapshot.winner!==lastWinner) { chime(snapshot.winner===game.id?[520,660,830,1040]:[620,480]); announce(''); stopKeys(); }
-  if(!snapshot.started && !snapshot.winner) {
-    snapshot.players.forEach((p,index)=>{ models[index].progress=p.progress;models[index].lane=p.lane; });
-  }
-  if(player()?.ready || snapshot.started || snapshot.winner) game.pendingReady=false;
-  wasStarted=snapshot.started; lastWinner=snapshot.winner;
-  drawUI();
-}
-function sendJoin() {
-  const socket=game.socket, entry=game.membership;
-  if(!socket?.connected||!entry||game.seenId===socket.id) return;
-  const epoch=game.joinEpoch, connection=socket.id; game.seenId=connection;
-  socket.timeout(21000).emit('join',entry,(timeout,reply)=>{
-    if(epoch!==game.joinEpoch||connection!==socket.id) return;
-    game.joining=false;
-    if(timeout||!reply?.ok) {
-      game.membership=null; game.id=null; game.seenId=null; game.room=null; game.mode='none';
-      game.lobbyError=timeout?'The room did not answer. Tap Join room to try again.':(reply?.error||'Could not join this room.');
-      if(timeout){socket.disconnect();socket.connect();}
-      void endView(); drawUI();return;
-    }
-    game.id=reply.id; game.roomError=''; game.lobbyError=''; storage('skybound-racer',entry.name); drawUI();
-  });
-}
-function connect() {
-  const serverURL=window.SKYBOUND_SERVER_URL;
-  if(!window.io||!serverURL) {network('wait','Offline');game.lobbyError='The multiplayer client could not load. Reload the game page.';drawUI();return;}
-  const socket=window.io(serverURL,{autoConnect:false,reconnection:true,timeout:18000,reconnectionDelayMax:4500,tryAllTransports:true});
-  game.socket=socket;
-  socket.on('connect',()=>{network('online','Online'); sendJoin(); drawUI();});
-  socket.on('connect_error',()=>{network('wait','Reconnecting'); if(game.membership){game.roomError='The multiplayer server is connecting. Your room will open as soon as it responds.';}drawUI();});
-  socket.on('disconnect',()=>{
-    network('wait','Reconnecting');game.seenId=null;game.id=null;game.room=null;game.pendingReady=false;wasStarted=false;lastWinner=null;
-    if(game.membership) game.roomError='Connection interrupted. Rejoining room '+game.membership.code+'…';
-    stopKeys();drawUI();
-  });
-  socket.on('room',joined);socket.connect();
-}
-element('roomForm').onsubmit=event=>{
-  event.preventDefault(); if(game.joining||!game.socket) return;
-  const name=element('name').value.trim()||'Racer', code=element('code').value.trim().toUpperCase();
-  if(!/^[A-Z0-9]{4,6}$/.test(code)){game.lobbyError='Enter a room code with 4–6 letters or numbers.';errors();element('code').focus();return;}
-  unlockSound();game.joinEpoch++;game.membership={name,code};game.joining=true;game.seenId=null;game.lobbyError='';game.roomError='';
-  element('code').value=code; document.activeElement?.blur();
-  if(!game.socket.connected){game.roomError='Connecting to multiplayer. Your room will open when the server responds.';game.socket.connect();}
-  sendJoin();drawUI();
-};
-element('code').addEventListener('input',()=>{element('code').value=element('code').value.toUpperCase();if(game.lobbyError){game.lobbyError='';errors();}});
-element('testGround').onclick=element('startAR').onclick=beginAR;
-element('exitAR').onclick=element('demoDone').onclick=element('resumeExit').onclick=()=>void endView();
-element('place').onclick=()=>game.tracking?.queuePlacement();
-element('demoMove').onclick=()=>game.tracking?.scan();
-element('reposition').onclick=()=>{if(game.mode==='preview') void endView(); else game.tracking?.scan();};
-element('preview').onclick=()=>{if(game.tracking?.active)return;unlockSound();game.mode='preview';game.view.resetWorld();game.roomError='';drawUI();resize();};
-element('leave').onclick=element('finishLeave').onclick=leaveRoom;
-element('ready').onclick=()=>{
-  if(element('ready').disabled) return;
-  unlockSound();game.pendingReady=true;game.socket.emit('ready');drawUI();
-};
-element('again').onclick=()=>{if(game.socket?.connected)game.socket.emit('restart');};
-overlay.addEventListener('beforexrselect',event=>{if(event.target.closest?.('button,input,.panel,.setup-bar'))event.preventDefault();});
-
-function sendDrive(force=false) {
-  const p=player(); if(!p||!game.room?.started||!game.socket?.connected)return;
-  const driveable=!document.hidden&&(game.mode==='preview'||Boolean(game.tracking?.usable));
-  const gas=driveable&&held.gas,brake=driveable&&held.brake,steer=driveable ? Number(held.right)-Number(held.left) : 0;
-  // The deployed server owns speed and position. Boost strips release the normal throttle limit.
-  const boost=onBoost(p.progress,laneFor(p.lane,mySlot()));
-  const now=performance.now();
-  const input={gas:gas && (boost || p.speed < 0.79),brake,steer}, signature=JSON.stringify(input);
-  if(!force && signature===lastDrive && now-lastDriveAt<92)return;
-  lastDriveAt=now;lastDrive=signature;game.socket.volatile.emit('drive',input);
-}
-const keyMap={KeyA:'left',ArrowLeft:'left',KeyD:'right',ArrowRight:'right',KeyW:'gas',ArrowUp:'gas',KeyS:'brake',ArrowDown:'brake'};
-function pushKey(key,pressed) {
-  if(pressed && (!game.room?.started||game.joining))return;
-  if(held[key]===pressed)return;
-  held[key]=pressed;element(key).classList.toggle('held',pressed);sendDrive(true);
-}
-for(const key of Object.keys(held)) {
-  const b=element(key);
-  b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);pushKey(key,true);});
-  for(const evt of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(evt,()=>pushKey(key,false));
-  b.addEventListener('contextmenu',e=>e.preventDefault());
-}
-window.addEventListener('keydown',e=>{const key=keyMap[e.code];if(key&&game.room?.started&&e.target.tagName!=='INPUT'){e.preventDefault();pushKey(key,true);}});
-window.addEventListener('keyup',e=>{if(keyMap[e.code])pushKey(keyMap[e.code],false);});
-window.addEventListener('blur',stopKeys); document.addEventListener('visibilitychange',()=>{if(document.hidden)stopKeys();});
-setInterval(()=>sendDrive(),55);
-function frame(t,xrFrame) {
-  const view=game.view; if(!view)return;
-  game.tracking.frame(t,xrFrame);
-  const dt=lastRender?Math.min(.15,(t-lastRender)/1000):.016;lastRender=t;
-  const blend=1-Math.exp(-dt*17);
-  for(let i=0;i<2;i++) {
-    const p=game.room?.players[i],model=models[i];
-    view.cars[i].visible=!game.room||Boolean(p);
-    if(p) {
-      model.progress+=(p.progress-model.progress)*blend;model.lane+=(p.lane-model.lane)*blend;
-      view.setCar(i,model.progress,model.lane);
-    } else if(!game.room) view.setCar(i,(i?0.56:0.027)+t*(i?0.000030:0.000035),0);
-  }
-  view.render();
-}
-try {
-  game.view=createCourse(element('course'));
-  game.tracking=createGroundTracking(game.view,overlay,state=>{
-    const justPlaced=state.phase==='placed'&&game.mode!=='ar';
-    game.groundMessage=state.message;
-    if(state.phase==='placed'){game.mode='ar';if(justPlaced)chime([540,790]);}
-    else if(state.phase!=='idle')game.mode='none';
-    drawUI();
-  }, failure=>{
-    if(game.membership && (game.room?.started||player()?.ready||game.pendingReady) && !game.room?.winner) game.socket?.emit('restart');
-    stopKeys();game.mode='none';game.pendingReady=false;
-    if(failure){if(game.membership)game.roomError=failure;else game.lobbyError=failure;}
-    requestAnimationFrame(()=>{drawUI();resize();});
-  });
-  game.view.renderer.setAnimationLoop(frame);
-  new ResizeObserver(resize).observe(element('stage'));
-  element('course').addEventListener('webglcontextlost',e=>{e.preventDefault();announce('Graphics paused. Return to Chrome or reload the game page.',0);stopKeys();});
-  element('course').addEventListener('webglcontextrestored',()=>{announce('Graphics restored.');resize();});
-} catch(error) {
-  game.graphicsError='3D graphics could not start. Open the page directly in Chrome with hardware acceleration enabled.';
-  console.error('Skybound 3D initialization',error);
-}
-window.addEventListener('resize',resize);checkSupport();connect();drawUI();resize();
+$('ar').onclick=launchAR;$('arRoom').onclick=launchAR;
+function hold(id,key){const b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);controls[key]=true});for(const event of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(event,()=>controls[key]=false)}hold('gas','gas');hold('brake','brake');hold('left','left');hold('right','right');
+window.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const k={ArrowUp:'gas',KeyW:'gas',ArrowDown:'brake',KeyS:'brake',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right'}[e.code];if(k){controls[k]=true;e.preventDefault()}});window.addEventListener('keyup',e=>{const k={ArrowUp:'gas',KeyW:'gas',ArrowDown:'brake',KeyS:'brake',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right'}[e.code];if(k)controls[k]=false});
+renderer.setAnimationLoop((t,frame)=>{if(arActive&&frame&&hitSource&&!placed){const hits=frame.getHitTestResults(hitSource);hitPose=hits.length?hits[0].getPose(refSpace):null;if(hitPose){ghost.visible=true;ghost.position.set(hitPose.transform.position.x,hitPose.transform.position.y+.012,hitPose.transform.position.z);ghost.quaternion.set(hitPose.transform.orientation.x,hitPose.transform.orientation.y,hitPose.transform.orientation.z,hitPose.transform.orientation.w);$('placeTrack').disabled=false;$('crosshair').textContent='Surface detected! Tap PLACE TRACK.'}else{ghost.visible=false;$('placeTrack').disabled=true;$('crosshair').textContent='Scan slowly over a well-lit, textured floor.'}}if(started&&socket?.connected&&t-lastDrive>80){lastDrive=t;socket.emit('drive',{gas:controls.gas,brake:controls.brake,steer:Number(controls.right)-Number(controls.left)})}renderer.render(scene,camera)});
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
