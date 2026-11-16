@@ -25,3 +25,5 @@ Not browser-tested.
 GROUND COLLISION FIX: Adds a dedicated fixed Rapier cuboid slab aligned to the GLB's thin House floor, and starts the player above it. Hand renders on top. This is not browser-tested.
 
 Hand removed. Shelf meshes use detailed static triangle colliders; tabletop gets an additional solid box. Floor and player collision retained. Not browser-tested.
+
+PICKUP UPDATE: original multi-mesh paddles, Coke cans and red cups are grouped into individual physics bodies. Original tapes and ping-pong ball are also grabbable. Ball located outside room in original GLB is relocated to the table at runtime. E/click grab-drop, F throw. No hand. Floor, shelves, table collision retained. Not browser-tested.

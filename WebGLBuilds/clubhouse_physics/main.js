@@ -9,15 +9,21 @@ const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.06,400);came
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;document.body.prepend(renderer.domElement);
 const clock=new THREE.Clock(), ray=new THREE.Raycaster(), move=new Set();let yaw=0,pitch=0,world,held=null,entities=[],sceneRoot=null,playerBody,playerCollider,controller,verticalSpeed=0,playerReady=false;const tmp=new THREE.Vector3();
 function boxCollider(obj,type){obj.updateWorldMatrix(true,false);const bounds=new THREE.Box3().setFromObject(obj);if(bounds.isEmpty())return;const size=bounds.getSize(new THREE.Vector3());if(Math.min(size.x,size.y,size.z)<.001)return;const center=bounds.getCenter(new THREE.Vector3());const body=world.createRigidBody(type==='dynamic'?RAPIER.RigidBodyDesc.dynamic().setTranslation(center.x,center.y,center.z).setLinearDamping(1.5).setAngularDamping(2):RAPIER.RigidBodyDesc.fixed().setTranslation(center.x,center.y,center.z));world.createCollider(RAPIER.ColliderDesc.cuboid(Math.max(.01,size.x/2),Math.max(.01,size.y/2),Math.max(.01,size.z/2)).setFriction(.8).setRestitution(type==='dynamic'?.25:0),body);return {body,center};}
-function addMovable(obj){
-  obj.updateWorldMatrix(true,false);
-  const bounds=new THREE.Box3().setFromObject(obj), size=bounds.getSize(new THREE.Vector3()), center=bounds.getCenter(new THREE.Vector3());
-  const wrapper=new THREE.Group();wrapper.position.copy(center);scene.add(wrapper);wrapper.attach(obj);
-  const body=world.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(center.x,center.y,center.z).setLinearDamping(1.7).setAngularDamping(2.2));
-  const isBall=/ball/i.test(obj.name);
+function addMovable(parts,label){
+  const bounds=new THREE.Box3();for(const part of parts)bounds.expandByObject(part);
+  if(bounds.isEmpty())return;
+  const size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+  const wrapper=new THREE.Group();wrapper.name='Grab: '+label;wrapper.position.copy(center);scene.add(wrapper);
+  for(const part of parts)wrapper.attach(part);
+  const body=world.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(center.x,center.y,center.z).setLinearDamping(1.5).setAngularDamping(2.0).setCcdEnabled(true));
+  const isBall=/ball/i.test(label);
   const collider=isBall?RAPIER.ColliderDesc.ball(Math.max(.025,Math.max(size.x,size.y,size.z)/2)):RAPIER.ColliderDesc.cuboid(Math.max(.025,size.x/2),Math.max(.025,size.y/2),Math.max(.025,size.z/2));
-  world.createCollider(collider.setFriction(.75).setRestitution(isBall?.7:.08),body);
-  entities.push({obj,wrapper,body,localCtr:new THREE.Vector3()});
+  world.createCollider(collider.setFriction(.75).setRestitution(isBall?.75:.12),body);
+  entities.push({obj:parts[0],parts,wrapper,body,localCtr:new THREE.Vector3(),label});
+}
+function pickupKey(name){
+  const m=name.match(/^(Ping_Pong_Paddle_Bp\d*|Coke_Can_bp\d*|Red_Cup_Bp\d*|Video_Case_Bp\d*|Blank_tape_bp\d*|Ping_Pong_Ball_bp\d*)(?:_[a-f0-9]{6})?$/i);
+  return m?m[1].toLowerCase():null;
 }
 function staticTriCollider(mesh){
   // Preserve the real clubhouse mesh; collider follows its actual triangles, not a giant box.
@@ -51,8 +57,10 @@ new GLTFLoader().load(MODEL_PATH,gltf=>{
  const player=sceneRoot.getObjectByName('PlayerStart');
  if(player){const p=player.getWorldPosition(new THREE.Vector3());camera.position.set(p.x,p.y+0.55,p.z);}
  const all=[];sceneRoot.traverse(o=>{if(o.isMesh)all.push(o)});
- const isMove=o=>/^(Video_Case_Bp|Blank_tape_bp|Ping_Pong_Paddle_Bp|Ping_Pong_Ball_bp)/i.test(o.name)&&!/UCX_/i.test(o.name);
+ const isMove=o=>!/^UCX_/i.test(o.name)&&!!pickupKey(o.name);
  const movable=all.filter(isMove);
+ const groups=new Map();
+ for(const part of movable){const key=pickupKey(part.name);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(part);}
  // Collider meshes only for non-moving scenery. UCX meshes are invisible source collision proxies.
  const statics=all.filter(o=>!isMove(o)&&!/^(UCX_|RecastNavMesh)/i.test(o.name));
  for(const obj of statics){
@@ -92,13 +100,24 @@ new GLTFLoader().load(MODEL_PATH,gltf=>{
    camera.position.y=Math.max(camera.position.y,EYE_HEIGHT+.2);
  }
  initializePlayer();
- for(const obj of movable){
-   const center=new THREE.Box3().setFromObject(obj).getCenter(new THREE.Vector3());
-   if(center.distanceTo(camera.position)>30){console.warn('Movable outside clubhouse skipped',obj.name,center.toArray());continue;}
-   addMovable(obj);
+ for(const [key,parts] of groups){
+   const bounds=new THREE.Box3();parts.forEach(part=>bounds.expandByObject(part));
+   const center=bounds.getCenter(new THREE.Vector3());
+   // Some original ping-pong balls were exported far outside the room.
+   // Keep their actual mesh/material but move the group onto the table.
+   if(center.distanceTo(camera.position)>30){
+     if(/ping_pong_ball/i.test(key)){
+       const table=new THREE.Box3();statics.filter(o=>/^Ping_Pong_Bp/i.test(o.name)).forEach(o=>table.expandByObject(o));
+       if(!table.isEmpty()){
+         const dest=table.getCenter(new THREE.Vector3());dest.y=.95;
+         const delta=dest.sub(center);parts.forEach(part=>{part.position.add(part.parent.worldToLocal(part.getWorldPosition(new THREE.Vector3()).add(delta)).sub(part.position));part.updateWorldMatrix(true,false)});
+       }
+     }else{console.warn('Out-of-room pickup skipped',key);continue;}
+   }
+   addMovable(parts,key);
  }
  names.textContent=all.map(o=>(isMove(o)?'[GRABBABLE] ':'')+o.name).join('\n');
- status.textContent=`Original clubhouse loaded — ${entities.length} grabbable objects. Aim at a tape and press E or click.`;
+ status.textContent=`Clubhouse ready — ${entities.length} pickup objects (tapes, paddles, balls, cans, cups). Aim and press E or click.`;
 },e=>{if(e.total)status.textContent='Loading clubhouse '+Math.round(e.loaded/e.total*100)+'%';},e=>{
  status.textContent='ERROR: Original clubhouse GLB did not load. Check assets/clubhouse.glb and browser console.';console.error(e);
 });
@@ -134,7 +153,7 @@ function animate(){
  for(const e of entities){
    const p=e.body.translation(),q=e.body.rotation();
    e.wrapper.quaternion.set(q.x,q.y,q.z,q.w);
-   e.wrapper.position.set(p.x,p.y,p.z).sub(e.localCtr.clone().applyQuaternion(e.wrapper.quaternion));
+   e.wrapper.position.set(p.x,p.y,p.z);
  }
  renderer.render(scene,camera);
 }
