@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#101b2b" />
+  <title>House Level | 3D Walkaround</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="scene" aria-label="Interactive 3D house"></div>
+  <header class="topbar">
+    <div class="heading"><strong>HOUSE WALKAROUND</strong><span>Explore the 3D model</span></div>
+    <div class="top-actions"><button id="homeBtn" title="Reset view">↺ Reset</button><button id="viewBtn" title="Enable mouse look">Mouse look: Off</button></div>
+  </header>
+  <div id="loadStatus" role="status" aria-live="polite">Loading 3D house…</div>
+  <div id="errorBox" hidden><strong>Could not load the 3D house.</strong><p id="errorMessage"></p><p>Open this site from GitHub Pages or a local web server, not by double-clicking the HTML file. An internet connection is needed to load the Three.js library.</p></div>
+  <div class="crosshair" aria-hidden="true">+</div>
+  <aside class="help"><b>W A S D</b> move <span>·</span> <b>Mouse drag</b> look around <span>·</span> <b>Shift</b> run <span>·</span> <b>R</b> reset</aside>
+  <div class="touchControls" id="touchControls" aria-label="Touch movement controls">
+    <div class="dpad">
+      <button data-move="forward" class="up" aria-label="Move forward">▲</button>
+      <button data-move="left" class="left" aria-label="Move left">◀</button>
+      <button data-move="back" class="down" aria-label="Move back">▼</button>
+      <button data-move="right" class="right" aria-label="Move right">▶</button>
+    </div>
+    <span class="touchHint">Drag the right side to look</span>
+  </div>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
