@@ -23,3 +23,5 @@ and an inverse-kinematics interaction system would be needed.
 Not browser-tested.
 
 GROUND COLLISION FIX: Adds a dedicated fixed Rapier cuboid slab aligned to the GLB's thin House floor, and starts the player above it. Hand renders on top. This is not browser-tested.
+
+Hand removed. Shelf meshes use detailed static triangle colliders; tabletop gets an additional solid box. Floor and player collision retained. Not browser-tested.

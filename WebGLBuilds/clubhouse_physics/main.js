@@ -7,34 +7,6 @@ window.addEventListener('error',e=>{status.textContent='Error: '+e.message});win
 const scene=new THREE.Scene();scene.background=new THREE.Color('#263e57');scene.add(new THREE.HemisphereLight(0xffffff,0x4d5c6c,2.2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(8,15,6);scene.add(sun);
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.06,400);camera.position.set(...START_POSITION);
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;document.body.prepend(renderer.domElement);
-// First-person procedural hand. Attached to camera so it stays visible while walking.
-const handRig=new THREE.Group();camera.add(handRig);scene.add(camera);
-handRig.position.set(.40,-.43,-.77);handRig.rotation.set(-.15,-.23,-.16);
-const skin=new THREE.MeshStandardMaterial({color:0xc9906e,roughness:.86});
-const sleeve=new THREE.MeshStandardMaterial({color:0x254a6a,roughness:.95});
-function handPart(geometry,material,x,y,z,rx=0,ry=0,rz=0){
- const m=new THREE.Mesh(geometry,material);m.position.set(x,y,z);m.rotation.set(rx,ry,rz);m.renderOrder=9999;m.material.depthTest=false;m.material.depthWrite=false;handRig.add(m);return m;
-}
-handPart(new THREE.CylinderGeometry(.105,.14,.36,12),sleeve,0,-.29,.07,.22,0,-.10);
-handPart(new THREE.CylinderGeometry(.084,.095,.22,12),skin,0,-.09,0,.20,0,-.08);
-handPart(new THREE.BoxGeometry(.23,.23,.10),skin,0,.07,-.025,0,0,-.08);
-const fingers=[];
-for(let i=0;i<4;i++){
- const f=handPart(new THREE.CapsuleGeometry(.028,.15,4,8),skin,-.083+i*.055,.245,-.04,0,0,(i-1.5)*.07);
- fingers.push(f);
-}
-const thumb=handPart(new THREE.CapsuleGeometry(.036,.105,4,8),skin,-.15,.095,-.06,0,0,.80);
-let handBlend=0,handReach=0;
-function updateHand(dt){
- const target=held?1:0;
- handBlend=THREE.MathUtils.damp(handBlend,target,11,dt);
- handReach=THREE.MathUtils.damp(handReach,target,8,dt);
- for(let i=0;i<fingers.length;i++)fingers[i].rotation.x=handBlend*1.15;
- thumb.rotation.x=handBlend*.8;
- handRig.position.set(.40-handReach*.09,-.43+handReach*.08,-.77-handReach*.19);
- handRig.rotation.z=-.16+handReach*.11;
-}
-
 const clock=new THREE.Clock(), ray=new THREE.Raycaster(), move=new Set();let yaw=0,pitch=0,world,held=null,entities=[],sceneRoot=null,playerBody,playerCollider,controller,verticalSpeed=0,playerReady=false;const tmp=new THREE.Vector3();
 function boxCollider(obj,type){obj.updateWorldMatrix(true,false);const bounds=new THREE.Box3().setFromObject(obj);if(bounds.isEmpty())return;const size=bounds.getSize(new THREE.Vector3());if(Math.min(size.x,size.y,size.z)<.001)return;const center=bounds.getCenter(new THREE.Vector3());const body=world.createRigidBody(type==='dynamic'?RAPIER.RigidBodyDesc.dynamic().setTranslation(center.x,center.y,center.z).setLinearDamping(1.5).setAngularDamping(2):RAPIER.RigidBodyDesc.fixed().setTranslation(center.x,center.y,center.z));world.createCollider(RAPIER.ColliderDesc.cuboid(Math.max(.01,size.x/2),Math.max(.01,size.y/2),Math.max(.01,size.z/2)).setFriction(.8).setRestitution(type==='dynamic'?.25:0),body);return {body,center};}
 function addMovable(obj){
@@ -86,6 +58,18 @@ new GLTFLoader().load(MODEL_PATH,gltf=>{
  for(const obj of statics){
    if(/^(House|shelf_bp|Ping_Pong_Shelf_Bp|Ping_Pong_Bp|TV_Stand_Bp|Cube2|door)/i.test(obj.name))staticTriCollider(obj);
  }
+ // Detailed static triangle colliders already include shelf boards and table pieces.
+ // Reinforce the ping-pong tabletop with a solid box to stop tunneling.
+ const tableSurfaces=statics.filter(o=>/^Ping_Pong_Bp/i.test(o.name))
+  .map(o=>({o,b:new THREE.Box3().setFromObject(o)}))
+  .filter(({b})=>{const sz=b.getSize(new THREE.Vector3());return sz.x>1.2&&sz.z>2&&sz.y<.08&&b.min.y>.65&&b.max.y<.85;});
+ if(tableSurfaces.length){
+  const b=tableSurfaces[0].b,c=b.getCenter(new THREE.Vector3()),sz=b.getSize(new THREE.Vector3());
+  const thickness=Math.max(.035,sz.y);
+  const body=world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(c.x,b.max.y-thickness/2,c.z));
+  world.createCollider(RAPIER.ColliderDesc.cuboid(sz.x/2,thickness/2,sz.z/2).setFriction(.9).setRestitution(.12),body);
+ }
+ console.info('Shelf collider meshes:',statics.filter(o=>/^(shelf_bp|Ping_Pong_Shelf_Bp)/i.test(o.name)).length,'Table meshes:',statics.filter(o=>/^Ping_Pong_Bp/i.test(o.name)).length);
  // Dedicated SOLID floor slab. The clubhouse's actual floor is the thin
  // House mesh (approximately y=-0.01 to 0.10 in this GLB).
  // Trimesh alone can let the character start below/through a thin surface.
@@ -126,7 +110,6 @@ function throwHeld(){if(!held)return;const dir=new THREE.Vector3();camera.getWor
 function animate(){
  requestAnimationFrame(animate);
  const dt=Math.min(clock.getDelta(),.033);
- updateHand(dt);
  const forward=(move.has('KeyW')||move.has('ArrowUp')?1:0)-(move.has('KeyS')||move.has('ArrowDown')?1:0);
  const side=(move.has('KeyD')||move.has('ArrowRight')?1:0)-(move.has('KeyA')||move.has('ArrowLeft')?1:0);
  const dir=new THREE.Vector3(side,0,-forward);
