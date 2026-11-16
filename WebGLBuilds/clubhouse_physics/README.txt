@@ -1,17 +1,8 @@
-CLUBHOUSE PHYSICS - GLB INCLUDED
+ORIGINAL CLUBHOUSE PHYSICS BUILD
 
-Upload the CONTENTS of this folder to your existing GitHub Pages path:
-AimeeShounDev/WebGLBuilds/clubhouse_physics/
-Do not change your URL or server config.
-
-The 42 MB model is already included in assets/clubhouse.glb.
-index.html has an import map to fix the blank Loading screen caused by
-Three.js addon bare module imports.
-
-WASD: move, drag: look, E: grab/drop, F: throw.
-Button: Object names shows detected mesh names.
-
-Physics is an initial prototype: object collision boxes are approximations.
-Some meshes may have complex parenting or overlapping parts.
-This is NOT multiplayer-synchronized, and player/wall collision is not complete.
-Browser/WebGL runtime testing has not been performed.
+Includes original clubhouse(5).glb unchanged as assets/clubhouse.glb.
+Video_Case_Bp*, Blank_tape_bp, Ping_Pong_Paddle_Bp*, and nearby Ping_Pong_Ball_bp are grab targets.
+House, shelf and ping pong furniture colliders use mesh triangles.
+WASD to move, drag to look, aim at a tape and click or press E to grab/drop, F to throw.
+Deploy the contents into your existing WebGLBuilds/clubhouse_physics directory.
+This build is not browser-render-tested and does not yet implement multiplayer synchronization or player-wall collision.
