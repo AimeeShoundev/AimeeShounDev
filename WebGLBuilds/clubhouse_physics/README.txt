@@ -21,3 +21,5 @@ The hand is cosmetic: objects are held by the existing Rapier physics system.
 For anatomically realistic gripping or VR hand tracking, a rigged hand model
 and an inverse-kinematics interaction system would be needed.
 Not browser-tested.
+
+GROUND COLLISION FIX: Adds a dedicated fixed Rapier cuboid slab aligned to the GLB's thin House floor, and starts the player above it. Hand renders on top. This is not browser-tested.

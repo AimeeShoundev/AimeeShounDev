@@ -13,7 +13,7 @@ handRig.position.set(.40,-.43,-.77);handRig.rotation.set(-.15,-.23,-.16);
 const skin=new THREE.MeshStandardMaterial({color:0xc9906e,roughness:.86});
 const sleeve=new THREE.MeshStandardMaterial({color:0x254a6a,roughness:.95});
 function handPart(geometry,material,x,y,z,rx=0,ry=0,rz=0){
- const m=new THREE.Mesh(geometry,material);m.position.set(x,y,z);m.rotation.set(rx,ry,rz);handRig.add(m);return m;
+ const m=new THREE.Mesh(geometry,material);m.position.set(x,y,z);m.rotation.set(rx,ry,rz);m.renderOrder=9999;m.material.depthTest=false;m.material.depthWrite=false;handRig.add(m);return m;
 }
 handPart(new THREE.CylinderGeometry(.105,.14,.36,12),sleeve,0,-.29,.07,.22,0,-.10);
 handPart(new THREE.CylinderGeometry(.084,.095,.22,12),skin,0,-.09,0,.20,0,-.08);
@@ -86,7 +86,27 @@ new GLTFLoader().load(MODEL_PATH,gltf=>{
  for(const obj of statics){
    if(/^(House|shelf_bp|Ping_Pong_Shelf_Bp|Ping_Pong_Bp|TV_Stand_Bp|Cube2|door)/i.test(obj.name))staticTriCollider(obj);
  }
- // Add floor and furniture colliders before initializing the player.
+ // Dedicated SOLID floor slab. The clubhouse's actual floor is the thin
+ // House mesh (approximately y=-0.01 to 0.10 in this GLB).
+ // Trimesh alone can let the character start below/through a thin surface.
+ const floorMesh=statics.filter(o=>/^House/i.test(o.name))
+   .map(o=>({o,b:new THREE.Box3().setFromObject(o)}))
+   .filter(x=>x.b.max.y<.35&&x.b.min.y>-.5)
+   .sort((a,b)=>(b.b.max.x-b.b.min.x)*(b.b.max.z-b.b.min.z)-(a.b.max.x-a.b.min.x)*(a.b.max.z-a.b.min.z))[0];
+ if(floorMesh){
+   const b=floorMesh.b, c=b.getCenter(new THREE.Vector3()),sz=b.getSize(new THREE.Vector3());
+   const slabThickness=.24, floorTop=b.max.y-.015;
+   const slabBody=world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(c.x,floorTop-slabThickness/2,c.z));
+   world.createCollider(RAPIER.ColliderDesc.cuboid(sz.x/2,slabThickness/2,sz.z/2).setFriction(1),slabBody);
+   // Start the player ABOVE the slab, not intersecting the surface.
+   camera.position.y=Math.max(camera.position.y,floorTop+EYE_HEIGHT+.12);
+   console.info('Solid clubhouse floor collider:',floorMesh.o.name,'top',floorTop,'bounds',b.min.toArray(),b.max.toArray());
+ }else{
+   console.warn('No dedicated House floor mesh detected. Using fallback clubhouse floor.');
+   const slabBody=world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(.9,-.10,-2.1));
+   world.createCollider(RAPIER.ColliderDesc.cuboid(4,.18,4.5).setFriction(1),slabBody);
+   camera.position.y=Math.max(camera.position.y,EYE_HEIGHT+.2);
+ }
  initializePlayer();
  for(const obj of movable){
    const center=new THREE.Box3().setFromObject(obj).getCenter(new THREE.Vector3());
