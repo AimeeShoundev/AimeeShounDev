@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Clubhouse | Materials Repair 2026-11-15</title>
+  <link rel="stylesheet" href="style.css?v=materials-repair-20261115" />
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}</script>
+</head>
+<body>
+  <canvas id="scene" aria-label="Interactive three-dimensional clubhouse"></canvas>
+  <div id="loading" role="status"><div class="panel"><strong>Opening clubhouse…</strong><div class="track"><div id="progress"></div></div><span id="loadText">Loading your 3D model</span></div></div>
+  <header id="topbar"><div class="brand"><strong>CLUBHOUSE WALKAROUND</strong><small>TEXTURE REPAIR · NOV 15</small></div><div class="buttons"><button id="inside" type="button">Inside</button><button id="overview" type="button">Overview</button><button id="fullscreen" type="button">⛶</button></div></header>
+  <div id="modelStatus">Loading image-textured clubhouse materials…</div><div id="hint">WASD / arrow keys: move · Drag: look · Shift: run</div>
+  <div id="crosshair" aria-hidden="true">+</div>
+  <div id="touchPad"><button data-move="forward" class="up" aria-label="Forward">▲</button><button data-move="left" class="left" aria-label="Left">◀</button><button data-move="backward" class="down" aria-label="Backward">▼</button><button data-move="right" class="right" aria-label="Right">▶</button></div>
+  <div id="error" hidden><strong>Could not open the clubhouse</strong><p id="errorDetail"></p><p>Open the project on GitHub Pages or another web server, with <code>assets/clubhouse.glb</code> in place.</p></div>
+  <script type="module" src="script.js?v=materials-repair-20261115"></script>
+</body>
+</html>
