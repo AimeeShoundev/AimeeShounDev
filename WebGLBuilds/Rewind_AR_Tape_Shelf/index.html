@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#081429">
+  <meta name="description" content="Bring your video shelf into your room. Pick up a tape, explore its cover in 360 degrees, and put it back.">
+  <title>Rewind · Your AR video shelf</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.min.js","three/addons/":"./vendor/addons/"}}</script>
+</head>
+<body>
+  <main id="viewport" aria-label="Interactive video shelf"></main>
+  <div id="ui">
+    <div id="gesture-plane" aria-label="3D view. Tap a tape to inspect it; drag to rotate." tabindex="0"></div>
+    <header class="topbar">
+      <div class="brand"><svg viewBox="0 0 40 28" aria-hidden="true"><rect x="1.5" y="1.5" width="37" height="25" rx="4"/><rect x="7" y="6" width="26" height="11" rx="3"/><circle cx="12" cy="11.5" r="2.5"/><circle cx="28" cy="11.5" r="2.5"/><path d="M11 26l2-5h14l2 5"/></svg><div><strong>REWIND</strong><span>THE VIDEO SHELF</span></div></div>
+      <div class="top-actions"><span class="mode-tag" id="mode-label">3D PREVIEW</span><button class="icon-button" id="help-button" aria-label="Help and device compatibility">?</button><button class="small-button" id="exit-ar" hidden>Exit AR</button></div>
+    </header>
+    <div class="scene-label" id="scene-label"><span class="eyebrow">YOUR COLLECTION, UP CLOSE</span><h1>Make room for<br><em>movie night.</em></h1><p>22 tapes. A little nostalgia.<br>A shelf that belongs in your room.</p></div>
+    <div class="scene-footer" id="scene-footer"><span>ORIGINAL COVERS</span><span class="footer-rule"></span><span>360° EXPLORATION</span></div>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <section class="dock" id="browse-dock" aria-label="Shelf controls">
+      <div class="dock-copy"><span class="eyebrow" id="dock-eyebrow">TAKE YOUR PICK</span><h2 id="dock-title">Pick a tape. Take a closer look.</h2><p id="dock-hint">Tap any cover to pick it up. Drag the view to explore the shelf.</p></div>
+      <div class="dock-actions"><div class="button-row"><button class="secondary" id="browse-button" disabled>Browse tapes <span class="count">22</span></button><button class="primary" id="enter-ar" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M12 7l4 2.5v5L12 17l-4-2.5v-5zM8 9.5l4 2.5 4-2.5M12 12v5"/></svg><span>Place in my room</span></button><button class="primary" id="place-button" hidden disabled>Place shelf here</button></div><p class="compat-note" id="support-note">Loading your original model…</p></div>
+      <div class="ar-controls" id="ar-controls" hidden><button class="small-button" id="reposition">Move shelf</button><button class="small-button" id="turn-left" aria-label="Turn shelf left 15 degrees">Rotate left</button><button class="small-button" id="turn-right" aria-label="Turn shelf right 15 degrees">Rotate right</button></div>
+    </section>
+    <section class="dock inspect-dock" id="inspect-dock" aria-label="Tape inspection controls" hidden>
+      <div class="dock-copy"><span class="eyebrow">IN YOUR HANDS <span id="tape-count"></span></span><h2 id="tape-title">Tape</h2><p>Drag to turn 360°. Pinch to bring it closer.</p></div>
+      <div class="inspect-actions"><div class="button-row"><button class="small-button" id="front-button">Front</button><button class="small-button" id="back-button">Back</button><button class="small-button" id="spin-button" aria-pressed="false">Auto-spin</button><button class="icon-button" id="closer-button" aria-label="Bring tape closer">+</button><button class="icon-button" id="farther-button" aria-label="Move tape farther away">−</button></div><button class="primary" id="return-button">Return to shelf</button></div>
+    </section>
+    <div id="shelf-settings" class="shelf-settings"><label for="shelf-height">Shelf height <output id="height-output">175 cm</output></label><input type="range" id="shelf-height" min="75" max="220" value="175" step="5" aria-label="Shelf height in centimeters"></div>
+    <div class="loading" id="loading" role="status"><span class="loader-reel"></span><span id="loading-text">Unpacking your collection…</span><div class="load-track"><i id="load-fill"></i></div><button class="small-button" id="retry-load" hidden>Try again</button></div>
+    <section class="sheet" id="library-sheet" role="dialog" aria-modal="true" aria-labelledby="library-heading" hidden><div class="sheet-header"><div><span class="eyebrow">ON THE SHELF</span><h2 id="library-heading">Find your next favorite.</h2></div><button class="icon-button" id="close-library" aria-label="Close tape list">×</button></div><p class="sheet-intro">Choose a tape to bring it closer.</p><div class="tape-list" id="tape-list"></div></section>
+    <section class="sheet help-sheet" id="help-sheet" role="dialog" aria-modal="true" aria-labelledby="help-heading" hidden><div class="sheet-header"><div><span class="eyebrow">WELCOME TO REWIND</span><h2 id="help-heading">A shelf in your space.</h2></div><button class="icon-button" id="close-help" aria-label="Close help">×</button></div><ol class="steps"><li><strong>Place the shelf</strong><p>Open on a compatible Android phone in Chrome. Choose “Place in my room,” allow AR access, and slowly scan an open, well-lit floor. Place the shelf when the gold ring appears.</p></li><li><strong>Pick a tape</strong><p>Tap a cover or choose one from Browse tapes. It moves in front of you while your room stays visible.</p></li><li><strong>Take a closer look</strong><p>Drag in any direction to rotate it. Use Front, Back, or Auto-spin. Pinch or use + and − to change its distance.</p></li><li><strong>Put it back</strong><p>Choose “Return to shelf,” then pick another tape. Use Move shelf to scan and place it somewhere new.</p></li></ol><div class="device-note"><strong id="device-heading">About room AR</strong><p id="device-detail">Full room AR requires WebXR hit testing and touch overlays, available in Chrome on supported Android devices with Google Play Services for AR. iPhone/iPad Safari does not support this interactive room AR mode. You can explore the same tapes here in 3D preview.</p></div><p class="keyboard-note">Keyboard: use Browse tapes to choose a cover; arrow keys rotate a held tape; +/− change distance; Escape returns it. Camera permission is requested only when you start AR.</p></section>
+  </div>
+  <noscript>This experience needs JavaScript to display the model and start AR.</noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
