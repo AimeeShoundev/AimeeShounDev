@@ -365,3 +365,16 @@ h1, h2, h3, p { margin: 0; }
   .section-pad { padding-block: 2rem; }
   .site-header, .feature-folder, .experience-entry { break-inside: avoid; }
 }
+
+/* Front-page professional recommendations */
+.recommendations-section { background: var(--paper); }
+.recommendations-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; margin-top: 2.5rem; }
+.recommendation { border: 1px solid var(--ink); border-top: 5px solid var(--orange); padding: clamp(1.2rem, 2.5vw, 2.5rem); min-width: 0; }
+.recommendation h3 { font-family: var(--display); font-size: 2rem; line-height: 1.1; }
+.recommendation h3 a:hover { text-decoration: underline; text-decoration-color: var(--orange); }
+.recommendation-role { margin-top: .6rem; color: var(--muted); }
+.recommendation-meta { margin-top: .5rem; font-size: .875rem; color: var(--muted); }
+.recommendation blockquote { margin: 1.5rem 0; }
+.recommendation blockquote p + p { margin-top: 1rem; }
+@media (max-width: 1100px) { .site-nav { gap: 1rem; flex-wrap: wrap; justify-content: flex-end; } }
+@media (max-width: 760px) { .recommendations-grid { grid-template-columns: 1fr; } }
